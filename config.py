@@ -1,0 +1,13 @@
+ascii_char = list(r"$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'. ")
+background_img = 'background.png'
+img_path = 'G:/university/MyAI project/py files/other py files/3ca6ceb7fa413c3894511d760a46acc7.jpeg'
+resize_num = 7
+fonts_name = 'Lucida Console'
+fonts_size = 5
+bits = 8
+video_path = None #'G:/fl studio files/images'
+video_file = 'C:/Users/Administrator/Desktop/【俺妹】俺の妹がこんなに可愛いわけがない OP「irony」.mp4'
+img_save_path = 'Images'
+write_img_to_folder = False
+colors = (0, 0, 0, 255)
+fps = 1000
