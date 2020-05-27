@@ -1,9 +1,9 @@
 ascii_char = list(r"$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'. ")
 background_img = 'background.png'
 img_path = 'G:/university/MyAI project/py files/other py files/3ca6ceb7fa413c3894511d760a46acc7.jpeg'
-resize_num = 10
+resize_num = 3
 fonts_name = 'Lucida Console'
-fonts_size = 6
+fonts_size = 1
 bits = 8
 show_mode = 1
 image_path = 'G:/fl studio files/aaa/图片文件/10cf1df1b730f3207c7525cbbafbfc84.jpg'
