@@ -1,5 +1,6 @@
 #-*- coding:utf-8 -*-
-from config import *
+with open('config.py', encoding='utf-8') as f:
+    exec(f.read())
 import cv2
 import pyglet
 import os
@@ -7,16 +8,16 @@ from PIL import Image, ImageFont, ImageDraw
 
 
 
-length = len(ascii_char)
-K = 2**bits+1
+length = len(字符集)
+K = 2**比特数+1
 unit = K/length
 def get_char(r,g,b,alpha=None):
     gray = int(0.2126 * r + 0.7152 * g + 0.0722 * b)
-    return ascii_char[int(gray/unit)]
+    return 字符集[int(gray/unit)]
 
 def img_to_ascii(im):
-    WIDTH = int(im.width*1.1/resize_num)
-    HEIGHT = int(im.height*0.6/resize_num)
+    WIDTH = int(im.width*1.1/缩放倍数)
+    HEIGHT = int(im.height*0.6/缩放倍数)
     im = im.resize((WIDTH,HEIGHT),Image.ANTIALIAS)
     txt = ""
     for i in range(HEIGHT):
@@ -26,10 +27,10 @@ def img_to_ascii(im):
         txt += '\n' 
     return txt
 
-if show_mode == 1:
-    if video_path:
+if 演示模式 == 1:
+    if 视频帧图路径:
     
-        os.chdir(video_path)
+        os.chdir(视频帧图路径)
         frames = []
         count = 0
         file_ls = os.listdir()
@@ -38,14 +39,14 @@ if show_mode == 1:
             count += 1
             print(f'loading frame {count}')
     else:
-        vidcap = cv2.VideoCapture(video_file)
+        vidcap = cv2.VideoCapture(视频路径)
         is_read, img = vidcap.read()
         frames = []
         count = 0
-        if write_img_to_folder:
-            os.mkdir(img_save_path)
-            os.chdir(img_save_path)
-            if not frames_range:
+        if 视频导出帧图片到文件夹:
+            os.mkdir(视频帧图片保存路径)
+            os.chdir(视频帧图片保存路径)
+            if not 视频转换帧数区间:
                 while is_read:
                     #img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                     cv2.imwrite(f"{count}.jpg", img)
@@ -54,7 +55,7 @@ if show_mode == 1:
                     count += 1
                     print(f'loading frame {count}')
             else:
-                for k in range(*frames_range):
+                for k in range(*视频转换帧数区间):
                     if is_read:
                         cv2.imwrite(f"{count}.jpg", img)
                         frames.append(Image.fromarray(img))
@@ -64,7 +65,7 @@ if show_mode == 1:
                     else:
                         break
         else:
-            if not frames_range:
+            if not 视频转换帧数区间:
                 while is_read:
                     #img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                     frames.append(Image.fromarray(img))
@@ -72,7 +73,7 @@ if show_mode == 1:
                     count += 1
                     print(f'loading frame {count}')  
             else:
-                for k in range(*frames_range):
+                for k in range(*视频转换帧数区间):
                     if is_read:       
                         frames.append(Image.fromarray(img))
                         is_read, img = vidcap.read()
@@ -84,27 +85,20 @@ if show_mode == 1:
     counter = 0
 
     text_str = img_to_ascii(frames[0])
-    width = text_str.index('\n')
-    height = text_str.count('\n')
-    test_label = pyglet.text.Label(text_str[:width],font_size=fonts_size,font_name=fonts_name)
-    unit_height = test_label.content_height
-    unit_width = test_label.content_width
-    height *= unit_height
-    width *= (fonts_size + 1)
-    window = pyglet.window.Window(width=width, height=height)
+    window = pyglet.window.Window(width=屏幕宽度, height=屏幕高度)
     pyglet.resource.path = ['']
     pyglet.resource.reindex()
-    image = pyglet.resource.image(background_img)
-    image.width, image.height = width, height
+    image = pyglet.resource.image(背景图片)
+    image.width, image.height = 屏幕宽度, 屏幕高度
     label = pyglet.text.Label(text_str,
-                              font_size=fonts_size,
-                              font_name=fonts_name,
+                              font_size=字体大小,
+                              font_name=字体,
                               x=0,
-                              y=height//2,
+                              y=屏幕高度//2,
                               anchor_x='left',
                               anchor_y='center',
-                              color=colors,
-                              width=width,
+                              color=颜色,
+                              width=屏幕宽度,
                               multiline=True)
     
     @window.event
@@ -119,33 +113,26 @@ if show_mode == 1:
         pass
     
     
-    pyglet.clock.schedule_interval(update, 1/fps)    
+    pyglet.clock.schedule_interval(update, 1/帧数)    
 else:
-    text_str = img_to_ascii(Image.open(image_path))
-    if save_as_img:
+    text_str = img_to_ascii(Image.open(图片路径))
+    if 字符画保存为图片:
         from txt_to_image import convert
         convert(text_str, 'result.png')
-    width = text_str.index('\n')
-    height = text_str.count('\n')
-    test_label = pyglet.text.Label(text_str[:width],font_size=fonts_size,font_name=fonts_name)
-    unit_height = test_label.content_height
-    unit_width = test_label.content_width
-    height *= unit_height
-    width = int(width * (fonts_size + 0.5))
-    window = pyglet.window.Window(width=width, height=height)
+    window = pyglet.window.Window(width=屏幕宽度, height=屏幕高度)
     pyglet.resource.path = ['']
     pyglet.resource.reindex()
-    image = pyglet.resource.image(background_img)
-    image.width, image.height = width, height
+    image = pyglet.resource.image(背景图片)
+    image.width, image.height = 屏幕宽度, 屏幕高度
     label = pyglet.text.Label(text_str,
-                              font_size=fonts_size,
-                              font_name=fonts_name,
+                              font_size=字体大小,
+                              font_name=字体,
                               x=0,
-                              y=height,
+                              y=屏幕高度,
                               anchor_x='left',
                               anchor_y='top',
-                              color=colors,
-                              width=width,
+                              color=颜色,
+                              width=屏幕宽度,
                               multiline=True)
         
     @window.event
