@@ -24,7 +24,7 @@ class Root(Tk):
 
         self.value_dict = {}
         self.set_value('字符集', '字符集', False, 600, 100, 0, 0)
-        self.set_value('背景图片', '背景图片', True, 600, 40, 0, 120)
+        self.set_value('背景图片', '背景图片', True, 600, 40, 0, 120, True)
         self.set_value('缩放倍数', '缩放倍数', False, 80, 40, 0, 180)
         self.set_value('字体', '字体', True, 140, 40, 0, 230)
         self.set_value('字体大小', '字体大小', False, 140, 40, 0, 280)
@@ -41,11 +41,12 @@ class Root(Tk):
         self.set_value('字符画保存为图片', '字符画保存为图片', False, 150, 40, 200, 540)
         self.set_value('屏幕宽度', '屏幕宽度', False, 70, 40, 320, 370)
         self.set_value('屏幕高度', '屏幕高度', False, 70, 40, 410, 370)
+        self.set_value('字符画保存为文本文件', '字符画保存为图片', False, 150, 40, 500, 370)
         self.save = ttk.Button(self, text="save", command=self.save_current)
-        self.save.place(x=600, y=500)
+        self.save.place(x=500, y=500)
         self.saved_text = ttk.Label(self, text='saved')
         self.playing = ttk.Button(self, text='运行', command=self.play)
-        self.playing.place(x=500, y=500)
+        self.playing.place(x=600, y=500)
         self.frame_info = StringVar()
         self.frame_info.set('暂无读取帧')
         self.frame_show = ttk.Label(self, textvariable=self.frame_info)
@@ -94,10 +95,12 @@ class Root(Tk):
         for each in self.value_dict:
             current_value = self.value_dict[each]
             current = current_value[0].get('1.0',END).replace('\n','')
+            str_msg = current_value[2]
             if current != current_value[1]:
-                if current == '':
-                    current = 'None'
-                change(each, current, current_value[2])
+                if current in ['', 'None']:
+                    current = None
+                    str_msg = False
+                change(each, current, str_msg)
                 self.value_dict[each][1] = current
                 changed = True
         if changed:
@@ -225,6 +228,9 @@ def plays():
         root.frame_info.set('图片转换中')
         root.update()
         text_str = img_to_ascii(Image.open(图片路径))
+        if 字符画保存为文本文件:
+            with open(f'{os.path.splitext(os.path.basename(图片路径))[0]}.txt', 'w') as f:
+                f.write(text_str)
         if 字符画保存为图片:
             convert(text_str, 'result.png')
         root.frame_info.set('图片转换完成')
@@ -232,7 +238,7 @@ def plays():
         window = pyglet.window.Window(width=屏幕宽度, height=屏幕高度)
         pyglet.resource.path = [abs_path]
         pyglet.resource.reindex()
-        image = pyglet.resource.image(背景图片)
+        image = pyglet.image.load(背景图片)
         image.width, image.height = 屏幕宽度, 屏幕高度
         label = pyglet.text.Label(text_str,
                                   font_size=字体大小,
