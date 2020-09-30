@@ -1,7 +1,7 @@
 #-*- coding:utf-8 -*-
-字符集 =  "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'. "
+字符集 = "M@N%W$E#RK&FXYI*l]}1/+i>\"!~';,`:."
 背景图片 = 'background.png'
-缩放倍数 = 2
+缩放倍数 = 5
 字体 = 'Lucida Console'
 字体大小 = 1
 比特数 = 8

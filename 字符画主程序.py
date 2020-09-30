@@ -1,6 +1,7 @@
 with open('config.py', encoding='utf-8') as f:
     exec(f.read(), globals())
 
+
 def change(var, new, is_str=True):
     text = open('config.py', encoding='utf-8').read()
     text_ls = list(text)
@@ -52,19 +53,25 @@ class Root(Tk):
         self.frame_info.set('暂无读取帧')
         self.frame_show = ttk.Label(self, textvariable=self.frame_info)
         self.frame_show.place(x=500, y=550)
-    
+        self.msg_label = ttk.Label(self, text='每次运行之前要记得先\n点击save按钮保存配置哦~')
+        self.msg_label.place(x=680, y=50)
+
     def play(self):
         plays()
-    
-    
+
     def set_value(self,
                   value_name,
                   real_value,
                   is_str,
-                  width, height,
-                  x1, y1, path_enable=False):
+                  width,
+                  height,
+                  x1,
+                  y1,
+                  path_enable=False):
         value_label = ttk.LabelFrame(self,
-                                     text=value_name, width=width, height=height)
+                                     text=value_name,
+                                     width=width,
+                                     height=height)
         value_label.place(x=x1, y=y1)
         value_entry = Text(value_label, height=10)
         before_value = str(eval(real_value))
@@ -76,17 +83,18 @@ class Root(Tk):
         value_entry.place(x=0, y=0, width=width)
         self.value_dict[real_value] = [value_entry, before_value, is_str]
         if path_enable:
-            path_button = ttk.Button(self, text='更改', command=lambda: self.search_path(value_entry))
-            path_button.place(x=x1+width+10, y=y1+20)
-    
-    
+            path_button = ttk.Button(
+                self, text='更改', command=lambda: self.search_path(value_entry))
+            path_button.place(x=x1 + width + 10, y=y1 + 20)
+
     def search_path(self, obj):
         filename = filedialog.askopenfilename(initialdir='.',
                                               title="选择文件",
-                                              filetype=(("所有文件", "*.*"),))
+                                              filetype=(("所有文件", "*.*"), ))
         if filename:
             obj.delete('1.0', END)
             obj.insert(END, filename)
+
     def show_saved(self):
         self.saved_text.place(x=620, y=530)
         self.after(1000, self.saved_text.place_forget)
@@ -95,7 +103,7 @@ class Root(Tk):
         changed = False
         for each in self.value_dict:
             current_value = self.value_dict[each]
-            current = current_value[0].get('1.0',END).replace('\n','')
+            current = current_value[0].get('1.0', END).replace('\n', '')
             str_msg = current_value[2]
             if current != current_value[1]:
                 if current in ['', 'None']:
@@ -108,43 +116,43 @@ class Root(Tk):
             self.show_saved()
 
 
-
-
 def plays():
     with open('config.py', encoding='utf-8') as f:
         exec(f.read(), globals())
     length = len(字符集)
     K = 2**比特数
-    unit = (K+1)/length
-    def get_char(r,g,b,alpha=K):
+    unit = (K + 1) / length
+
+    def get_char(r, g, b, alpha=K):
         if alpha == 0:
             return " "
-        gray = int(0.2126*r + 0.7152*g + 0.0722*b)
-        return 字符集[int(gray/unit)]
-    
+        gray = int(0.2126 * r + 0.7152 * g + 0.0722 * b)
+        return 字符集[int(gray / unit)]
+
     def img_to_ascii(im, show_percentage=False):
-        WIDTH = int(im.width*1.1/缩放倍数)
-        HEIGHT = int(im.height*0.6/缩放倍数)
+        WIDTH = int(im.width * 1.1 / 缩放倍数)
+        HEIGHT = int(im.height * 0.6 / 缩放倍数)
         if show_percentage:
             whole_count = WIDTH * HEIGHT
             count = 0
-        im = im.resize((WIDTH,HEIGHT),Image.ANTIALIAS)
+        im = im.resize((WIDTH, HEIGHT), Image.ANTIALIAS)
         txt = ""
         for i in range(HEIGHT):
             for j in range(WIDTH):
-                pixel = im.getpixel((j,i))
-                txt += get_char(*pixel) 
+                pixel = im.getpixel((j, i))
+                txt += get_char(*pixel)
                 if show_percentage:
                     count += 1
-                    root.frame_info.set(f'转换进度:  {round((count/whole_count)*100, 3)}%')
+                    root.frame_info.set(
+                        f'转换进度:  {round((count/whole_count)*100, 3)}%')
                     root.update()
-                    
-            txt += '\n' 
+
+            txt += '\n'
         return txt
-    
+
     if 演示模式 == 1:
         if 视频帧图路径:
-        
+
             os.chdir(视频帧图路径)
             frames = []
             count = 0
@@ -193,7 +201,7 @@ def plays():
                         root.update()
                 else:
                     for k in range(*视频转换帧数区间):
-                        if is_read:       
+                        if is_read:
                             frames.append(Image.fromarray(img))
                             is_read, img = vidcap.read()
                             count += 1
@@ -204,7 +212,7 @@ def plays():
         root.frame_info.set('视频帧读取完成，开始转换')
         root.update()
         counter = 0
-    
+
         text_str = img_to_ascii(frames[0])
         if 显示图片或者视频:
             window = pyglet.window.Window(width=屏幕宽度, height=屏幕高度)
@@ -216,13 +224,13 @@ def plays():
                                       font_size=字体大小,
                                       font_name=字体,
                                       x=0,
-                                      y=屏幕高度//2,
+                                      y=屏幕高度 // 2,
                                       anchor_x='left',
                                       anchor_y='center',
                                       color=颜色,
                                       width=屏幕宽度,
                                       multiline=True)
-            
+
             @window.event
             def on_draw():
                 nonlocal counter
@@ -231,11 +239,11 @@ def plays():
                 label.draw()
                 counter += 1
                 label.text = img_to_ascii(frames[counter])
+
             def update(dt):
                 pass
-            
-            
-            pyglet.clock.schedule_interval(update, 1/帧数)    
+
+            pyglet.clock.schedule_interval(update, 1 / 帧数)
     else:
         root.frame_info.set('图片转换中')
         root.update()
@@ -244,10 +252,18 @@ def plays():
         root.update()
         file_name = os.path.splitext(os.path.basename(图片路径))[0]
         if 字符画保存为文本文件:
+            root.frame_info.set('图片转换完成，正在写入字符画为文本文件...')
+            root.update()
             with open(f'ascii_{file_name}.txt', 'w') as f:
                 f.write(text_str)
+            root.frame_info.set('已成功写入文本文件')
+            root.update()
         if 字符画保存为图片:
+            root.frame_info.set('图片转换完成，正在输出字符画为图片...')
+            root.update()
             convert(text_str, f'ascii_{file_name}.png')
+            root.frame_info.set('已成功输出为图片')
+            root.update()
         if 显示图片或者视频:
             window = pyglet.window.Window(width=屏幕宽度, height=屏幕高度)
             pyglet.resource.path = [abs_path]
@@ -264,19 +280,15 @@ def plays():
                                       color=颜色,
                                       width=屏幕宽度,
                                       multiline=True)
-                
+
             @window.event
             def on_draw():
                 nonlocal counter
                 window.clear()
                 image.blit(0, 0)
-                label.draw()      
-    
-    
-    
-            pyglet.app.run()    
+                label.draw()
 
-
+            pyglet.app.run()
 
 
 root = Root()

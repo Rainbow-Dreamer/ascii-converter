@@ -8,6 +8,7 @@ PIXEL_ON = 0  # PIL color to use for "on"
 PIXEL_OFF = 255  # PIL color to use for "off"
 PIL.Image.MAX_IMAGE_PIXELS = None
 
+
 def convert(txt_name, img_name, mode=0, font_path=None):
     image = text_image(txt_name, mode=mode, font_path=font_path)
     image.save(img_name)
