@@ -1,7 +1,6 @@
 with open('config.py', encoding='utf-8') as f:
     exec(f.read(), globals())
 
-
 def change(var, new, is_str=True):
     text = open('config.py', encoding='utf-8').read()
     text_ls = list(text)
@@ -9,7 +8,7 @@ def change(var, new, is_str=True):
     var_ind = text.index('\n' + var) + var_len
     next_line = text[var_ind:].index('\n')
     if is_str:
-        text_ls[var_ind:var_ind + next_line] = f" = '{new}'"
+        text_ls[var_ind:var_ind + next_line] = f' = {repr(new)}'
     else:
         text_ls[var_ind:var_ind + next_line] = f" = {new}"
     with open('config.py', 'w', encoding='utf-8') as f:
@@ -23,7 +22,7 @@ class Root(Tk):
         self.minsize(900, 600)
 
         self.value_dict = {}
-        self.set_value('字符集', '字符集', False, 600, 100, 0, 0)
+        self.set_value('字符集', '字符集', True, 600, 100, 0, 0)
         self.set_value('背景图片', '背景图片', True, 600, 40, 0, 120, True)
         self.set_value('缩放倍数', '缩放倍数', False, 80, 40, 0, 180)
         self.set_value('字体', '字体', True, 140, 40, 0, 230)
@@ -41,7 +40,9 @@ class Root(Tk):
         self.set_value('字符画保存为图片', '字符画保存为图片', False, 150, 40, 200, 540)
         self.set_value('屏幕宽度', '屏幕宽度', False, 70, 40, 320, 370)
         self.set_value('屏幕高度', '屏幕高度', False, 70, 40, 410, 370)
-        self.set_value('字符画保存为文本文件', '字符画保存为图片', False, 150, 40, 500, 370)
+        self.set_value('字符画保存为文本文件', '字符画保存为文本文件', False, 150, 40, 500, 370)
+        self.set_value('显示图片或者视频', '显示图片或者视频', False, 150, 40, 680, 370)
+        self.set_value('图片转换显示进度', '图片转换显示进度', False, 150, 40, 730, 450)
         self.save = ttk.Button(self, text="save", command=self.save_current)
         self.save.place(x=500, y=500)
         self.saved_text = ttk.Label(self, text='saved')
@@ -113,21 +114,31 @@ def plays():
     with open('config.py', encoding='utf-8') as f:
         exec(f.read(), globals())
     length = len(字符集)
-    K = 2**比特数+1
-    unit = K/length
-    def get_char(r,g,b,alpha=None):
-        gray = int(0.2126 * r + 0.7152 * g + 0.0722 * b)
+    K = 2**比特数
+    unit = (K+1)/length
+    def get_char(r,g,b,alpha=K):
+        if alpha == 0:
+            return " "
+        gray = int(0.2126*r + 0.7152*g + 0.0722*b)
         return 字符集[int(gray/unit)]
     
-    def img_to_ascii(im):
+    def img_to_ascii(im, show_percentage=False):
         WIDTH = int(im.width*1.1/缩放倍数)
         HEIGHT = int(im.height*0.6/缩放倍数)
+        if show_percentage:
+            whole_count = WIDTH * HEIGHT
+            count = 0
         im = im.resize((WIDTH,HEIGHT),Image.ANTIALIAS)
         txt = ""
         for i in range(HEIGHT):
             for j in range(WIDTH):
                 pixel = im.getpixel((j,i))
-                txt += get_char(*pixel)       
+                txt += get_char(*pixel) 
+                if show_percentage:
+                    count += 1
+                    root.frame_info.set(f'转换进度:  {round((count/whole_count)*100, 3)}%')
+                    root.update()
+                    
             txt += '\n' 
         return txt
     
@@ -195,72 +206,75 @@ def plays():
         counter = 0
     
         text_str = img_to_ascii(frames[0])
-        window = pyglet.window.Window(width=屏幕宽度, height=屏幕高度)
-        pyglet.resource.path = [abs_path]
-        pyglet.resource.reindex()
-        image = pyglet.resource.image(背景图片)
-        image.width, image.height = 屏幕宽度, 屏幕高度
-        label = pyglet.text.Label(text_str,
-                                  font_size=字体大小,
-                                  font_name=字体,
-                                  x=0,
-                                  y=屏幕高度//2,
-                                  anchor_x='left',
-                                  anchor_y='center',
-                                  color=颜色,
-                                  width=屏幕宽度,
-                                  multiline=True)
-        
-        @window.event
-        def on_draw():
-            nonlocal counter
-            window.clear()
-            image.blit(0, 0)
-            label.draw()
-            counter += 1
-            label.text = img_to_ascii(frames[counter])
-        def update(dt):
-            pass
-        
-        
-        pyglet.clock.schedule_interval(update, 1/帧数)    
+        if 显示图片或者视频:
+            window = pyglet.window.Window(width=屏幕宽度, height=屏幕高度)
+            pyglet.resource.path = [abs_path]
+            pyglet.resource.reindex()
+            image = pyglet.resource.image(背景图片)
+            image.width, image.height = 屏幕宽度, 屏幕高度
+            label = pyglet.text.Label(text_str,
+                                      font_size=字体大小,
+                                      font_name=字体,
+                                      x=0,
+                                      y=屏幕高度//2,
+                                      anchor_x='left',
+                                      anchor_y='center',
+                                      color=颜色,
+                                      width=屏幕宽度,
+                                      multiline=True)
+            
+            @window.event
+            def on_draw():
+                nonlocal counter
+                window.clear()
+                image.blit(0, 0)
+                label.draw()
+                counter += 1
+                label.text = img_to_ascii(frames[counter])
+            def update(dt):
+                pass
+            
+            
+            pyglet.clock.schedule_interval(update, 1/帧数)    
     else:
         root.frame_info.set('图片转换中')
         root.update()
-        text_str = img_to_ascii(Image.open(图片路径))
-        if 字符画保存为文本文件:
-            with open(f'{os.path.splitext(os.path.basename(图片路径))[0]}.txt', 'w') as f:
-                f.write(text_str)
-        if 字符画保存为图片:
-            convert(text_str, 'result.png')
+        text_str = img_to_ascii(Image.open(图片路径), 图片转换显示进度)
         root.frame_info.set('图片转换完成')
         root.update()
-        window = pyglet.window.Window(width=屏幕宽度, height=屏幕高度)
-        pyglet.resource.path = [abs_path]
-        pyglet.resource.reindex()
-        image = pyglet.image.load(背景图片)
-        image.width, image.height = 屏幕宽度, 屏幕高度
-        label = pyglet.text.Label(text_str,
-                                  font_size=字体大小,
-                                  font_name=字体,
-                                  x=0,
-                                  y=屏幕高度,
-                                  anchor_x='left',
-                                  anchor_y='top',
-                                  color=颜色,
-                                  width=屏幕宽度,
-                                  multiline=True)
-            
-        @window.event
-        def on_draw():
-            nonlocal counter
-            window.clear()
-            image.blit(0, 0)
-            label.draw()      
+        file_name = os.path.splitext(os.path.basename(图片路径))[0]
+        if 字符画保存为文本文件:
+            with open(f'ascii_{file_name}.txt', 'w') as f:
+                f.write(text_str)
+        if 字符画保存为图片:
+            convert(text_str, f'ascii_{file_name}.png')
+        if 显示图片或者视频:
+            window = pyglet.window.Window(width=屏幕宽度, height=屏幕高度)
+            pyglet.resource.path = [abs_path]
+            pyglet.resource.reindex()
+            image = pyglet.image.load(背景图片)
+            image.width, image.height = 屏幕宽度, 屏幕高度
+            label = pyglet.text.Label(text_str,
+                                      font_size=字体大小,
+                                      font_name=字体,
+                                      x=0,
+                                      y=屏幕高度,
+                                      anchor_x='left',
+                                      anchor_y='top',
+                                      color=颜色,
+                                      width=屏幕宽度,
+                                      multiline=True)
+                
+            @window.event
+            def on_draw():
+                nonlocal counter
+                window.clear()
+                image.blit(0, 0)
+                label.draw()      
     
     
     
-    pyglet.app.run()    
+            pyglet.app.run()    
 
 
 
