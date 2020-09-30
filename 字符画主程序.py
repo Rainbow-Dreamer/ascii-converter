@@ -1,5 +1,6 @@
 with open('config.py', encoding='utf-8') as f:
     exec(f.read(), globals())
+txt_to_image.update(font_path, font_size)
 
 
 def change(var, new, is_str=True):
@@ -219,25 +220,28 @@ def plays():
         root.update()
         counter = 0
         if 导出视频:
-            img_ls = []
-            for i in range(len(frames)):
+            try:
+                os.mkdir('temp_video_images')
+            except:
+                pass
+            os.chdir('temp_video_images')
+            num_frames = len(frames)
+            n = len(str(num_frames))
+            for i in range(num_frames):
                 root.frame_info.set(f'正在转换第{i+1}帧')
                 root.update()
-                current_img = convert(img_to_ascii(frames[i]),
-                                      'current.png',
-                                      not_save=True)
-                if i == 0:
-                    size = (int(current_img.width), int(current_img.height))
-                img_ls.append(
-                    np.array(current_img.convert('RGB'))[:, :, ::-1].copy())
+                convert(img_to_ascii(frames[i]),
+                        f'{i:0{n}d}.png',
+                        font_size=font_size)
+            root.frame_info.set(f'转换完成，开始输出为视频..')
+            root.update()
+            os.chdir('..')
             file_name = os.path.splitext(os.path.basename(视频路径))[0]
-            out = cv2.VideoWriter('output.avi',
-                                  cv2.VideoWriter_fourcc(*'XVID'), fps, size)
-            for j in range(len(img_ls)):
-                root.frame_info.set(f'正在写入视频第{j+1}帧')
-                root.update()
-                out.write(img_ls[j])
-            out.release()
+            output_filename = f'ascii_{file_name}.mp4'
+            if output_filename in os.listdir():
+                os.remove(output_filename)
+            ffmpeg.input(f'temp_video_images/%{n}d.png',
+                         framerate=fps).output(output_filename).run()
             root.frame_info.set(f'已成功输出为视频')
             root.update()
 

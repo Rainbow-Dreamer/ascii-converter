@@ -9,15 +9,24 @@ PIXEL_OFF = 255  # PIL color to use for "off"
 PIL.Image.MAX_IMAGE_PIXELS = None
 
 
-def convert(txt_name, img_name, mode=0, font_path=None, not_save=False):
-    image = text_image(txt_name, mode=mode, font_path=font_path)
+def update(font_path, font_size):
+    global font
+    font_path = font_path or 'cour.ttf'  # Courier New. works in windows. linux may need more explicit path
+    try:
+        font = PIL.ImageFont.truetype(font_path, size=font_size)
+    except IOError:
+        font = PIL.ImageFont.load_default()
+
+
+def convert(txt_name, img_name, mode=0, not_save=False, font_size=20):
+    image = text_image(txt_name, mode=mode, font_size=font_size)
     if not not_save:
         image.save(img_name)
     else:
         return image
 
 
-def text_image(lines, font_path=None, mode=0):
+def text_image(lines, mode=0, font_size=20):
     """Convert text file to a grayscale image with black characters on a white background.
 
     arguments:
@@ -32,14 +41,7 @@ def text_image(lines, font_path=None, mode=0):
         lines = tuple(lines.split('\n'))
     # parse the file into lines
     # choose a font (you can see more detail in my library on github)
-    large_font = 20  # get better resolution with larger size
-    font_path = font_path or 'cour.ttf'  # Courier New. works in windows. linux may need more explicit path
-    try:
-        font = PIL.ImageFont.truetype(font_path, size=large_font)
-    except IOError:
-        font = PIL.ImageFont.load_default()
-        print('Could not use chosen font. Using default.')
-
+    large_font = font_size  # get better resolution with larger size
     # make the background image based on the combination of font and lines
     pt2px = lambda pt: int(round(pt * 96.0 / 72))  # convert points to pixels
     max_width_line = max(lines, key=lambda s: font.getsize(s)[0])
