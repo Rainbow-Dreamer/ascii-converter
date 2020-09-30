@@ -44,6 +44,7 @@ class Root(Tk):
         self.set_value('字符画保存为文本文件', '字符画保存为文本文件', False, 150, 40, 500, 370)
         self.set_value('显示图片或者视频', '显示图片或者视频', False, 150, 40, 680, 370)
         self.set_value('图片转换显示进度', '图片转换显示进度', False, 150, 40, 730, 450)
+        self.set_value('导出视频', '导出视频', False, 150, 40, 730, 510)
         self.save = ttk.Button(self, text="save", command=self.save_current)
         self.save.place(x=500, y=500)
         self.saved_text = ttk.Label(self, text='saved')
@@ -53,8 +54,12 @@ class Root(Tk):
         self.frame_info.set('暂无读取帧')
         self.frame_show = ttk.Label(self, textvariable=self.frame_info)
         self.frame_show.place(x=500, y=550)
-        self.msg_label = ttk.Label(self, text='每次运行之前要记得先\n点击save按钮保存配置哦~')
-        self.msg_label.place(x=680, y=50)
+        self.msg_label = ttk.Label(
+            self,
+            text=
+            '每次运行之前要记得先\n点击save按钮保存配置哦~\n演示模式为0：转换图片为ascii字符画\n演示模式为1：转换视频为ascii字符画视频'
+        )
+        self.msg_label.place(x=620, y=50)
 
     def play(self):
         plays()
@@ -200,7 +205,7 @@ def plays():
                         root.frame_info.set(f'正在读取视频帧{count}')
                         root.update()
                 else:
-                    for k in range(*视频转换帧数区间):
+                    for k in range(视频转换帧数区间[1]):
                         if is_read:
                             frames.append(Image.fromarray(img))
                             is_read, img = vidcap.read()
@@ -209,9 +214,32 @@ def plays():
                             root.update()
                         else:
                             break
+                    frames = frames[视频转换帧数区间[0]:]
         root.frame_info.set('视频帧读取完成，开始转换')
         root.update()
         counter = 0
+        if 导出视频:
+            img_ls = []
+            for i in range(len(frames)):
+                root.frame_info.set(f'正在转换第{i+1}帧')
+                root.update()
+                current_img = convert(img_to_ascii(frames[i]),
+                                      'current.png',
+                                      not_save=True)
+                if i == 0:
+                    size = (int(current_img.width), int(current_img.height))
+                img_ls.append(
+                    np.array(current_img.convert('RGB'))[:, :, ::-1].copy())
+            file_name = os.path.splitext(os.path.basename(视频路径))[0]
+            out = cv2.VideoWriter('output.avi',
+                                  cv2.VideoWriter_fourcc(*'XVID'), fps, size)
+            for j in range(len(img_ls)):
+                root.frame_info.set(f'正在写入视频第{j+1}帧')
+                root.update()
+                out.write(img_ls[j])
+            out.release()
+            root.frame_info.set(f'已成功输出为视频')
+            root.update()
 
         text_str = img_to_ascii(frames[0])
         if 显示图片或者视频:
@@ -238,12 +266,16 @@ def plays():
                 image.blit(0, 0)
                 label.draw()
                 counter += 1
-                label.text = img_to_ascii(frames[counter])
+                try:
+                    label.text = img_to_ascii(frames[counter])
+                except:
+                    frames.clear()
 
             def update(dt):
                 pass
 
             pyglet.clock.schedule_interval(update, 1 / 帧数)
+            pyglet.app.run()
     else:
         root.frame_info.set('图片转换中')
         root.update()

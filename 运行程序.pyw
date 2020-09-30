@@ -4,6 +4,8 @@ from tkinter import filedialog
 import cv2, pyglet, os, sys
 from PIL import Image
 from txt_to_image import convert
+import numpy as np
+import time
 abs_path = os.path.dirname(os.path.abspath(__file__))
 os.chdir(abs_path)
 sys.path.append(abs_path)
