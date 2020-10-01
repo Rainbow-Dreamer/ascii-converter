@@ -22,5 +22,5 @@
 显示图片或者视频 = True
 图片转换显示进度 = True
 fps = 30
-font_path = 'CONSOLAS.TTF'
+font_path = 'LUCON.TTF'
 font_size = 10
