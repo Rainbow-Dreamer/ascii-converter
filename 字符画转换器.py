@@ -308,7 +308,7 @@ def plays():
         if 字符画保存为图片:
             root.frame_info.set('图片转换完成，正在输出字符画为图片...')
             root.update()
-            convert(text_str, f'ascii_{file_name}.png')
+            convert(text_str, f'ascii_{file_name}.png', font_size=font_size)
             root.frame_info.set('已成功输出为图片')
             root.update()
         if 显示图片或者视频:
