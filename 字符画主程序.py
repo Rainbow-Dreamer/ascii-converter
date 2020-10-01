@@ -21,46 +21,48 @@ class Root(Tk):
     def __init__(self):
         super(Root, self).__init__()
         self.title("视频和图片转字符画")
-        self.minsize(900, 600)
-
+        self.minsize(900, 700)
         self.value_dict = {}
-        self.set_value('字符集', '字符集', True, 600, 100, 0, 0)
-        self.set_value('背景图片', '背景图片', True, 600, 40, 0, 120, True)
-        self.set_value('缩放倍数', '缩放倍数', False, 80, 40, 0, 180)
-        self.set_value('字体', '字体', True, 140, 40, 0, 230)
-        self.set_value('字体大小', '字体大小', False, 140, 40, 0, 280)
-        self.set_value('比特数', '比特数', False, 80, 40, 0, 330)
-        self.set_value('演示模式', '演示模式', False, 80, 40, 0, 380)
-        self.set_value('图片路径', '图片路径', True, 600, 40, 0, 430, True)
-        self.set_value('视频路径', '视频路径', True, 500, 50, 100, 180, True)
-        self.set_value('视频帧图路径', '视频帧图路径', True, 500, 50, 150, 250, True)
-        self.set_value('视频帧图片保存路径', '视频帧图片保存路径', True, 500, 50, 150, 310, True)
-        self.set_value('视频导出帧图片到文件夹', '视频导出帧图片到文件夹', False, 150, 40, 150, 370)
-        self.set_value('颜色', '颜色', False, 150, 40, 0, 490)
-        self.set_value('帧数', '帧数', False, 150, 40, 0, 540)
-        self.set_value('视频转换帧数区间', '视频转换帧数区间', False, 150, 40, 200, 490)
-        self.set_value('字符画保存为图片', '字符画保存为图片', False, 150, 40, 200, 540)
-        self.set_value('屏幕宽度', '屏幕宽度', False, 70, 40, 320, 370)
-        self.set_value('屏幕高度', '屏幕高度', False, 70, 40, 410, 370)
-        self.set_value('字符画保存为文本文件', '字符画保存为文本文件', False, 150, 40, 500, 370)
-        self.set_value('显示图片或者视频', '显示图片或者视频', False, 150, 40, 680, 370)
-        self.set_value('图片转换显示进度', '图片转换显示进度', False, 150, 40, 730, 450)
-        self.set_value('导出视频', '导出视频', False, 150, 40, 730, 510)
+        self.set_value('字符集', '字符集', True, 600, 60, 0, 0)
+        self.set_value('背景图片', '背景图片', True, 600, 40, 0, 80, True)
+        self.set_value('缩放倍数', '缩放倍数', False, 80, 40, 0, 140)
+        self.set_value('字体', '字体', True, 140, 40, 0, 190)
+        self.set_value('字体大小', '字体大小', False, 140, 40, 0, 240)
+        self.set_value('比特数', '比特数', False, 80, 40, 0, 290)
+        self.set_value('演示模式', '演示模式', False, 80, 40, 0, 340)
+        self.set_value('图片路径', '图片路径', True, 600, 40, 0, 390, True)
+        self.set_value('视频路径', '视频路径', True, 500, 50, 100, 140, True)
+        self.set_value('视频帧图路径', '视频帧图路径', True, 500, 50, 150, 210, True)
+        self.set_value('视频帧图片保存路径', '视频帧图片保存路径', True, 500, 50, 150, 270, True)
+        self.set_value('视频导出帧图片到文件夹', '视频导出帧图片到文件夹', False, 150, 40, 150, 330)
+        self.set_value('颜色', '颜色', False, 150, 40, 0, 450)
+        self.set_value('帧数', '帧数', False, 150, 40, 0, 500)
+        self.set_value('视频转换帧数区间', '视频转换帧数区间', False, 150, 40, 200, 450)
+        self.set_value('字符画保存为图片', '字符画保存为图片', False, 150, 40, 200, 500)
+        self.set_value('屏幕宽度', '屏幕宽度', False, 70, 40, 320, 330)
+        self.set_value('屏幕高度', '屏幕高度', False, 70, 40, 410, 330)
+        self.set_value('字符画保存为文本文件', '字符画保存为文本文件', False, 150, 40, 500, 330)
+        self.set_value('显示图片或者视频', '显示图片或者视频', False, 150, 40, 680, 330)
+        self.set_value('图片转换显示进度', '图片转换显示进度', False, 150, 40, 730, 410)
+        self.set_value('导出视频', '导出视频', False, 150, 40, 730, 520)
+        self.set_value('导出视频帧数', 'fps', False, 100, 40, 350, 580)
+        self.set_value('导出视频字体', 'font_path', True, 100, 40, 500, 580)
+        self.set_value('导出视频字体大小', 'font_size', False, 120, 40, 650, 580)
         self.save = ttk.Button(self, text="save", command=self.save_current)
-        self.save.place(x=500, y=500)
+        self.save.place(x=500, y=490)
         self.saved_text = ttk.Label(self, text='saved')
         self.playing = ttk.Button(self, text='运行', command=self.play)
-        self.playing.place(x=600, y=500)
+        self.playing.place(x=600, y=490)
         self.frame_info = StringVar()
         self.frame_info.set('暂无读取帧')
         self.frame_show = ttk.Label(self, textvariable=self.frame_info)
-        self.frame_show.place(x=500, y=550)
+        self.frame_show.place(x=500, y=530)
         self.msg_label = ttk.Label(
             self,
             text=
             '每次运行之前要记得先\n点击save按钮保存配置哦~\n演示模式为0：转换图片为ascii字符画\n演示模式为1：转换视频为ascii字符画视频'
         )
-        self.msg_label.place(x=620, y=50)
+        self.msg_label.place(x=620, y=10)
 
     def play(self):
         plays()
@@ -102,7 +104,7 @@ class Root(Tk):
             obj.insert(END, filename)
 
     def show_saved(self):
-        self.saved_text.place(x=620, y=530)
+        self.saved_text.place(x=445, y=495)
         self.after(1000, self.saved_text.place_forget)
 
     def save_current(self):
@@ -158,7 +160,6 @@ def plays():
 
     if 演示模式 == 1:
         if 视频帧图路径:
-
             os.chdir(视频帧图路径)
             frames = []
             count = 0
@@ -171,6 +172,10 @@ def plays():
         else:
             vidcap = cv2.VideoCapture(视频路径)
             is_read, img = vidcap.read()
+            if not is_read:
+                root.frame_info.set('视频路径不存在或者为空')
+                root.update()
+                return
             frames = []
             count = 0
             if 视频导出帧图片到文件夹:
@@ -206,7 +211,8 @@ def plays():
                         root.frame_info.set(f'正在读取视频帧{count}')
                         root.update()
                 else:
-                    for k in range(视频转换帧数区间[1]):
+                    start_frame, to_frame = 视频转换帧数区间
+                    for k in range(to_frame):
                         if is_read:
                             frames.append(Image.fromarray(img))
                             is_read, img = vidcap.read()
@@ -215,7 +221,7 @@ def plays():
                             root.update()
                         else:
                             break
-                    frames = frames[视频转换帧数区间[0]:]
+                    frames = frames[start_frame:]
         root.frame_info.set('视频帧读取完成，开始转换')
         root.update()
         counter = 0
@@ -228,7 +234,7 @@ def plays():
             num_frames = len(frames)
             n = len(str(num_frames))
             for i in range(num_frames):
-                root.frame_info.set(f'正在转换第{i+1}帧')
+                root.frame_info.set(f'正在转换第{start_frame + i + 1}帧')
                 root.update()
                 convert(img_to_ascii(frames[i]),
                         f'{i:0{n}d}.png',
@@ -283,7 +289,12 @@ def plays():
     else:
         root.frame_info.set('图片转换中')
         root.update()
-        text_str = img_to_ascii(Image.open(图片路径), 图片转换显示进度)
+        try:
+            text_str = img_to_ascii(Image.open(图片路径), 图片转换显示进度)
+        except:
+            root.frame_info.set('图片路径不存在或者为空')
+            root.update()
+            return
         root.frame_info.set('图片转换完成')
         root.update()
         file_name = os.path.splitext(os.path.basename(图片路径))[0]
