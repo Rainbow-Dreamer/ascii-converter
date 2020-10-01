@@ -149,12 +149,11 @@ def plays():
             for j in range(WIDTH):
                 pixel = im.getpixel((j, i))
                 txt += get_char(*pixel)
-                if show_percentage:
-                    count += 1
-                    root.frame_info.set(
-                        f'转换进度:  {round((count/whole_count)*100, 3)}%')
-                    root.update()
-
+            if show_percentage:
+                count += WIDTH
+                root.frame_info.set(
+                    f'转换进度:  {round((count/whole_count)*100, 3)}%')
+                root.update()
             txt += '\n'
         return txt
 

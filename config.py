@@ -19,8 +19,8 @@
 屏幕宽度 = 1200
 屏幕高度 = 700
 字符画保存为文本文件 = True
-显示图片或者视频 = True
-图片转换显示进度 = False
+显示图片或者视频 = False
+图片转换显示进度 = True
 fps = 30
 font_path = 'LUCON.TTF'
 font_size = 10
