@@ -10,5 +10,5 @@ import ffmpeg
 abs_path = os.path.dirname(os.path.abspath(__file__))
 os.chdir(abs_path)
 sys.path.append(abs_path)
-with open('字符画主程序.py', encoding='utf-8') as f:
+with open('字符画转换器.py', encoding='utf-8') as f:
     exec(f.read(), globals())
