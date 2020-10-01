@@ -298,7 +298,7 @@ def plays():
         root.update()
         file_name = os.path.splitext(os.path.basename(图片路径))[0]
         if 字符画保存为文本文件:
-            root.frame_info.set('图片转换完成，正在写入字符画为文本文件...')
+            root.frame_info.set('图片转换完成，正在写入字符画为\n文本文件...')
             root.update()
             with open(f'ascii_{file_name}.txt', 'w') as f:
                 f.write(text_str)
