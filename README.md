@@ -18,3 +18,11 @@
 
 ![image](preview/2.jpg)
 
+在屏幕上显示转换后的ascii字符的效果
+
+![image](preview/3.jpg)
+
+在文本编辑器里打开转换后的ascii字符的文本文件
+
+![image](preview/4.jpg)
+
