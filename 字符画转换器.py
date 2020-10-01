@@ -183,7 +183,6 @@ def plays():
                 os.chdir(视频帧图片保存路径)
                 if not 视频转换帧数区间:
                     while is_read:
-                        #img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                         cv2.imwrite(f"{count}.jpg", img)
                         frames.append(Image.fromarray(img))
                         is_read, img = vidcap.read()
@@ -204,7 +203,6 @@ def plays():
             else:
                 if not 视频转换帧数区间:
                     while is_read:
-                        #img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                         frames.append(Image.fromarray(img))
                         is_read, img = vidcap.read()
                         count += 1
@@ -212,16 +210,18 @@ def plays():
                         root.update()
                 else:
                     start_frame, to_frame = 视频转换帧数区间
-                    for k in range(to_frame):
+                    no_of_frames = to_frame - start_frame
+                    vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
+                    for k in range(no_of_frames):
                         if is_read:
                             frames.append(Image.fromarray(img))
                             is_read, img = vidcap.read()
                             count += 1
-                            root.frame_info.set(f'正在读取视频帧{count}')
+                            root.frame_info.set(
+                                f'正在读取视频帧{start_frame + count}')
                             root.update()
                         else:
                             break
-                    frames = frames[start_frame:]
         root.frame_info.set('视频帧读取完成，开始转换')
         root.update()
         counter = 0
