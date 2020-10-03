@@ -48,6 +48,8 @@ class Root(Tk):
         self.set_value('导出视频帧数', 'fps', False, 100, 40, 350, 580)
         self.set_value('导出视频字体', 'font_path', True, 100, 40, 500, 580)
         self.set_value('导出视频字体大小', 'font_size', False, 120, 40, 650, 580)
+        self.set_value('图片宽度比例', 'width_resize', False, 100, 40, 300, 630)
+        self.set_value('图片高度比例', 'height_resize', False, 100, 40, 450, 630)
         self.save = ttk.Button(self, text="save", command=self.save_current)
         self.save.place(x=500, y=490)
         self.saved_text = ttk.Label(self, text='saved')
@@ -63,6 +65,27 @@ class Root(Tk):
             '每次运行之前要记得先\n点击save按钮保存配置哦~\n演示模式为0：转换图片为ascii字符画\n演示模式为1：转换视频为ascii字符画视频'
         )
         self.msg_label.place(x=620, y=10)
+        self.set_true_button = ttk.Button(self,
+                                          text='True',
+                                          command=lambda: self.insert_value(1),
+                                          takefocus=False)
+        self.set_false_button = ttk.Button(
+            self,
+            text='False',
+            command=lambda: self.insert_value(0),
+            takefocus=False)
+        self.set_true_button.place(x=0, y=600)
+        self.set_false_button.place(x=100, y=600)
+
+    def insert_value(self, value):
+        if value == 1:
+            value = 'True'
+        elif value == 0:
+            value = 'False'
+        current_focus = self.focus_get()
+        if 'text' in str(current_focus):
+            current_focus.delete('1.0', END)
+            current_focus.insert(END, value)
 
     def play(self):
         plays()
@@ -81,7 +104,10 @@ class Root(Tk):
                                      width=width,
                                      height=height)
         value_label.place(x=x1, y=y1)
-        value_entry = Text(value_label, height=10)
+        value_entry = Text(value_label,
+                           undo=True,
+                           autoseparators=True,
+                           maxundo=-1)
         before_value = str(eval(real_value))
         if before_value == 'None':
             before_value = ''
@@ -138,8 +164,8 @@ def plays():
         return 字符集[int(gray / unit)]
 
     def img_to_ascii(im, show_percentage=False):
-        WIDTH = int(im.width * 1.1 / 缩放倍数)
-        HEIGHT = int(im.height * 0.6 / 缩放倍数)
+        WIDTH = int(im.width * width_resize / 缩放倍数)
+        HEIGHT = int(im.height * height_resize / 缩放倍数)
         if show_percentage:
             whole_count = WIDTH * HEIGHT
             count = 0

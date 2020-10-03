@@ -24,3 +24,5 @@
 fps = 30
 font_path = 'LUCON.TTF'
 font_size = 10
+width_resize = 1.002
+height_resize = 0.6
