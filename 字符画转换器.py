@@ -76,6 +76,19 @@ class Root(Tk):
             takefocus=False)
         self.set_true_button.place(x=0, y=600)
         self.set_false_button.place(x=100, y=600)
+        self.picture_color = IntVar()
+        self.output_picture_color = Checkbutton(self,
+                                                text='输出图片为彩色',
+                                                variable=self.picture_color,
+                                                onvalue=1,
+                                                offvalue=0)
+        self.output_picture_color.place(x=200, y=560)
+        self.color_scale = 6
+        self.color_scale_entry = ttk.Entry(self)
+        self.color_scale_entry.place(x=600, y=650)
+        self.color_scale_entry.insert(END, self.color_scale)
+        self.color_scale_label = ttk.Label(self, text='彩色字符画字体缩放倍数')
+        self.color_scale_label.place(x=600, y=625)
 
     def insert_value(self, value):
         if value == 1:
@@ -88,6 +101,11 @@ class Root(Tk):
             current_focus.insert(END, value)
 
     def play(self):
+        global is_color
+        global color_scale
+        is_color = self.picture_color.get()
+        self.color_scale = int(self.color_scale_entry.get())
+        color_scale = self.color_scale
         plays()
 
     def set_value(self,
@@ -164,24 +182,49 @@ def plays():
         return 字符集[int(gray / unit)]
 
     def img_to_ascii(im, show_percentage=False):
-        WIDTH = int(im.width * width_resize / 缩放倍数)
-        HEIGHT = int(im.height * height_resize / 缩放倍数)
+        if is_color and (字符画保存为图片 or 导出视频):
+            WIDTH = int(im.width / 缩放倍数)
+            HEIGHT = int(im.height / 缩放倍数)
+        else:
+            WIDTH = int(im.width * width_resize / 缩放倍数)
+            HEIGHT = int(im.height * height_resize / 缩放倍数)
         if show_percentage:
             whole_count = WIDTH * HEIGHT
             count = 0
         im = im.resize((WIDTH, HEIGHT), Image.ANTIALIAS)
         txt = ""
-        for i in range(HEIGHT):
-            for j in range(WIDTH):
-                pixel = im.getpixel((j, i))
-                txt += get_char(*pixel)
-            if show_percentage:
-                count += WIDTH
-                root.frame_info.set(
-                    f'转换进度:  {round((count/whole_count)*100, 3)}%')
-                root.update()
-            txt += '\n'
-        return txt
+        if is_color and (字符画保存为图片 or 导出视频):
+            im_txt = Image.new("RGB", (im.width, im.height),
+                               (2**比特数 - 1, 2**比特数 - 1, 2**比特数 - 1))
+            colors = []
+            txt = []
+            for i in range(HEIGHT):
+                current_color = []
+                current_line = ''
+                for j in range(WIDTH):
+                    pixel = im.getpixel((j, i))
+                    current_color.append((pixel[0], pixel[1], pixel[2]))
+                    current_line += get_char(*pixel)
+                if show_percentage:
+                    count += WIDTH
+                    root.frame_info.set(
+                        f'转换进度:  {round((count/whole_count)*100, 3)}%')
+                    root.update()
+                txt.append(current_line)
+                colors.append(current_color)
+            return txt, colors, im_txt
+        else:
+            for i in range(HEIGHT):
+                for j in range(WIDTH):
+                    pixel = im.getpixel((j, i))
+                    txt += get_char(*pixel)
+                if show_percentage:
+                    count += WIDTH
+                    root.frame_info.set(
+                        f'转换进度:  {round((count/whole_count)*100, 3)}%')
+                    root.update()
+                txt += '\n'
+            return txt
 
     if 演示模式 == 1:
         if 视频帧图路径:
@@ -209,7 +252,9 @@ def plays():
                 if not 视频转换帧数区间:
                     while is_read:
                         cv2.imwrite(f"{count}.jpg", img)
-                        frames.append(Image.fromarray(img))
+                        frames.append(
+                            Image.fromarray(
+                                cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
                         is_read, img = vidcap.read()
                         count += 1
                         root.frame_info.set(f'正在读取视频帧{count}')
@@ -218,17 +263,22 @@ def plays():
                     for k in range(*视频转换帧数区间):
                         if is_read:
                             cv2.imwrite(f"{count}.jpg", img)
-                            frames.append(Image.fromarray(img))
+                            frames.append(
+                                Image.fromarray(
+                                    cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
                             is_read, img = vidcap.read()
                             count += 1
-                            root.frame_info.set(f'正在读取视频帧{count}')
+                            root.frame_info.set(
+                                f'正在读取视频帧{start_frame + count}')
                             root.update()
                         else:
                             break
             else:
                 if not 视频转换帧数区间:
                     while is_read:
-                        frames.append(Image.fromarray(img))
+                        frames.append(
+                            Image.fromarray(
+                                cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
                         is_read, img = vidcap.read()
                         count += 1
                         root.frame_info.set(f'正在读取视频帧{count}')
@@ -239,7 +289,9 @@ def plays():
                     vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
                     for k in range(no_of_frames):
                         if is_read:
-                            frames.append(Image.fromarray(img))
+                            frames.append(
+                                Image.fromarray(
+                                    cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
                             is_read, img = vidcap.read()
                             count += 1
                             root.frame_info.set(
@@ -258,12 +310,33 @@ def plays():
             os.chdir('temp_video_images')
             num_frames = len(frames)
             n = len(str(num_frames))
-            for i in range(num_frames):
-                root.frame_info.set(f'正在转换第{start_frame + i + 1}帧')
-                root.update()
-                convert(img_to_ascii(frames[i]),
-                        f'{i:0{n}d}.png',
-                        font_size=font_size)
+            if is_color == 0:
+                for i in range(num_frames):
+                    root.frame_info.set(f'正在转换第{start_frame + i + 1}帧')
+                    root.update()
+                    convert(img_to_ascii(frames[i]),
+                            f'{i:0{n}d}.png',
+                            font_size=font_size)
+            else:
+                try:
+                    font = ImageFont.truetype(font_path, size=font_size)
+                except IOError:
+                    font = ImageFont.load_default()
+                font_x_len, font_y_len = font.getsize(' ')
+                font_x_len = int(font_x_len / color_scale)
+                font_y_len = int(font_y_len / color_scale)
+                for i in range(num_frames):
+                    root.frame_info.set(f'正在转换第{start_frame + i + 1}帧')
+                    root.update()
+                    text_str_output = img_to_ascii(frames[i])
+                    txt, colors, im_txt = text_str_output
+                    dr = ImageDraw.Draw(im_txt)
+                    for j in range(len(txt)):
+                        for k in range(len(txt[0])):
+                            dr.text((k * font_x_len, j * font_y_len),
+                                    txt[j][k], colors[j][k])
+                    im_txt.save(f'{i:0{n}d}.png')
+
             root.frame_info.set(f'转换完成，开始输出为视频..')
             root.update()
             os.chdir('..')
@@ -276,7 +349,11 @@ def plays():
             root.frame_info.set(f'已成功输出为视频')
             root.update()
 
-        text_str = img_to_ascii(frames[0])
+        text_str_output = img_to_ascii(frames[0])
+        if type(text_str_output) != str:
+            text_str = '\n'.join(text_str_output[0])
+        else:
+            text_str = text_str_output
         if 显示图片或者视频:
             window = pyglet.window.Window(width=屏幕宽度, height=屏幕高度)
             pyglet.resource.path = [abs_path]
@@ -302,7 +379,12 @@ def plays():
                 label.draw()
                 counter += 1
                 try:
-                    label.text = img_to_ascii(frames[counter])
+                    text_str_output = img_to_ascii(frames[counter])
+                    if type(text_str_output) != str:
+                        text_str = '\n'.join(text_str_output[0])
+                    else:
+                        text_str = text_str_output
+                    label.text = text_str
                 except:
                     frames.clear()
 
@@ -315,7 +397,11 @@ def plays():
         root.frame_info.set('图片转换中')
         root.update()
         try:
-            text_str = img_to_ascii(Image.open(图片路径), 图片转换显示进度)
+            text_str_output = img_to_ascii(Image.open(图片路径), 图片转换显示进度)
+            if type(text_str_output) != str:
+                text_str = '\n'.join(text_str_output[0])
+            else:
+                text_str = text_str_output
         except:
             root.frame_info.set('图片路径不存在或者为空')
             root.update()
@@ -333,7 +419,24 @@ def plays():
         if 字符画保存为图片:
             root.frame_info.set('图片转换完成，正在输出字符画为图片...')
             root.update()
-            convert(text_str, f'ascii_{file_name}.png', font_size=font_size)
+            if is_color == 0:
+                convert(text_str,
+                        f'ascii_{file_name}.png',
+                        font_size=font_size)
+            else:
+                txt, colors, im_txt = text_str_output
+                dr = ImageDraw.Draw(im_txt)
+                try:
+                    font = ImageFont.truetype(font_path, size=字体大小)
+                except IOError:
+                    font = ImageFont.load_default()
+                font_x_len, font_y_len = font.getsize(' ')
+                for j in range(len(txt)):
+                    for i in range(len(txt[0])):
+                        dr.text((i * font_x_len, j * font_y_len), txt[j][i],
+                                colors[j][i])
+                im_txt.save(f'ascii_{file_name}.png')
+
             root.frame_info.set('已成功输出为图片')
             root.update()
         if 显示图片或者视频:

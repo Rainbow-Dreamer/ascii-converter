@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 import cv2, pyglet, os, sys
-from PIL import Image
+from PIL import Image, ImageFont, ImageDraw
 import txt_to_image
 from txt_to_image import convert
 import numpy as np
