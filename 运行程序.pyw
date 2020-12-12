@@ -3,8 +3,6 @@ from tkinter import ttk
 from tkinter import filedialog
 import cv2, pyglet, os, sys
 from PIL import Image, ImageFont, ImageDraw
-import txt_to_image
-from txt_to_image import convert
 import numpy as np
 import ffmpeg
 abs_path = os.path.dirname(os.path.abspath(__file__))

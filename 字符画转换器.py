@@ -1,6 +1,5 @@
 with open('config.py', encoding='utf-8') as f:
     exec(f.read(), globals())
-txt_to_image.update(font_path, font_size)
 
 
 def change(var, new, is_str=True):
@@ -83,12 +82,6 @@ class Root(Tk):
                                                 onvalue=1,
                                                 offvalue=0)
         self.output_picture_color.place(x=200, y=560)
-        self.color_scale = 6
-        self.color_scale_entry = ttk.Entry(self)
-        self.color_scale_entry.place(x=600, y=650)
-        self.color_scale_entry.insert(END, self.color_scale)
-        self.color_scale_label = ttk.Label(self, text='彩色字符画字体缩放倍数')
-        self.color_scale_label.place(x=600, y=625)
 
     def insert_value(self, value):
         if value == 1:
@@ -102,10 +95,7 @@ class Root(Tk):
 
     def play(self):
         global is_color
-        global color_scale
         is_color = self.picture_color.get()
-        self.color_scale = int(self.color_scale_entry.get())
-        color_scale = self.color_scale
         plays()
 
     def set_value(self,
@@ -182,41 +172,35 @@ def plays():
         return 字符集[int(gray / unit)]
 
     def img_to_ascii(im, show_percentage=False):
-        if is_color and (字符画保存为图片 or 导出视频):
-            WIDTH = int(im.width / 缩放倍数)
-            HEIGHT = int(im.height / 缩放倍数)
-        else:
-            WIDTH = int(im.width * width_resize / 缩放倍数)
-            HEIGHT = int(im.height * height_resize / 缩放倍数)
+        WIDTH = int((im.width * width_resize // 6) / 缩放倍数)
+        HEIGHT = int((im.height * height_resize // 15) / 缩放倍数)
         if show_percentage:
             whole_count = WIDTH * HEIGHT
             count = 0
-        im = im.resize((WIDTH, HEIGHT), Image.ANTIALIAS)
+        im_resize = im.resize((WIDTH, HEIGHT), Image.ANTIALIAS)
         txt = ""
         if is_color and (字符画保存为图片 or 导出视频):
-            im_txt = Image.new("RGB", (im.width, im.height),
+            im_txt = Image.new("RGB",
+                               (int(im.width / 缩放倍数), int(im.height / 缩放倍数)),
                                (2**比特数 - 1, 2**比特数 - 1, 2**比特数 - 1))
             colors = []
-            txt = []
             for i in range(HEIGHT):
-                current_color = []
-                current_line = ''
                 for j in range(WIDTH):
-                    pixel = im.getpixel((j, i))
-                    current_color.append((pixel[0], pixel[1], pixel[2]))
-                    current_line += get_char(*pixel)
+                    pixel = im_resize.getpixel((j, i))
+                    colors.append(pixel)
+                    txt += get_char(*pixel)
                 if show_percentage:
                     count += WIDTH
                     root.frame_info.set(
                         f'转换进度:  {round((count/whole_count)*100, 3)}%')
                     root.update()
-                txt.append(current_line)
-                colors.append(current_color)
+                txt += '\n'
+                colors.append((255, 255, 255))
             return txt, colors, im_txt
         else:
             for i in range(HEIGHT):
                 for j in range(WIDTH):
-                    pixel = im.getpixel((j, i))
+                    pixel = im_resize.getpixel((j, i))
                     txt += get_char(*pixel)
                 if show_percentage:
                     count += WIDTH
@@ -260,7 +244,11 @@ def plays():
                         root.frame_info.set(f'正在读取视频帧{count}')
                         root.update()
                 else:
-                    for k in range(*视频转换帧数区间):
+                    start_frame, to_frame = 视频转换帧数区间
+                    no_of_frames = to_frame - start_frame
+                    vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
+                    is_read, img = vidcap.read()
+                    for k in range(no_of_frames):
                         if is_read:
                             cv2.imwrite(f"{count}.jpg", img)
                             frames.append(
@@ -287,6 +275,7 @@ def plays():
                     start_frame, to_frame = 视频转换帧数区间
                     no_of_frames = to_frame - start_frame
                     vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
+                    is_read, img = vidcap.read()
                     for k in range(no_of_frames):
                         if is_read:
                             frames.append(
@@ -310,31 +299,44 @@ def plays():
             os.chdir('temp_video_images')
             num_frames = len(frames)
             n = len(str(num_frames))
+            try:
+                font = ImageFont.truetype(font_path, size=font_size)
+            except:
+                font = ImageFont.load_default()
+            font_x_len, font_y_len = font.getsize(字符集[1])
+            font_y_len = int(font_y_len * 1.37)
             if is_color == 0:
                 for i in range(num_frames):
                     root.frame_info.set(f'正在转换第{start_frame + i + 1}帧')
                     root.update()
-                    convert(img_to_ascii(frames[i]),
-                            f'{i:0{n}d}.png',
-                            font_size=font_size)
+                    im = frames[i]
+                    text_str = img_to_ascii(im)
+                    im_txt = Image.new(
+                        "L", (int(im.width / 缩放倍数), int(im.height / 缩放倍数)),
+                        'white')
+                    dr = ImageDraw.Draw(im_txt)
+                    x = y = 0
+                    for j in range(len(text_str)):
+                        if text_str[j] == "\n":
+                            x = 0
+                            y += font_y_len
+                        dr.text((x, y), text_str[j], fill='black', font=font)
+                        x += font_x_len
+                    im_txt.save(f'{i:0{n}d}.png')
             else:
-                try:
-                    font = ImageFont.truetype(font_path, size=font_size)
-                except IOError:
-                    font = ImageFont.load_default()
-                font_x_len, font_y_len = font.getsize(' ')
-                font_x_len = int(font_x_len / color_scale)
-                font_y_len = int(font_y_len / color_scale)
                 for i in range(num_frames):
                     root.frame_info.set(f'正在转换第{start_frame + i + 1}帧')
                     root.update()
                     text_str_output = img_to_ascii(frames[i])
                     txt, colors, im_txt = text_str_output
                     dr = ImageDraw.Draw(im_txt)
+                    x = y = 0
                     for j in range(len(txt)):
-                        for k in range(len(txt[0])):
-                            dr.text((k * font_x_len, j * font_y_len),
-                                    txt[j][k], colors[j][k])
+                        if txt[j] == "\n":
+                            x = 0
+                            y += font_y_len
+                        dr.text((x, y), txt[j], fill=colors[j], font=font)
+                        x += font_x_len
                     im_txt.save(f'{i:0{n}d}.png')
 
             root.frame_info.set(f'转换完成，开始输出为视频..')
@@ -351,7 +353,7 @@ def plays():
 
         text_str_output = img_to_ascii(frames[0])
         if type(text_str_output) != str:
-            text_str = '\n'.join(text_str_output[0])
+            text_str = text_str_output[0]
         else:
             text_str = text_str_output
         if 显示图片或者视频:
@@ -381,7 +383,7 @@ def plays():
                 try:
                     text_str_output = img_to_ascii(frames[counter])
                     if type(text_str_output) != str:
-                        text_str = '\n'.join(text_str_output[0])
+                        text_str = text_str_output[0]
                     else:
                         text_str = text_str_output
                     label.text = text_str
@@ -397,9 +399,10 @@ def plays():
         root.frame_info.set('图片转换中')
         root.update()
         try:
-            text_str_output = img_to_ascii(Image.open(图片路径), 图片转换显示进度)
+            im = Image.open(图片路径)
+            text_str_output = img_to_ascii(im, 图片转换显示进度)
             if type(text_str_output) != str:
-                text_str = '\n'.join(text_str_output[0])
+                text_str = text_str_output[0]
             else:
                 text_str = text_str_output
         except:
@@ -419,22 +422,36 @@ def plays():
         if 字符画保存为图片:
             root.frame_info.set('图片转换完成，正在输出字符画为图片...')
             root.update()
+            try:
+                font = ImageFont.truetype(font_path, size=font_size)
+            except:
+                font = ImageFont.load_default()
+            font_x_len, font_y_len = font.getsize(字符集[1])
+            font_y_len = int(font_y_len * 1.37)
             if is_color == 0:
-                convert(text_str,
-                        f'ascii_{file_name}.png',
-                        font_size=font_size)
+                im_txt = Image.new(
+                    "L", (int(im.width / 缩放倍数), int(im.height / 缩放倍数)),
+                    'white')
+                dr = ImageDraw.Draw(im_txt)
+                x = y = 0
+                for i in range(len(text_str)):
+                    if text_str[i] == "\n":
+                        x = 0
+                        y += font_y_len
+                    dr.text((x, y), text_str[i], fill='black', font=font)
+                    x += font_x_len
+                im_txt.save(f'ascii_{file_name}.png')
+
             else:
                 txt, colors, im_txt = text_str_output
                 dr = ImageDraw.Draw(im_txt)
-                try:
-                    font = ImageFont.truetype(font_path, size=字体大小)
-                except IOError:
-                    font = ImageFont.load_default()
-                font_x_len, font_y_len = font.getsize(' ')
-                for j in range(len(txt)):
-                    for i in range(len(txt[0])):
-                        dr.text((i * font_x_len, j * font_y_len), txt[j][i],
-                                colors[j][i])
+                x = y = 0
+                for i in range(len(txt)):
+                    if txt[i] == "\n":
+                        x = 0
+                        y += font_y_len
+                    dr.text((x, y), txt[i], fill=colors[i], font=font)
+                    x += font_x_len
                 im_txt.save(f'ascii_{file_name}.png')
 
             root.frame_info.set('已成功输出为图片')

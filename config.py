@@ -1,7 +1,7 @@
 #-*- coding:utf-8 -*-
 字符集 = "M@N%W$E#RK&FXYI*l]}1/+i>\"!~';,`:."
 背景图片 = 'background.png'
-缩放倍数 = 2
+缩放倍数 = 1
 字体 = 'Lucida Console'
 字体大小 = 1
 比特数 = 8
@@ -21,8 +21,8 @@
 字符画保存为文本文件 = True
 显示图片或者视频 = False
 图片转换显示进度 = True
-fps = 30
-font_path = 'LUCON.TTF'
+fps = 24
+font_path = None
 font_size = 10
-width_resize = 1.002
-height_resize = 0.6
+width_resize = 1
+height_resize = 1
