@@ -2,8 +2,6 @@
 字符集 = "M@N%W$E#RK&FXYI*l]}1/+i>\"!~';,`:."
 背景图片 = 'background.png'
 缩放倍数 = 1
-字体 = 'Lucida Console'
-字体大小 = 1
 比特数 = 8
 演示模式 = 0
 图片路径 = None
@@ -19,7 +17,6 @@
 屏幕宽度 = 1200
 屏幕高度 = 700
 字符画保存为文本文件 = True
-显示图片或者视频 = False
 图片转换显示进度 = True
 fps = 24
 font_path = None

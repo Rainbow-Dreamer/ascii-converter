@@ -1,4 +1,4 @@
-with open('config.py', encoding='utf-8') as f:
+with open('config.py', encoding='utf-8-sig') as f:
     exec(f.read(), globals())
 
 
@@ -25,10 +25,8 @@ class Root(Tk):
         self.set_value('字符集', '字符集', True, 600, 60, 0, 0)
         self.set_value('背景图片', '背景图片', True, 600, 40, 0, 80, True)
         self.set_value('缩放倍数', '缩放倍数', False, 80, 40, 0, 140)
-        self.set_value('字体', '字体', True, 140, 40, 0, 190)
-        self.set_value('字体大小', '字体大小', False, 140, 40, 0, 240)
-        self.set_value('比特数', '比特数', False, 80, 40, 0, 290)
-        self.set_value('演示模式', '演示模式', False, 80, 40, 0, 340)
+        self.set_value('比特数', '比特数', False, 80, 40, 0, 240)
+        self.set_value('演示模式', '演示模式', False, 80, 40, 0, 290)
         self.set_value('图片路径', '图片路径', True, 600, 40, 0, 390, True)
         self.set_value('视频路径', '视频路径', True, 500, 50, 100, 140, True)
         self.set_value('视频帧图路径', '视频帧图路径', True, 500, 50, 150, 210, True)
@@ -41,7 +39,6 @@ class Root(Tk):
         self.set_value('屏幕宽度', '屏幕宽度', False, 70, 40, 320, 330)
         self.set_value('屏幕高度', '屏幕高度', False, 70, 40, 410, 330)
         self.set_value('字符画保存为文本文件', '字符画保存为文本文件', False, 150, 40, 500, 330)
-        self.set_value('显示图片或者视频', '显示图片或者视频', False, 150, 40, 680, 330)
         self.set_value('图片转换显示进度', '图片转换显示进度', False, 150, 40, 730, 410)
         self.set_value('导出视频', '导出视频', False, 150, 40, 730, 520)
         self.set_value('导出视频帧数', 'fps', False, 100, 40, 350, 580)
@@ -356,45 +353,6 @@ def plays():
             text_str = text_str_output[0]
         else:
             text_str = text_str_output
-        if 显示图片或者视频:
-            window = pyglet.window.Window(width=屏幕宽度, height=屏幕高度)
-            pyglet.resource.path = [abs_path]
-            pyglet.resource.reindex()
-            image = pyglet.resource.image(背景图片)
-            image.width, image.height = 屏幕宽度, 屏幕高度
-            label = pyglet.text.Label(text_str,
-                                      font_size=字体大小,
-                                      font_name=字体,
-                                      x=0,
-                                      y=屏幕高度 // 2,
-                                      anchor_x='left',
-                                      anchor_y='center',
-                                      color=颜色,
-                                      width=屏幕宽度,
-                                      multiline=True)
-
-            @window.event
-            def on_draw():
-                nonlocal counter
-                window.clear()
-                image.blit(0, 0)
-                label.draw()
-                counter += 1
-                try:
-                    text_str_output = img_to_ascii(frames[counter])
-                    if type(text_str_output) != str:
-                        text_str = text_str_output[0]
-                    else:
-                        text_str = text_str_output
-                    label.text = text_str
-                except:
-                    frames.clear()
-
-            def update(dt):
-                pass
-
-            pyglet.clock.schedule_interval(update, 1 / 帧数)
-            pyglet.app.run()
     else:
         root.frame_info.set('图片转换中')
         root.update()
@@ -456,31 +414,6 @@ def plays():
 
             root.frame_info.set('已成功输出为图片')
             root.update()
-        if 显示图片或者视频:
-            window = pyglet.window.Window(width=屏幕宽度, height=屏幕高度)
-            pyglet.resource.path = [abs_path]
-            pyglet.resource.reindex()
-            image = pyglet.image.load(背景图片)
-            image.width, image.height = 屏幕宽度, 屏幕高度
-            label = pyglet.text.Label(text_str,
-                                      font_size=字体大小,
-                                      font_name=字体,
-                                      x=0,
-                                      y=屏幕高度,
-                                      anchor_x='left',
-                                      anchor_y='top',
-                                      color=颜色,
-                                      width=屏幕宽度,
-                                      multiline=True)
-
-            @window.event
-            def on_draw():
-                nonlocal counter
-                window.clear()
-                image.blit(0, 0)
-                label.draw()
-
-            pyglet.app.run()
 
 
 root = Root()
