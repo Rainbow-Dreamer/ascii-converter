@@ -230,6 +230,7 @@ def plays():
             if 视频导出帧图片到文件夹:
                 os.mkdir(视频帧图片保存路径)
                 os.chdir(视频帧图片保存路径)
+                start_frame = 0
                 if not 视频转换帧数区间:
                     while is_read:
                         cv2.imwrite(f"{count}.jpg", img)
@@ -259,6 +260,7 @@ def plays():
                         else:
                             break
             else:
+                start_frame = 0
                 if not 视频转换帧数区间:
                     while is_read:
                         frames.append(
