@@ -18,7 +18,7 @@
 屏幕高度 = 700
 字符画保存为文本文件 = True
 图片转换显示进度 = True
-fps = 24
+fps = 30
 font_path = None
 font_size = 10
 width_resize = 1
