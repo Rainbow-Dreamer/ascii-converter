@@ -3,7 +3,7 @@ with open('config.py', encoding='utf-8-sig') as f:
 
 
 def change(var, new, is_str=True):
-    text = open('config.py', encoding='utf-8').read()
+    text = open('config.py', encoding='utf-8-sig').read()
     text_ls = list(text)
     var_len = len(var) + 1
     var_ind = text.index('\n' + var) + var_len
@@ -12,7 +12,7 @@ def change(var, new, is_str=True):
         text_ls[var_ind:var_ind + next_line] = f' = {repr(new)}'
     else:
         text_ls[var_ind:var_ind + next_line] = f" = {new}"
-    with open('config.py', 'w', encoding='utf-8') as f:
+    with open('config.py', 'w', encoding='utf-8-sig') as f:
         f.write(''.join(text_ls))
 
 
@@ -156,7 +156,7 @@ class Root(Tk):
 
 
 def plays():
-    with open('config.py', encoding='utf-8') as f:
+    with open('config.py', encoding='utf-8-sig') as f:
         exec(f.read(), globals())
     length = len(字符集)
     K = 2**比特数
@@ -169,8 +169,8 @@ def plays():
         return 字符集[int(gray / unit)]
 
     def img_to_ascii(im, show_percentage=False):
-        WIDTH = int((im.width * width_resize) / 缩放倍数)
-        HEIGHT = int((im.height * height_resize // 2) / 缩放倍数)
+        WIDTH = int((im.width * width_resize / 6) / 缩放倍数)
+        HEIGHT = int((im.height * height_resize / 12) / 缩放倍数)
         if show_percentage:
             whole_count = WIDTH * HEIGHT
             count = 0
@@ -384,7 +384,9 @@ def plays():
             root.update()
             try:
                 font = ImageFont.truetype(font_path, size=font_size)
-            except:
+                print(123)
+            except Exception as e:
+                print(str(e))
                 font = ImageFont.load_default()
             font_x_len, font_y_len = font.getsize(字符集[1])
             font_y_len = int(font_y_len * 1.37)
