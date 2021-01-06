@@ -169,8 +169,8 @@ def plays():
         return 字符集[int(gray / unit)]
 
     def img_to_ascii(im, show_percentage=False):
-        WIDTH = int((im.width * width_resize // 6) / 缩放倍数)
-        HEIGHT = int((im.height * height_resize // 15) / 缩放倍数)
+        WIDTH = int((im.width * width_resize) / 缩放倍数)
+        HEIGHT = int((im.height * height_resize // 2) / 缩放倍数)
         if show_percentage:
             whole_count = WIDTH * HEIGHT
             count = 0
