@@ -375,7 +375,8 @@ def plays():
         if 字符画保存为文本文件:
             root.frame_info.set('图片转换完成，正在写入字符画为\n文本文件...')
             root.update()
-            with open(f'ascii_{file_name}.txt', 'w', encoding='utf-8-sig') as f:
+            with open(f'ascii_{file_name}.txt', 'w',
+                      encoding='utf-8-sig') as f:
                 f.write(text_str)
             root.frame_info.set('已成功写入文本文件')
             root.update()
