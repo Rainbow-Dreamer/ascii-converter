@@ -39,7 +39,7 @@ class Root(Tk):
         self.set_value('屏幕宽度', '屏幕宽度', False, 70, 40, 320, 330)
         self.set_value('屏幕高度', '屏幕高度', False, 70, 40, 410, 330)
         self.set_value('字符画保存为文本文件', '字符画保存为文本文件', False, 150, 40, 500, 330)
-        self.set_value('图片转换显示进度', '图片转换显示进度', False, 150, 40, 730, 410)
+        self.set_value('显示转换进度', '显示转换进度', False, 150, 40, 730, 410)
         self.set_value('导出视频', '导出视频', False, 150, 40, 730, 520)
         self.set_value('导出视频帧数', 'fps', False, 100, 40, 350, 580)
         self.set_value('导出视频字体', 'font_path', True, 100, 40, 500, 580)
@@ -360,7 +360,7 @@ def plays():
         root.update()
         try:
             im = Image.open(图片路径)
-            text_str_output = img_to_ascii(im, 图片转换显示进度)
+            text_str_output = img_to_ascii(im, 显示转换进度)
             if type(text_str_output) != str:
                 text_str = text_str_output[0]
             else:
@@ -385,7 +385,6 @@ def plays():
             root.update()
             try:
                 font = ImageFont.truetype(font_path, size=font_size)
-                print(123)
             except Exception as e:
                 print(str(e))
                 font = ImageFont.load_default()

@@ -1,10 +1,10 @@
-#-*- coding:utf-8 -*-
+﻿#-*- coding:utf-8 -*-
 字符集 = "M@N%W$E#RK&FXYI*l]}1/+i>\"!~';,`:."
 背景图片 = 'background.png'
-缩放倍数 = 1
+缩放倍数 = 0.5
 比特数 = 8
 演示模式 = 0
-图片路径 = None
+图片路径 = 'G:/university/MyAI project/py files/other py files/ascii_converter/previews/2.jpg'
 视频帧图路径 = None
 视频路径 = None
 视频帧图片保存路径 = None
@@ -17,9 +17,10 @@
 屏幕宽度 = 1200
 屏幕高度 = 700
 字符画保存为文本文件 = True
-图片转换显示进度 = True
+显示转换进度 = True
 fps = 30
 font_path = None
 font_size = 10
 width_resize = 1
 height_resize = 1
+输出图片为彩色 = False
