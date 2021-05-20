@@ -295,9 +295,7 @@ class Root(Tk):
         try:
             current = self.config_contents.get('1.0', 'end-1c')
             current_new = '"' + current.replace('"', '\\"') + '"'
-            #exec(f'{current_config} = {current_new}', globals(), globals())
             self.value_dict[current_config] = current
-            print(self.value_dict[current_config])
         except Exception as e:
             print(str(e))
             pass
@@ -345,10 +343,8 @@ class Root(Tk):
             self.config_name.configure(text=current_config)
             self.config_contents.delete('1.0', END)
             current_config_value = self.value_dict[current_config]
-            #print(current_config)
             if type(current_config_value) == list:
                 current_config_value = current_config_value[1]
-            #print(current_config_value)
             try:
                 current_config_value = eval(current_config_value)
             except:
