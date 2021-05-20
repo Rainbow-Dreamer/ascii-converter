@@ -119,18 +119,22 @@ class Root(Tk):
             compound=CENTER,
             command=self.img_to_ascii_img_window)
         self.img_to_ascii_img_button.place(x=140, y=100, width=200, height=107)
-        self.video_to_ascii_video_button = ttk.Button(self,
-                                                      text='视频转字符画视频',
-                                                      image=self.button_img,
-                                                      compound=CENTER)
+        self.video_to_ascii_video_button = ttk.Button(
+            self,
+            text='视频转字符画视频',
+            image=self.button_img,
+            compound=CENTER,
+            command=self.video_to_ascii_video_window)
         self.video_to_ascii_video_button.place(x=440,
                                                y=100,
                                                width=200,
                                                height=107)
-        self.video_to_ascii_img_button = ttk.Button(self,
-                                                    text='视频按帧数转换\n字符画图片',
-                                                    image=self.button_img,
-                                                    compound=CENTER)
+        self.video_to_ascii_img_button = ttk.Button(
+            self,
+            text='视频按帧数转换\n字符画图片',
+            image=self.button_img,
+            compound=CENTER,
+            command=self.video_to_ascii_img_window)
         self.video_to_ascii_img_button.place(x=140,
                                              y=250,
                                              width=200,
@@ -170,6 +174,8 @@ class Root(Tk):
         self.change_settings_button.place(x=440, y=250, width=200, height=107)
 
     def img_to_ascii_img_window(self):
+        global 演示模式
+        演示模式 = 0
         self.quit_main_window()
         self.current_widgets = []
 
@@ -221,10 +227,10 @@ class Root(Tk):
         self.show_percentage = show_percentage_widgets[0]
         self.current_widgets += show_percentage_widgets
 
-        self.current_widgets += self.set_value('图片宽度比例', '图片宽度比例', False,
-                                               100, 28, 400, 260)
-        self.current_widgets += self.set_value('图片高度比例', '图片高度比例',
-                                               False, 100, 28, 550, 260)
+        self.current_widgets += self.set_value('图片宽度比例', '图片宽度比例', False, 100,
+                                               28, 400, 260)
+        self.current_widgets += self.set_value('图片高度比例', '图片高度比例', False, 100,
+                                               28, 550, 260)
 
         self.save_button = ttk.Button(self,
                                       text='保存当前配置',
@@ -310,16 +316,16 @@ class Root(Tk):
         self.config_contents.bind('<KeyRelease>', self.config_change)
         self.config_contents.place(x=380, y=120, width=400, height=200)
         self.choose_filename_button = ttk.Button(self,
-                                                 text='choose filename',
+                                                 text='选择文件路径',
                                                  command=self.choose_filename)
         self.choose_directory_button = ttk.Button(
-            self, text='choose directory', command=self.choose_directory)
+            self, text='选择文件夹路径', command=self.choose_directory)
         self.choose_filename_button.place(x=0, y=250)
         self.choose_directory_button.place(x=0, y=300)
-        self.save = ttk.Button(self, text="save", command=self.save_current)
+        self.save = ttk.Button(self, text='保存当前配置', command=self.save_current)
         self.save.place(x=0, y=350)
         self.saved_text = ttk.Label(self, text='saved')
-        self.search_text = ttk.Label(self, text='search for config options')
+        self.search_text = ttk.Label(self, text='搜索设置参数')
         self.search_text.place(x=0, y=425)
         self.search_contents = StringVar()
         self.search_contents.trace_add('write', self.search)
@@ -328,12 +334,12 @@ class Root(Tk):
         self.search_inds = 0
         self.up_button = ttk.Button(
             self,
-            text='up',
+            text='上一个',
             command=lambda: self.change_search_inds(-1),
             width=8)
         self.down_button = ttk.Button(
             self,
-            text='down',
+            text='下一个',
             command=lambda: self.change_search_inds(1),
             width=8)
         self.up_button.place(x=160, y=450)
@@ -346,7 +352,7 @@ class Root(Tk):
         self.choose_bool1.place(x=140, y=270)
         self.choose_bool2.place(x=260, y=270)
         self.change_sort_button = ttk.Button(self,
-                                             text="sort in order of appearance",
+                                             text="以出现先后排序",
                                              command=self.change_sort)
         self.sort_mode = 0
         self.change_sort()
@@ -362,6 +368,33 @@ class Root(Tk):
             self.frame_show
         ]
         self.frame_info.set('目前暂无动作')
+        self.choose_config_options.selection_set(0)
+        self.choose_config_options.selection_anchor(0)
+        self.show_current_config_options(0)
+
+    def video_to_ascii_video_window(self):
+        global 演示模式
+        演示模式 = 1
+        self.quit_main_window()
+        self.current_widgets = []
+
+        self.go_back_button = ttk.Button(self,
+                                         text='返回',
+                                         command=self.go_back_main_window,
+                                         image=self.button_img2,
+                                         compound=CENTER)
+        self.go_back_button.place(x=600, y=420)
+        self.current_widgets.append(self.go_back_button)
+
+        self.current_widgets += self.set_value('视频路径', '视频路径', True, 600, 50,
+                                               0, 100, True)
+        self.current_widgets += self.set_value('缩放倍数', '缩放倍数', False, 80, 28,
+                                               0, 200)
+        self.current_widgets += self.set_value('比特数', '比特数', False, 80, 28, 0,
+                                               300)
+
+    def video_to_ascii_img_window(self):
+        pass
 
     def go_back_main_window(self):
         for i in self.current_widgets:
@@ -374,14 +407,14 @@ class Root(Tk):
         global all_config_options
         if self.sort_mode == 0:
             self.sort_mode = 1
-            self.change_sort_button.config(text='sort in order of appearance')
+            self.change_sort_button.config(text='以出现先后排序')
             all_config_options = config_original.copy()
             self.choose_config_options.delete(0, END)
             for k in all_config_options:
                 self.choose_config_options.insert(END, k)
         else:
             self.sort_mode = 0
-            self.change_sort_button.config(text='sort in alphabetical order')
+            self.change_sort_button.config(text='以字母或笔画排序')
             all_config_options = alpha_config.copy()
             self.choose_config_options.delete(0, END)
             for k in all_config_options:
@@ -456,7 +489,7 @@ class Root(Tk):
 
     def choose_filename(self):
         filename = filedialog.askopenfilename(initialdir='.',
-                                              title="choose filename",
+                                              title="选择文件路径",
                                               filetype=(("all files",
                                                          "*.*"), ))
         self.config_contents.delete('1.0', END)
@@ -466,7 +499,7 @@ class Root(Tk):
     def choose_directory(self):
         directory = filedialog.askdirectory(
             initialdir='.',
-            title="choose directory",
+            title="选择文件夹路径",
         )
         self.config_contents.delete('1.0', END)
         self.config_contents.insert(END, f"'{directory}'")
@@ -614,13 +647,17 @@ class Root(Tk):
                     str_msg = current_value[2]
                     if current == '':
                         current = None
+                    if not str_msg:
+                        current = eval(current)
+                    if current in ['', 'None']:
+                        current = None
+                        str_msg = False
                     if current != eval(each):
-                        if current in ['', 'None']:
-                            current = None
-                            str_msg = False
                         change(each, current, str_msg)
                         changed = True
-                        exec(f"{each} = {repr(current)}", globals(), globals())
+                        exec(
+                            f"{each} = {repr(current) if str_msg else current}",
+                            globals(), globals())
         if changed:
             self.show_saved()
         else:
@@ -628,28 +665,47 @@ class Root(Tk):
 
 
 def plays():
-    length = len(字符集)
-    K = 2**比特数
+    current_value_dict = deepcopy({
+        i: (j[1] if type(j) == list else j)
+        for i, j in root.value_dict.items()
+    })
+    current_value_dict = {
+        i: eval(j) if (type(eval(i)) != str and eval(i) != None
+                       and type(j) == str and j not in ['', 'None']) else j
+        for i, j in current_value_dict.items()
+    }
+    current_value_dict = {
+        i: (None if j in ['', 'None'] else j)
+        for i, j in current_value_dict.items()
+    }
+    length = len(current_value_dict['字符集'])
+    K = 2**current_value_dict['比特数']
     unit = (K + 1) / length
 
     def get_char(r, g, b, alpha=K):
         if alpha == 0:
             return " "
         gray = int(0.2126 * r + 0.7152 * g + 0.0722 * b)
-        return 字符集[int(gray / unit)]
+        return current_value_dict['字符集'][int(gray / unit)]
 
     def img_to_ascii(im, show_percentage=False):
-        WIDTH = int((im.width * 图片宽度比例 / 6) / 缩放倍数)
-        HEIGHT = int((im.height * 图片高度比例 / 12) / 缩放倍数)
+        WIDTH = int((im.width * current_value_dict['图片宽度比例'] / 6) /
+                    current_value_dict['缩放倍数'])
+        HEIGHT = int((im.height * current_value_dict['图片高度比例'] / 12) /
+                     current_value_dict['缩放倍数'])
         if show_percentage:
             whole_count = WIDTH * HEIGHT
             count = 0
         im_resize = im.resize((WIDTH, HEIGHT), Image.ANTIALIAS)
         txt = ""
-        if is_color and (字符画保存为图片 or 导出视频):
+        if is_color and (current_value_dict['字符画保存为图片']
+                         or current_value_dict['导出视频']):
             im_txt = Image.new("RGB",
-                               (int(im.width / 缩放倍数), int(im.height / 缩放倍数)),
-                               (2**比特数 - 1, 2**比特数 - 1, 2**比特数 - 1))
+                               (int(im.width / current_value_dict['缩放倍数']),
+                                int(im.height / current_value_dict['缩放倍数'])),
+                               (2**current_value_dict['比特数'] - 1,
+                                2**current_value_dict['比特数'] - 1,
+                                2**current_value_dict['比特数'] - 1))
             colors = []
             for i in range(HEIGHT):
                 for j in range(WIDTH):
@@ -677,9 +733,9 @@ def plays():
                 txt += '\n'
             return txt
 
-    if 演示模式 == 1:
-        if 视频帧图路径:
-            os.chdir(视频帧图路径)
+    if current_value_dict['演示模式'] == 1:
+        if current_value_dict['视频帧图路径']:
+            os.chdir(current_value_dict['视频帧图路径'])
             frames = []
             count = 0
             file_ls = os.listdir()
@@ -689,7 +745,7 @@ def plays():
                 root.frame_info.set(f'正在读取视频帧{count}')
                 root.update()
         else:
-            vidcap = cv2.VideoCapture(视频路径)
+            vidcap = cv2.VideoCapture(current_value_dict['视频路径'])
             is_read, img = vidcap.read()
             if not is_read:
                 root.frame_info.set('视频路径不存在或者为空')
@@ -697,11 +753,11 @@ def plays():
                 return
             frames = []
             count = 0
-            if 视频导出帧图片到文件夹:
-                os.mkdir(视频帧图片保存路径)
-                os.chdir(视频帧图片保存路径)
+            if current_value_dict['视频导出帧图片到文件夹']:
+                os.mkdir(current_value_dict['视频帧图片保存路径'])
+                os.chdir(current_value_dict['视频帧图片保存路径'])
                 start_frame = 0
-                if not 视频转换帧数区间:
+                if not current_value_dict['视频转换帧数区间']:
                     while is_read:
                         cv2.imwrite(f"{count}.jpg", img)
                         frames.append(
@@ -712,7 +768,7 @@ def plays():
                         root.frame_info.set(f'正在读取视频帧{count}')
                         root.update()
                 else:
-                    start_frame, to_frame = 视频转换帧数区间
+                    start_frame, to_frame = current_value_dict['视频转换帧数区间']
                     no_of_frames = to_frame - start_frame
                     vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
                     is_read, img = vidcap.read()
@@ -731,7 +787,7 @@ def plays():
                             break
             else:
                 start_frame = 0
-                if not 视频转换帧数区间:
+                if not current_value_dict['视频转换帧数区间']:
                     while is_read:
                         frames.append(
                             Image.fromarray(
@@ -741,7 +797,7 @@ def plays():
                         root.frame_info.set(f'正在读取视频帧{count}')
                         root.update()
                 else:
-                    start_frame, to_frame = 视频转换帧数区间
+                    start_frame, to_frame = current_value_dict['视频转换帧数区间']
                     no_of_frames = to_frame - start_frame
                     vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
                     is_read, img = vidcap.read()
@@ -760,7 +816,7 @@ def plays():
         root.frame_info.set('视频帧读取完成，开始转换')
         root.update()
         counter = 0
-        if 导出视频:
+        if current_value_dict['导出视频']:
             try:
                 os.mkdir('temp_video_images')
             except:
@@ -769,10 +825,11 @@ def plays():
             num_frames = len(frames)
             n = len(str(num_frames))
             try:
-                font = ImageFont.truetype(字体路径, size=字体大小)
+                font = ImageFont.truetype(current_value_dict['字体路径'],
+                                          size=current_value_dict['字体大小'])
             except:
                 font = ImageFont.load_default()
-            font_x_len, font_y_len = font.getsize(字符集[1])
+            font_x_len, font_y_len = font.getsize(current_value_dict['字符集'][1])
             font_y_len = int(font_y_len * 1.37)
             if is_color == 0:
                 for i in range(num_frames):
@@ -781,7 +838,8 @@ def plays():
                     im = frames[i]
                     text_str = img_to_ascii(im)
                     im_txt = Image.new(
-                        "L", (int(im.width / 缩放倍数), int(im.height / 缩放倍数)),
+                        "L", (int(im.width / current_value_dict['缩放倍数']),
+                              int(im.height / current_value_dict['缩放倍数'])),
                         'white')
                     dr = ImageDraw.Draw(im_txt)
                     x = y = 0
@@ -811,12 +869,14 @@ def plays():
             root.frame_info.set(f'转换完成，开始输出为视频..')
             root.update()
             os.chdir('..')
-            file_name = os.path.splitext(os.path.basename(视频路径))[0]
+            file_name = os.path.splitext(
+                os.path.basename(current_value_dict['视频路径']))[0]
             output_filename = f'ascii_{file_name}.mp4'
             if output_filename in os.listdir():
                 os.remove(output_filename)
             ffmpeg.input(f'temp_video_images/%{n}d.png',
-                         framerate=视频输出帧数).output(output_filename).run()
+                         framerate=current_value_dict['视频输出帧数']).output(
+                             output_filename).run()
             root.frame_info.set(f'已成功输出为视频')
             root.update()
 
@@ -829,8 +889,8 @@ def plays():
         root.frame_info.set('图片转换中')
         root.update()
         try:
-            im = Image.open(图片路径)
-            text_str_output = img_to_ascii(im, 显示转换进度)
+            im = Image.open(current_value_dict['图片路径'])
+            text_str_output = img_to_ascii(im, current_value_dict['显示转换进度'])
             if type(text_str_output) != str:
                 text_str = text_str_output[0]
             else:
@@ -842,8 +902,9 @@ def plays():
             return
         root.frame_info.set('图片转换完成')
         root.update()
-        file_name = os.path.splitext(os.path.basename(图片路径))[0]
-        if 字符画保存为文本文件:
+        file_name = os.path.splitext(
+            os.path.basename(current_value_dict['图片路径']))[0]
+        if current_value_dict['字符画保存为文本文件']:
             root.frame_info.set('图片转换完成，正在写入字符画为\n文本文件...')
             root.update()
             with open(f'ascii_{file_name}.txt', 'w',
@@ -851,18 +912,20 @@ def plays():
                 f.write(text_str)
             root.frame_info.set('已成功写入文本文件')
             root.update()
-        if 字符画保存为图片:
+        if current_value_dict['字符画保存为图片']:
             root.frame_info.set('图片转换完成，正在输出字符画为图片...')
             root.update()
             try:
-                font = ImageFont.truetype(字体路径, size=字体大小)
+                font = ImageFont.truetype(current_value_dict['字体路径'],
+                                          size=current_value_dict['字体大小'])
             except:
                 font = ImageFont.load_default()
-            font_x_len, font_y_len = font.getsize(字符集[1])
+            font_x_len, font_y_len = font.getsize(current_value_dict['字符集'][1])
             font_y_len = int(font_y_len * 1.37)
             if is_color == 0:
                 im_txt = Image.new(
-                    "L", (int(im.width / 缩放倍数), int(im.height / 缩放倍数)),
+                    "L", (int(im.width / current_value_dict['缩放倍数']),
+                          int(im.height / current_value_dict['缩放倍数'])),
                     'white')
                 dr = ImageDraw.Draw(im_txt)
                 x = y = 0

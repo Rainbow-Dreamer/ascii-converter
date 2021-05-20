@@ -23,7 +23,6 @@ class Root(Tk):
         self.minsize(900, 700)
         self.value_dict = {}
         self.set_value('字符集', '字符集', True, 600, 60, 0, 0)
-        self.set_value('背景图片', '背景图片', True, 600, 40, 0, 80, True)
         self.set_value('缩放倍数', '缩放倍数', False, 80, 40, 0, 140)
         self.set_value('比特数', '比特数', False, 80, 40, 0, 240)
         self.set_value('演示模式', '演示模式', False, 80, 40, 0, 290)
@@ -33,19 +32,16 @@ class Root(Tk):
         self.set_value('视频帧图片保存路径', '视频帧图片保存路径', True, 500, 50, 150, 270, True)
         self.set_value('视频导出帧图片到文件夹', '视频导出帧图片到文件夹', False, 150, 40, 150, 330)
         self.set_value('颜色', '颜色', False, 150, 40, 0, 450)
-        self.set_value('帧数', '帧数', False, 150, 40, 0, 500)
         self.set_value('视频转换帧数区间', '视频转换帧数区间', False, 150, 40, 200, 450)
         self.set_value('字符画保存为图片', '字符画保存为图片', False, 150, 40, 200, 500)
-        self.set_value('屏幕宽度', '屏幕宽度', False, 70, 40, 320, 330)
-        self.set_value('屏幕高度', '屏幕高度', False, 70, 40, 410, 330)
         self.set_value('字符画保存为文本文件', '字符画保存为文本文件', False, 150, 40, 500, 330)
         self.set_value('显示转换进度', '显示转换进度', False, 150, 40, 730, 410)
         self.set_value('导出视频', '导出视频', False, 150, 40, 730, 520)
-        self.set_value('导出视频帧数', 'fps', False, 100, 40, 350, 580)
-        self.set_value('导出视频字体', 'font_path', True, 100, 40, 500, 580)
-        self.set_value('导出视频字体大小', 'font_size', False, 120, 40, 650, 580)
-        self.set_value('图片宽度比例', 'width_resize', False, 100, 40, 300, 630)
-        self.set_value('图片高度比例', 'height_resize', False, 100, 40, 450, 630)
+        self.set_value('导出视频帧数', '视频输出帧数', False, 100, 40, 350, 580)
+        self.set_value('导出视频字体', '字体路径', True, 100, 40, 500, 580)
+        self.set_value('导出视频字体大小', '字体大小', False, 120, 40, 650, 580)
+        self.set_value('图片宽度比例', '图片宽度比例', False, 100, 40, 300, 630)
+        self.set_value('图片高度比例', '图片高度比例', False, 100, 40, 450, 630)
         self.save = ttk.Button(self, text="save", command=self.save_current)
         self.save.place(x=500, y=490)
         self.saved_text = ttk.Label(self, text='saved')
@@ -169,8 +165,8 @@ def plays():
         return 字符集[int(gray / unit)]
 
     def img_to_ascii(im, show_percentage=False):
-        WIDTH = int((im.width * width_resize / 6) / 缩放倍数)
-        HEIGHT = int((im.height * height_resize / 12) / 缩放倍数)
+        WIDTH = int((im.width * 图片宽度比例 / 6) / 缩放倍数)
+        HEIGHT = int((im.height * 图片高度比例 / 12) / 缩放倍数)
         if show_percentage:
             whole_count = WIDTH * HEIGHT
             count = 0
@@ -299,7 +295,7 @@ def plays():
             num_frames = len(frames)
             n = len(str(num_frames))
             try:
-                font = ImageFont.truetype(font_path, size=font_size)
+                font = ImageFont.truetype(字体路径, size=字体大小)
             except:
                 font = ImageFont.load_default()
             font_x_len, font_y_len = font.getsize(字符集[1])
@@ -346,7 +342,7 @@ def plays():
             if output_filename in os.listdir():
                 os.remove(output_filename)
             ffmpeg.input(f'temp_video_images/%{n}d.png',
-                         framerate=fps).output(output_filename).run()
+                         framerate=视频输出帧数).output(output_filename).run()
             root.frame_info.set(f'已成功输出为视频')
             root.update()
 
@@ -384,7 +380,7 @@ def plays():
             root.frame_info.set('图片转换完成，正在输出字符画为图片...')
             root.update()
             try:
-                font = ImageFont.truetype(font_path, size=font_size)
+                font = ImageFont.truetype(字体路径, size=字体大小)
             except Exception as e:
                 print(str(e))
                 font = ImageFont.load_default()
