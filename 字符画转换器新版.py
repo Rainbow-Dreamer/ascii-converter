@@ -3,6 +3,7 @@ with open('config.py', encoding='utf-8-sig') as f:
     exec(text, globals())
 var_counter = 1
 
+
 def get_all_config_options(text):
     result = []
     N = len(text)
@@ -16,6 +17,7 @@ def get_all_config_options(text):
                     current_config_options = text[i + 1:i + 1 + inds]
                     result.append(current_config_options)
     return result
+
 
 def change(var, new, is_str=True):
     text = open('config.py', encoding='utf-8-sig').read()
@@ -36,44 +38,47 @@ class Root(Tk):
         super(Root, self).__init__()
         self.title("Ascii Converter 字符画转换器")
         self.minsize(800, 500)
-        self.resizable(0,0)
+        self.resizable(0, 0)
         self.value_dict = {}
         style = ttk.Style()
-        style.theme_use('alt')        
+        style.theme_use('alt')
         style.configure('TButton',
                         borderwidth=0,
                         focuscolor='none',
                         highlightthickness=0,
-                        font=('微软雅黑',12))        
-        style.map('TButton', foreground=[('active', 'white')])               
-        style.configure('TEntry', fieldbackground='black', foreground='white', insertcolor='white')
+                        font=('微软雅黑', 12))
+        style.map('TButton', foreground=[('active', 'white')])
+        style.configure('TEntry',
+                        fieldbackground='black',
+                        foreground='white',
+                        insertcolor='white')
         style.configure('TLabelframe',
                         background='black',
                         borderwidth=0,
                         focuscolor='none',
                         highlightthickness=0,
-                        font=('微软雅黑',12))
+                        font=('微软雅黑', 12))
         style.configure('TLabelframe.Label',
                         background='black',
                         foreground='white',
                         borderwidth=0,
                         focuscolor='none',
                         highlightthickness=0,
-                        font=('微软雅黑',12))
+                        font=('微软雅黑', 12))
         style.configure('TLabel',
                         background='black',
                         foreground='white',
                         borderwidth=0,
                         focuscolor='none',
                         highlightthickness=0,
-                        font=('微软雅黑',12))
+                        font=('微软雅黑', 12))
         style.configure('New.TLabel',
                         background='black',
                         foreground='white',
                         borderwidth=0,
                         focuscolor='none',
                         highlightthickness=0,
-                        font=('微软雅黑',10))
+                        font=('微软雅黑', 10))
         style.configure('TCheckbutton',
                         background='black',
                         foreground='white',
@@ -81,115 +86,203 @@ class Root(Tk):
                         focuscolor='none',
                         highlightthickness=0,
                         inactiveselectbackground='black',
-                        font=('微软雅黑',12))
-        style.configure('TScrollbar',
-                        background='white')
-        self.button_img = ImageTk.PhotoImage(Image.open('resources/button.png').resize((200, 107)))
-        self.button_img2 = ImageTk.PhotoImage(Image.open('resources/button.png').resize((100, 40)))
+                        font=('微软雅黑', 12))
+        style.configure('TScrollbar', background='white')
+        self.button_img = ImageTk.PhotoImage(
+            Image.open('resources/button.png').resize((200, 107)))
+        self.button_img2 = ImageTk.PhotoImage(
+            Image.open('resources/button.png').resize((100, 40)))
         bg_image = Image.open('resources/5072612.jpg')
-        ratio = 800/bg_image.width
-        self.bg_image = ImageTk.PhotoImage(bg_image.resize((800, int(bg_image.height*ratio))))
-        self.bg_label = ttk.Label(self, image=self.bg_image, text='\n'*15 + 'made by Rainbow Dreamer\nqq: 2180502841\nB站账号: Rainbow_Dreamer\ngithub账号: Rainbow Dreamer', compound=CENTER)
-        self.bg_label.configure(font=('微软雅黑',10), foreground='white')
+        ratio = 800 / bg_image.width
+        self.bg_image = ImageTk.PhotoImage(
+            bg_image.resize((800, int(bg_image.height * ratio))))
+        self.bg_label = ttk.Label(
+            self,
+            image=self.bg_image,
+            text='\n' * 15 +
+            'made by Rainbow Dreamer\nqq: 2180502841\nB站账号: Rainbow_Dreamer\ngithub账号: Rainbow Dreamer',
+            compound=CENTER)
+        self.bg_label.configure(font=('微软雅黑', 10), foreground='white')
         self.bg_label.place(x=0, y=0)
         title_image = Image.open('resources/title.png')
         self.title_image = ImageTk.PhotoImage(title_image.resize((200, 60)))
-        self.title_label = ttk.Label(self, image=self.title_image, text='字符画转换器', compound=CENTER)
-        self.title_label.configure(font=('微软雅黑',15), foreground='white')
+        self.title_label = ttk.Label(self,
+                                     image=self.title_image,
+                                     text='字符画转换器',
+                                     compound=CENTER)
+        self.title_label.configure(font=('微软雅黑', 15), foreground='white')
         self.title_label.place(x=280, y=10)
-        self.img_to_ascii_img_button = ttk.Button(self, text='图片转字符画图片', image=self.button_img, compound=CENTER, command=self.img_to_ascii_img_window)
+        self.img_to_ascii_img_button = ttk.Button(
+            self,
+            text='图片转字符画图片',
+            image=self.button_img,
+            compound=CENTER,
+            command=self.img_to_ascii_img_window)
         self.img_to_ascii_img_button.place(x=140, y=100, width=200, height=107)
-        self.video_to_ascii_video_button = ttk.Button(self, text='视频转字符画视频', image=self.button_img, compound=CENTER)
-        self.video_to_ascii_video_button.place(x=440, y=100, width=200, height=107)
-        self.video_to_ascii_img_button = ttk.Button(self, text='视频按帧数转换\n字符画图片', image=self.button_img, compound=CENTER)
-        self.video_to_ascii_img_button.place(x=140, y=250, width=200, height=107)
-        self.change_settings_button = ttk.Button(self, text='更改设置', image=self.button_img, compound=CENTER, command=self.change_settings_window)
+        self.video_to_ascii_video_button = ttk.Button(self,
+                                                      text='视频转字符画视频',
+                                                      image=self.button_img,
+                                                      compound=CENTER)
+        self.video_to_ascii_video_button.place(x=440,
+                                               y=100,
+                                               width=200,
+                                               height=107)
+        self.video_to_ascii_img_button = ttk.Button(self,
+                                                    text='视频按帧数转换\n字符画图片',
+                                                    image=self.button_img,
+                                                    compound=CENTER)
+        self.video_to_ascii_img_button.place(x=140,
+                                             y=250,
+                                             width=200,
+                                             height=107)
+        self.change_settings_button = ttk.Button(
+            self,
+            text='更改设置',
+            image=self.button_img,
+            compound=CENTER,
+            command=self.change_settings_window)
         self.change_settings_button.place(x=440, y=250, width=200, height=107)
         self.frame_info = StringVar()
-        self.frame_show = ttk.Label(self, textvariable=self.frame_info, style='New.TLabel', anchor='nw')
+        self.frame_show = ttk.Label(self,
+                                    textvariable=self.frame_info,
+                                    style='New.TLabel',
+                                    anchor='nw')
         global all_config_options
-        all_config_options = get_all_config_options(text)        
+        all_config_options = get_all_config_options(text)
         self.value_dict = {i: eval(i) for i in all_config_options}
 
-    
     def quit_main_window(self):
         self.img_to_ascii_img_button.place_forget()
         self.video_to_ascii_video_button.place_forget()
         self.video_to_ascii_img_button.place_forget()
         self.change_settings_button.place_forget()
-    
+
     def reset_main_window(self):
         self.img_to_ascii_img_button.place(x=140, y=100, width=200, height=107)
-        self.video_to_ascii_video_button.place(x=440, y=100, width=200, height=107)
-        self.video_to_ascii_img_button.place(x=140, y=250, width=200, height=107)
+        self.video_to_ascii_video_button.place(x=440,
+                                               y=100,
+                                               width=200,
+                                               height=107)
+        self.video_to_ascii_img_button.place(x=140,
+                                             y=250,
+                                             width=200,
+                                             height=107)
         self.change_settings_button.place(x=440, y=250, width=200, height=107)
-    
+
     def img_to_ascii_img_window(self):
         self.quit_main_window()
         self.current_widgets = []
-        
-        self.go_back_button = ttk.Button(self, text='返回', command=self.go_back_main_window, image=self.button_img2, compound=CENTER)
+
+        self.go_back_button = ttk.Button(self,
+                                         text='返回',
+                                         command=self.go_back_main_window,
+                                         image=self.button_img2,
+                                         compound=CENTER)
         self.go_back_button.place(x=600, y=420)
         self.current_widgets.append(self.go_back_button)
-        
-        self.current_widgets += self.set_value('图片路径', '图片路径', True, 600, 50, 0, 100, True)
-        self.current_widgets += self.set_value('缩放倍数', '缩放倍数', False, 80, 28, 0, 200)
-        self.current_widgets += self.set_value('比特数', '比特数', False, 80, 28, 0, 300)
-        
-        ascii_save_as_image_widgets = self.set_value('字符画保存为图片', '字符画保存为图片', False, 160, 40, 200, 260, mode=1)
+
+        self.current_widgets += self.set_value('图片路径', '图片路径', True, 600, 50,
+                                               0, 100, True)
+        self.current_widgets += self.set_value('缩放倍数', '缩放倍数', False, 80, 28,
+                                               0, 200)
+        self.current_widgets += self.set_value('比特数', '比特数', False, 80, 28, 0,
+                                               300)
+
+        ascii_save_as_image_widgets = self.set_value('字符画保存为图片',
+                                                     '字符画保存为图片',
+                                                     False,
+                                                     160,
+                                                     40,
+                                                     200,
+                                                     260,
+                                                     mode=1)
         self.ascii_save_as_image = ascii_save_as_image_widgets[0]
-        self.current_widgets += ascii_save_as_image_widgets       
-        
-        ascii_save_as_text_widgets = self.set_value('字符画保存为文本文件', '字符画保存为文本文件', False, 200, 40, 200, 200, mode=1)
+        self.current_widgets += ascii_save_as_image_widgets
+
+        ascii_save_as_text_widgets = self.set_value('字符画保存为文本文件',
+                                                    '字符画保存为文本文件',
+                                                    False,
+                                                    200,
+                                                    40,
+                                                    200,
+                                                    200,
+                                                    mode=1)
         self.ascii_save_as_text = ascii_save_as_text_widgets[0]
         self.current_widgets += ascii_save_as_text_widgets
-        
-        show_percentage_widgets = self.set_value('显示转换进度', '显示转换进度', False, 150, 40, 450, 200, mode=1)
+
+        show_percentage_widgets = self.set_value('显示转换进度',
+                                                 '显示转换进度',
+                                                 False,
+                                                 150,
+                                                 40,
+                                                 450,
+                                                 200,
+                                                 mode=1)
         self.show_percentage = show_percentage_widgets[0]
         self.current_widgets += show_percentage_widgets
-        
-        self.current_widgets += self.set_value('图片宽度比例', 'width_resize', False, 100, 28, 400, 260)
-        self.current_widgets += self.set_value('图片高度比例', 'height_resize', False, 100, 28, 550, 260)
-        
-        self.save_button = ttk.Button(self, text='保存当前配置', command=self.save_current, image=self.button_img2, compound=CENTER)
+
+        self.current_widgets += self.set_value('图片宽度比例', 'width_resize', False,
+                                               100, 28, 400, 260)
+        self.current_widgets += self.set_value('图片高度比例', 'height_resize',
+                                               False, 100, 28, 550, 260)
+
+        self.save_button = ttk.Button(self,
+                                      text='保存当前配置',
+                                      command=self.save_current,
+                                      image=self.button_img2,
+                                      compound=CENTER)
         self.save_button.place(x=600, y=350)
-        self.current_widgets.append(self.save_button)        
-        
+        self.current_widgets.append(self.save_button)
+
         self.picture_color = IntVar()
         img_color = eval('输出图片为彩色')
         self.picture_color.set(1 if img_color else 0)
-        self.output_picture_color = Checkbutton(self,
-                                                text='输出图片为彩色',
-                                                variable=self.picture_color,
-                                                command=lambda: self.change_bool('输出图片为彩色'),
-                                                background='black',
-                                                foreground='white',
-                                                borderwidth=0,
-                                                highlightthickness=0,
-                                                font=('微软雅黑',12),
-                                                selectcolor='black',
-                                                activebackground='white')
+        self.output_picture_color = Checkbutton(
+            self,
+            text='输出图片为彩色',
+            variable=self.picture_color,
+            command=lambda: self.change_bool('输出图片为彩色'),
+            background='black',
+            foreground='white',
+            borderwidth=0,
+            highlightthickness=0,
+            font=('微软雅黑', 12),
+            selectcolor='black',
+            activebackground='white')
         self.output_picture_color.var = self.picture_color
         self.output_picture_color.place(x=620, y=200, width=150, height=40)
-        self.value_dict['输出图片为彩色'] = [self.output_picture_color, img_color, False]
+        self.value_dict['输出图片为彩色'] = [
+            self.output_picture_color, img_color, False
+        ]
         self.current_widgets.append(self.output_picture_color)
-        
-        self.playing = ttk.Button(self, text='运行', command=self.play, image=self.button_img2, compound=CENTER)
+
+        self.playing = ttk.Button(self,
+                                  text='运行',
+                                  command=self.play,
+                                  image=self.button_img2,
+                                  compound=CENTER)
         self.playing.place(x=150, y=330)
         self.current_widgets.append(self.playing)
-        
+
         self.frame_info.set('暂无读取帧')
         self.frame_show.place(x=0, y=400, width=290, height=70)
         self.current_widgets.append(self.frame_show)
-    
+
     def change_settings_window(self):
         self.quit_main_window()
-        self.go_back_button = ttk.Button(self, text='返回', command=self.go_back_main_window, image=self.button_img2, compound=CENTER)
+        self.go_back_button = ttk.Button(self,
+                                         text='返回',
+                                         command=self.go_back_main_window,
+                                         image=self.button_img2,
+                                         compound=CENTER)
         self.go_back_button.place(x=600, y=420)
         self.config_options_bar = ttk.Scrollbar(self)
         self.config_options_bar.place(x=228, y=121, height=183, anchor=CENTER)
         self.choose_config_options = Listbox(
-            self, yscrollcommand=self.config_options_bar.set, background='black', foreground='white')
+            self,
+            yscrollcommand=self.config_options_bar.set,
+            background='black',
+            foreground='white')
         self.choose_config_options.bind('<<ListboxSelect>>',
                                         self.show_current_config_options)
         self.options_num = len(all_config_options)
@@ -256,17 +349,25 @@ class Root(Tk):
                                              text="sort in alphabetical order",
                                              command=self.change_sort)
         self.sort_mode = 0
-        self.change_sort_button.place(x=150, y=320)        
+        self.change_sort_button.place(x=150, y=320)
         self.frame_show.place(x=500, y=330, width=290, height=70)
-        self.current_widgets = [self.go_back_button, self.config_options_bar, self.choose_config_options, self.config_contents, self.choose_filename_button, self.choose_directory_button, self.save, self.saved_text, self.search_text, self.search_entry, self.up_button, self.down_button, self.choose_bool1, self.choose_bool2, self.change_sort_button, self.config_name, self.frame_show]
-    
+        self.current_widgets = [
+            self.go_back_button, self.config_options_bar,
+            self.choose_config_options, self.config_contents,
+            self.choose_filename_button, self.choose_directory_button,
+            self.save, self.saved_text, self.search_text, self.search_entry,
+            self.up_button, self.down_button, self.choose_bool1,
+            self.choose_bool2, self.change_sort_button, self.config_name,
+            self.frame_show
+        ]
+
     def go_back_main_window(self):
         for i in self.current_widgets:
             i.place_forget()
         self.reset_main_window()
         global var_counter
         var_counter = 1
-    
+
     def change_sort(self):
         global all_config_options
         if self.sort_mode == 0:
@@ -367,8 +468,8 @@ class Root(Tk):
         )
         self.config_contents.delete('1.0', END)
         self.config_contents.insert(END, f"'{directory}'")
-        self.config_change(0)    
-    
+        self.config_change(0)
+
     def insert_value(self, value):
         if value == 1:
             value = 'True'
@@ -397,66 +498,80 @@ class Root(Tk):
         current_widgets = []
         global var_counter
         if mode == 0:
-            value_label = ttk.Label(self,
-                                    text=value_name)
+            value_label = ttk.Label(self, text=value_name)
             value_label.place(x=x1, y=y1, width=width, height=25)
-            value_entry = Text(self, undo=True,
-                           autoseparators=True,
-                           maxundo=-1, background='black', foreground='white', insertbackground='white')
+            value_entry = Text(self,
+                               undo=True,
+                               autoseparators=True,
+                               maxundo=-1,
+                               background='black',
+                               foreground='white',
+                               insertbackground='white')
             before_value = str(eval(real_value))
-            
+
             if before_value == 'None':
                 before_value = ''
             elif before_value == '':
                 before_value = "''"
             value_entry.insert(END, before_value)
             value_entry.configure(font=('微软雅黑', 12))
-            value_entry.place(x=x1, y=y1+25, width=width, height=height)
+            value_entry.place(x=x1, y=y1 + 25, width=width, height=height)
             self.value_dict[real_value] = [value_entry, before_value, is_str]
             current_widgets.append(value_label)
             current_widgets.append(value_entry)
-            value_entry.func = lambda e: self.save_current_contents(value_entry, real_value, is_str)
+            value_entry.func = lambda e: self.save_current_contents(
+                value_entry, real_value, is_str)
             value_entry.bind('<KeyRelease>', value_entry.func)
         elif mode == 1:
             exec(f"self.checkvar{var_counter} = IntVar()")
             checkvar = eval(f"self.checkvar{var_counter}")
             var_counter += 1
             before_value = eval(real_value)
-            checkvar.set(1 if before_value else 0)            
-            value_checkbutton = Checkbutton(self,
-                            text=value_name,
-                            variable=checkvar,
-                            command=lambda: self.change_bool(value_name),
-                            background='black',
-                            foreground='white',
-                            borderwidth=0,
-                            highlightthickness=0,
-                            font=('微软雅黑',12),
-                            selectcolor='black',
-                            activebackground='white')
+            checkvar.set(1 if before_value else 0)
+            value_checkbutton = Checkbutton(
+                self,
+                text=value_name,
+                variable=checkvar,
+                command=lambda: self.change_bool(value_name),
+                background='black',
+                foreground='white',
+                borderwidth=0,
+                highlightthickness=0,
+                font=('微软雅黑', 12),
+                selectcolor='black',
+                activebackground='white')
             value_checkbutton.var = checkvar
-            self.value_dict[real_value] = [value_checkbutton, before_value, is_str]
+            self.value_dict[real_value] = [
+                value_checkbutton, before_value, is_str
+            ]
             value_checkbutton.place(x=x1, y=y1, width=width, height=height)
             current_widgets.append(value_checkbutton)
         if path_enable:
             path_button = ttk.Button(
-                self, text='更改', command=lambda: self.search_path(value_entry), image=self.button_img2, compound=CENTER)
+                self,
+                text='更改',
+                command=lambda: self.search_path(value_entry),
+                image=self.button_img2,
+                compound=CENTER)
             path_button.place(x=x1 + width + 10, y=y1 + 5)
             current_widgets.append(path_button)
         return current_widgets
 
     def change_bool(self, real_value):
-        exec(f"{real_value} = {not self.value_dict[real_value][1]}", globals(), globals())
-    
+        exec(f"{real_value} = {not self.value_dict[real_value][1]}", globals(),
+             globals())
+
     def save_current_contents(self, current_entry, real_value, is_str):
         try:
             if is_str:
-                exec(f"{real_value} = '{current_entry.get('1.0', 'end-1c')}'", globals(), globals())
+                exec(f"{real_value} = '{current_entry.get('1.0', 'end-1c')}'",
+                     globals(), globals())
             else:
-                exec(f"{real_value} = {current_entry.get('1.0', 'end-1c')}", globals(), globals())
+                exec(f"{real_value} = {current_entry.get('1.0', 'end-1c')}",
+                     globals(), globals())
         except:
             pass
-    
+
     def search_path(self, obj):
         filename = filedialog.askopenfilename(initialdir='.',
                                               title="选择文件",
@@ -482,7 +597,7 @@ class Root(Tk):
                     current_is_str = True
                 if current_value != before_value:
                     change(each, current_value, current_is_str)
-                    changed = True            
+                    changed = True
                     if current_is_str:
                         current_value = repr(current_value)
                     exec(f"{each} = {current_value}", globals(), globals())
@@ -492,7 +607,7 @@ class Root(Tk):
                     current = True if current else False
                     if current != current_value[1]:
                         change(each, current, str_msg)
-                        self.value_dict[each][1] = current                
+                        self.value_dict[each][1] = current
                         changed = True
                 else:
                     current = current_value[0].get('1.0', 'end-1c')
@@ -512,7 +627,7 @@ class Root(Tk):
 
 def plays():
     #with open('config.py', encoding='utf-8-sig') as f:
-        #exec(f.read(), globals())
+    #exec(f.read(), globals())
     length = len(字符集)
     K = 2**比特数
     unit = (K + 1) / length
