@@ -1,6 +1,21 @@
 with open('config.py', encoding='utf-8-sig') as f:
-    exec(f.read(), globals())
+    text = f.read()
+    exec(text, globals())
 var_counter = 1
+
+def get_all_config_options(text):
+    result = []
+    N = len(text)
+    for i in range(N):
+        current = text[i]
+        if current == '\n':
+            if i + 1 < N:
+                next_character = text[i + 1]
+                if next_character.isalpha():
+                    inds = text[i + 1:].index('=') - 1
+                    current_config_options = text[i + 1:i + 1 + inds]
+                    result.append(current_config_options)
+    return result
 
 def change(var, new, is_str=True):
     text = open('config.py', encoding='utf-8-sig').read()
@@ -67,6 +82,8 @@ class Root(Tk):
                         highlightthickness=0,
                         inactiveselectbackground='black',
                         font=('微软雅黑',12))
+        style.configure('TScrollbar',
+                        background='white')
         self.button_img = ImageTk.PhotoImage(Image.open('resources/button.png').resize((200, 107)))
         self.button_img2 = ImageTk.PhotoImage(Image.open('resources/button.png').resize((100, 40)))
         bg_image = Image.open('resources/5072612.jpg')
@@ -86,67 +103,13 @@ class Root(Tk):
         self.video_to_ascii_video_button.place(x=440, y=100, width=200, height=107)
         self.video_to_ascii_img_button = ttk.Button(self, text='视频按帧数转换\n字符画图片', image=self.button_img, compound=CENTER)
         self.video_to_ascii_img_button.place(x=140, y=250, width=200, height=107)
-        self.change_settings_button = ttk.Button(self, text='更改设置', image=self.button_img, compound=CENTER)
+        self.change_settings_button = ttk.Button(self, text='更改设置', image=self.button_img, compound=CENTER, command=self.change_settings_window)
         self.change_settings_button.place(x=440, y=250, width=200, height=107)
-        #self.information_label = ttk.Label(self, text='made by Rainbow Dreamer\nqq: 2180502841\nB站账号: Rainbow_Dreamer')
-        #self.information_label.place(x=0, y=400)
-        #self.set_value('字符集', '字符集', True, 600, 60, 0, 0)
-        #self.set_value('背景图片', '背景图片', True, 600, 40, 0, 80, True)
-        #self.set_value('缩放倍数', '缩放倍数', False, 80, 40, 0, 140)
-        #self.set_value('比特数', '比特数', False, 80, 40, 0, 240)
-        #self.set_value('演示模式', '演示模式', False, 80, 40, 0, 290)
-        #self.set_value('图片路径', '图片路径', True, 600, 40, 0, 390, True)
-        #self.set_value('视频路径', '视频路径', True, 500, 50, 100, 140, True)
-        #self.set_value('视频帧图路径', '视频帧图路径', True, 500, 50, 150, 210, True)
-        #self.set_value('视频帧图片保存路径', '视频帧图片保存路径', True, 500, 50, 150, 270, True)
-        #self.set_value('视频导出帧图片到文件夹', '视频导出帧图片到文件夹', False, 150, 40, 150, 330)
-        #self.set_value('颜色', '颜色', False, 150, 40, 0, 450)
-        #self.set_value('帧数', '帧数', False, 150, 40, 0, 500)
-        #self.set_value('视频转换帧数区间', '视频转换帧数区间', False, 150, 40, 200, 450)
-        #self.set_value('字符画保存为图片', '字符画保存为图片', False, 150, 40, 200, 500)
-        #self.set_value('屏幕宽度', '屏幕宽度', False, 70, 40, 320, 330)
-        #self.set_value('屏幕高度', '屏幕高度', False, 70, 40, 410, 330)
-        #self.set_value('字符画保存为文本文件', '字符画保存为文本文件', False, 150, 40, 500, 330)
-        #self.set_value('显示转换进度', '显示转换进度', False, 150, 40, 730, 410)
-        #self.set_value('导出视频', '导出视频', False, 150, 40, 730, 520)
-        #self.set_value('导出视频帧数', 'fps', False, 100, 40, 350, 580)
-        #self.set_value('导出视频字体', 'font_path', True, 100, 40, 500, 580)
-        #self.set_value('导出视频字体大小', 'font_size', False, 120, 40, 650, 580)
-        #self.set_value('图片宽度比例', 'width_resize', False, 100, 40, 300, 630)
-        #self.set_value('图片高度比例', 'height_resize', False, 100, 40, 450, 630)
-        #self.save = ttk.Button(self, text="save", command=self.save_current)
-        #self.save.place(x=500, y=490)
-        #self.saved_text = ttk.Label(self, text='saved')
-        #self.playing = ttk.Button(self, text='运行', command=self.play)
-        #self.playing.place(x=600, y=490)
-        #self.frame_info = StringVar()
-        #self.frame_info.set('暂无读取帧')
-        #self.frame_show = ttk.Label(self, textvariable=self.frame_info)
-        #self.frame_show.place(x=500, y=530)
-        #self.msg_label = ttk.Label(
-            #self,
-            #text=
-            #'每次运行之前要记得先\n点击save按钮保存配置哦~\n演示模式为0：转换图片为ascii字符画\n演示模式为1：转换视频为ascii字符画视频'
-        #)
-        #self.msg_label.place(x=620, y=10)
-        #self.set_true_button = ttk.Button(self,
-                                          #text='True',
-                                          #command=lambda: self.insert_value(1),
-                                          #takefocus=False)
-        #self.set_false_button = ttk.Button(
-            #self,
-            #text='False',
-            #command=lambda: self.insert_value(0),
-            #takefocus=False)
-        #self.set_true_button.place(x=0, y=600)
-        #self.set_false_button.place(x=100, y=600)
-        #self.picture_color = IntVar()
-        #self.output_picture_color = Checkbutton(self,
-                                                #text='输出图片为彩色',
-                                                #variable=self.picture_color,
-                                                #onvalue=1,
-                                                #offvalue=0)
-        #self.output_picture_color.place(x=200, y=560)
+        self.frame_info = StringVar()
+        self.frame_show = ttk.Label(self, textvariable=self.frame_info, style='New.TLabel', anchor='nw')
+        global all_config_options
+        all_config_options = get_all_config_options(text)        
+        self.value_dict = {i: eval(i) for i in all_config_options}
 
     
     def quit_main_window(self):
@@ -164,24 +127,34 @@ class Root(Tk):
     def img_to_ascii_img_window(self):
         self.quit_main_window()
         self.current_widgets = []
-        self.go_back_button = ttk.Button(self, text='返回', command=self.go_back_img_to_ascii_img_window, image=self.button_img2, compound=CENTER)
+        
+        self.go_back_button = ttk.Button(self, text='返回', command=self.go_back_main_window, image=self.button_img2, compound=CENTER)
         self.go_back_button.place(x=600, y=420)
         self.current_widgets.append(self.go_back_button)
+        
         self.current_widgets += self.set_value('图片路径', '图片路径', True, 600, 50, 0, 100, True)
         self.current_widgets += self.set_value('缩放倍数', '缩放倍数', False, 80, 28, 0, 200)
         self.current_widgets += self.set_value('比特数', '比特数', False, 80, 28, 0, 300)
+        
         ascii_save_as_image_widgets = self.set_value('字符画保存为图片', '字符画保存为图片', False, 160, 40, 200, 260, mode=1)
         self.ascii_save_as_image = ascii_save_as_image_widgets[0]
         self.current_widgets += ascii_save_as_image_widgets       
+        
         ascii_save_as_text_widgets = self.set_value('字符画保存为文本文件', '字符画保存为文本文件', False, 200, 40, 200, 200, mode=1)
         self.ascii_save_as_text = ascii_save_as_text_widgets[0]
         self.current_widgets += ascii_save_as_text_widgets
+        
         show_percentage_widgets = self.set_value('显示转换进度', '显示转换进度', False, 150, 40, 450, 200, mode=1)
         self.show_percentage = show_percentage_widgets[0]
         self.current_widgets += show_percentage_widgets
+        
         self.current_widgets += self.set_value('图片宽度比例', 'width_resize', False, 100, 28, 400, 260)
         self.current_widgets += self.set_value('图片高度比例', 'height_resize', False, 100, 28, 550, 260)
+        
         self.save_button = ttk.Button(self, text='保存当前配置', command=self.save_current, image=self.button_img2, compound=CENTER)
+        self.save_button.place(x=600, y=350)
+        self.current_widgets.append(self.save_button)        
+        
         self.picture_color = IntVar()
         img_color = eval('输出图片为彩色')
         self.picture_color.set(1 if img_color else 0)
@@ -200,23 +173,205 @@ class Root(Tk):
         self.output_picture_color.place(x=620, y=200, width=150, height=40)
         self.value_dict['输出图片为彩色'] = [self.output_picture_color, img_color, False]
         self.current_widgets.append(self.output_picture_color)
-        self.save_button.place(x=600, y=350)
-        self.current_widgets.append(self.save_button)
+        
         self.playing = ttk.Button(self, text='运行', command=self.play, image=self.button_img2, compound=CENTER)
         self.playing.place(x=150, y=330)
         self.current_widgets.append(self.playing)
-        self.frame_info = StringVar()
+        
         self.frame_info.set('暂无读取帧')
-        self.frame_show = ttk.Label(self, textvariable=self.frame_info, style='New.TLabel', anchor='nw')
         self.frame_show.place(x=0, y=400, width=290, height=70)
         self.current_widgets.append(self.frame_show)
     
-    def go_back_img_to_ascii_img_window(self):
+    def change_settings_window(self):
+        self.quit_main_window()
+        self.go_back_button = ttk.Button(self, text='返回', command=self.go_back_main_window, image=self.button_img2, compound=CENTER)
+        self.go_back_button.place(x=600, y=420)
+        self.config_options_bar = ttk.Scrollbar(self)
+        self.config_options_bar.place(x=228, y=121, height=183, anchor=CENTER)
+        self.choose_config_options = Listbox(
+            self, yscrollcommand=self.config_options_bar.set, background='black', foreground='white')
+        self.choose_config_options.bind('<<ListboxSelect>>',
+                                        self.show_current_config_options)
+        self.options_num = len(all_config_options)
+        global all_config_options_ind
+        all_config_options_ind = {
+            all_config_options[i]: i
+            for i in range(self.options_num)
+        }
+        global config_original
+        config_original = all_config_options.copy()
+        all_config_options.sort(key=lambda s: s.lower())
+        global alpha_config
+        alpha_config = all_config_options.copy()
+        for k in all_config_options:
+            self.choose_config_options.insert(END, k)
+        self.choose_config_options.place(x=0, y=30, width=220)
+        self.config_options_bar.config(
+            command=self.choose_config_options.yview)
+        self.config_name = ttk.Label(self, text='')
+        self.already_place_config_name = False
+        self.config_contents = Text(self,
+                                    undo=True,
+                                    autoseparators=True,
+                                    maxundo=-1)
+        self.config_contents.bind('<KeyRelease>', self.config_change)
+        self.config_contents.place(x=380, y=120, width=400, height=200)
+        self.choose_filename_button = ttk.Button(self,
+                                                 text='choose filename',
+                                                 command=self.choose_filename)
+        self.choose_directory_button = ttk.Button(
+            self, text='choose directory', command=self.choose_directory)
+        self.choose_filename_button.place(x=0, y=250)
+        self.choose_directory_button.place(x=0, y=300)
+        self.save = ttk.Button(self, text="save", command=self.save_current)
+        self.save.place(x=0, y=350)
+        self.saved_text = ttk.Label(self, text='saved')
+        self.search_text = ttk.Label(self, text='search for config options')
+        self.search_text.place(x=0, y=400)
+        self.search_contents = StringVar()
+        self.search_contents.trace_add('write', self.search)
+        self.search_entry = Entry(self, textvariable=self.search_contents)
+        self.search_entry.place(x=0, y=450)
+        self.search_inds = 0
+        self.up_button = ttk.Button(
+            self,
+            text='up',
+            command=lambda: self.change_search_inds(-1),
+            width=8)
+        self.down_button = ttk.Button(
+            self,
+            text='down',
+            command=lambda: self.change_search_inds(1),
+            width=8)
+        self.up_button.place(x=160, y=450)
+        self.down_button.place(x=250, y=450)
+        self.search_inds_list = []
+        self.choose_bool1 = ttk.Button(
+            self, text='True', command=lambda: self.insert_bool('True'))
+        self.choose_bool2 = ttk.Button(
+            self, text='False', command=lambda: self.insert_bool('False'))
+        self.choose_bool1.place(x=140, y=270)
+        self.choose_bool2.place(x=260, y=270)
+        self.change_sort_button = ttk.Button(self,
+                                             text="sort in alphabetical order",
+                                             command=self.change_sort)
+        self.sort_mode = 0
+        self.change_sort_button.place(x=150, y=320)        
+        self.frame_show.place(x=500, y=330, width=290, height=70)
+        self.current_widgets = [self.go_back_button, self.config_options_bar, self.choose_config_options, self.config_contents, self.choose_filename_button, self.choose_directory_button, self.save, self.saved_text, self.search_text, self.search_entry, self.up_button, self.down_button, self.choose_bool1, self.choose_bool2, self.change_sort_button, self.config_name, self.frame_show]
+    
+    def go_back_main_window(self):
         for i in self.current_widgets:
             i.place_forget()
         self.reset_main_window()
         global var_counter
         var_counter = 1
+    
+    def change_sort(self):
+        global all_config_options
+        if self.sort_mode == 0:
+            self.sort_mode = 1
+            self.change_sort_button.config(text='sort in order of appearance')
+            all_config_options = config_original.copy()
+            self.choose_config_options.delete(0, END)
+            for k in all_config_options:
+                self.choose_config_options.insert(END, k)
+        else:
+            self.sort_mode = 0
+            self.change_sort_button.config(text='sort in alphabetical order')
+            all_config_options = alpha_config.copy()
+            self.choose_config_options.delete(0, END)
+            for k in all_config_options:
+                self.choose_config_options.insert(END, k)
+        self.search()
+
+    def insert_bool(self, content):
+        self.config_contents.delete('1.0', END)
+        self.config_contents.insert(END, content)
+        self.config_change(0)
+
+    def config_change(self, e):
+        current_config = self.choose_config_options.get(ANCHOR)
+        try:
+            current = self.config_contents.get('1.0', 'end-1c')
+            current_new = '"' + current.replace('"', '\\"') + '"'
+            #exec(f'{current_config} = {current_new}', globals(), globals())
+            self.value_dict[current_config] = current
+            print(self.value_dict[current_config])
+        except Exception as e:
+            print(str(e))
+            pass
+
+    def change_search_inds(self, num):
+        self.search_inds += num
+        if self.search_inds < 0:
+            self.search_inds = 0
+        if self.search_inds_list:
+            search_num = len(self.search_inds_list)
+            if self.search_inds >= search_num:
+                self.search_inds = search_num - 1
+            first = self.search_inds_list[self.search_inds]
+            self.choose_config_options.selection_clear(0, END)
+            self.choose_config_options.selection_set(first)
+            self.choose_config_options.selection_anchor(first)
+            self.choose_config_options.see(first)
+            self.show_current_config_options(0)
+
+    def search(self, *args):
+        current = self.search_contents.get()
+        if not current:
+            return
+        self.search_inds_list = [
+            i for i in range(self.options_num)
+            if current in all_config_options[i]
+        ]
+        if self.search_inds_list:
+            self.search_inds = 0
+            first = self.search_inds_list[self.search_inds]
+            self.choose_config_options.selection_clear(0, END)
+            self.choose_config_options.selection_set(first)
+            self.choose_config_options.selection_anchor(first)
+            self.choose_config_options.see(first)
+            self.show_current_config_options(0)
+        else:
+            self.choose_config_options.selection_clear(0, END)
+
+    def show_current_config_options(self, e):
+        if not self.already_place_config_name:
+            self.already_place_config_name = True
+            self.config_name.place(x=380, y=84, height=35)
+        current_config = self.choose_config_options.get(ANCHOR)
+        if current_config:
+            self.config_name.configure(text=current_config)
+            self.config_contents.delete('1.0', END)
+            current_config_value = self.value_dict[current_config]
+            #print(current_config)
+            if type(current_config_value) == list:
+                current_config_value = current_config_value[1]
+            #print(current_config_value)
+            try:
+                current_config_value = eval(current_config_value)
+            except:
+                pass
+            self.config_contents.insert(END, current_config_value)
+
+    def choose_filename(self):
+        filename = filedialog.askopenfilename(initialdir='.',
+                                              title="choose filename",
+                                              filetype=(("all files",
+                                                         "*.*"), ))
+        self.config_contents.delete('1.0', END)
+        self.config_contents.insert(END, f"'{filename}'")
+        self.config_change(0)
+
+    def choose_directory(self):
+        directory = filedialog.askdirectory(
+            initialdir='.',
+            title="choose directory",
+        )
+        self.config_contents.delete('1.0', END)
+        self.config_contents.insert(END, f"'{directory}'")
+        self.config_change(0)    
     
     def insert_value(self, value):
         if value == 1:
@@ -322,23 +477,37 @@ class Root(Tk):
         changed = False
         for each in self.value_dict:
             current_value = self.value_dict[each]
-            if type(current_value[1]) == bool:
-                current = current_value[0].var.get()
-                current = True if current else False
-                if current != current_value[1]:
-                    change(each, current, str_msg)
-                    self.value_dict[each][1] = current                
-                    changed = True
+            if type(current_value) != list:
+                before_value = eval(each)
+                try:
+                    eval(current_value)
+                    current_is_str = False
+                except:
+                    current_is_str = True
+                if current_value != before_value:
+                    change(each, current_value, current_is_str)
+                    changed = True            
+                    if current_is_str:
+                        current_value = repr(current_value)
+                    exec(f"{each} = {current_value}", globals(), globals())
             else:
-                current = current_value[0].get('1.0', 'end-1c')
-                str_msg = current_value[2]
-                if current != current_value[1]:
-                    if current in ['', 'None']:
-                        current = None
-                        str_msg = False
-                    change(each, current, str_msg)
-                    self.value_dict[each][1] = current
-                    changed = True
+                if type(current_value[1]) == bool:
+                    current = current_value[0].var.get()
+                    current = True if current else False
+                    if current != current_value[1]:
+                        change(each, current, str_msg)
+                        self.value_dict[each][1] = current                
+                        changed = True
+                else:
+                    current = current_value[0].get('1.0', 'end-1c')
+                    str_msg = current_value[2]
+                    if current != current_value[1]:
+                        if current in ['', 'None']:
+                            current = None
+                            str_msg = False
+                        change(each, current, str_msg)
+                        self.value_dict[each][1] = current
+                        changed = True
         if changed:
             self.show_saved()
         else:

@@ -7,6 +7,7 @@ import sys
 from PIL import Image, ImageFont, ImageDraw, ImageTk
 import numpy as np
 import ffmpeg
+from ast import literal_eval
 abs_path = os.path.dirname(os.path.abspath(__file__))
 os.chdir(abs_path)
 sys.path.append(abs_path)
