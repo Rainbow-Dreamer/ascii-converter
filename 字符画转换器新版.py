@@ -221,9 +221,9 @@ class Root(Tk):
         self.show_percentage = show_percentage_widgets[0]
         self.current_widgets += show_percentage_widgets
 
-        self.current_widgets += self.set_value('图片宽度比例', 'width_resize', False,
+        self.current_widgets += self.set_value('图片宽度比例', '图片宽度比例', False,
                                                100, 28, 400, 260)
-        self.current_widgets += self.set_value('图片高度比例', 'height_resize',
+        self.current_widgets += self.set_value('图片高度比例', '图片高度比例',
                                                False, 100, 28, 550, 260)
 
         self.save_button = ttk.Button(self,
@@ -320,7 +320,7 @@ class Root(Tk):
         self.save.place(x=0, y=350)
         self.saved_text = ttk.Label(self, text='saved')
         self.search_text = ttk.Label(self, text='search for config options')
-        self.search_text.place(x=0, y=400)
+        self.search_text.place(x=0, y=425)
         self.search_contents = StringVar()
         self.search_contents.trace_add('write', self.search)
         self.search_entry = Entry(self, textvariable=self.search_contents)
@@ -346,9 +346,10 @@ class Root(Tk):
         self.choose_bool1.place(x=140, y=270)
         self.choose_bool2.place(x=260, y=270)
         self.change_sort_button = ttk.Button(self,
-                                             text="sort in alphabetical order",
+                                             text="sort in order of appearance",
                                              command=self.change_sort)
         self.sort_mode = 0
+        self.change_sort()
         self.change_sort_button.place(x=150, y=320)
         self.frame_show.place(x=500, y=330, width=290, height=70)
         self.current_widgets = [
@@ -360,6 +361,7 @@ class Root(Tk):
             self.choose_bool2, self.change_sort_button, self.config_name,
             self.frame_show
         ]
+        self.frame_info.set('目前暂无动作')
 
     def go_back_main_window(self):
         for i in self.current_widgets:
@@ -589,7 +591,7 @@ class Root(Tk):
             if type(current_value) != list:
                 before_value = eval(each)
                 try:
-                    eval(current_value)
+                    current_value = eval(current_value)
                     current_is_str = False
                 except:
                     current_is_str = True
@@ -637,8 +639,8 @@ def plays():
         return 字符集[int(gray / unit)]
 
     def img_to_ascii(im, show_percentage=False):
-        WIDTH = int((im.width * width_resize / 6) / 缩放倍数)
-        HEIGHT = int((im.height * height_resize / 12) / 缩放倍数)
+        WIDTH = int((im.width * 图片宽度比例 / 6) / 缩放倍数)
+        HEIGHT = int((im.height * 图片高度比例 / 12) / 缩放倍数)
         if show_percentage:
             whole_count = WIDTH * HEIGHT
             count = 0
@@ -767,7 +769,7 @@ def plays():
             num_frames = len(frames)
             n = len(str(num_frames))
             try:
-                font = ImageFont.truetype(font_path, size=font_size)
+                font = ImageFont.truetype(字体路径, size=字体大小)
             except:
                 font = ImageFont.load_default()
             font_x_len, font_y_len = font.getsize(字符集[1])
@@ -814,7 +816,7 @@ def plays():
             if output_filename in os.listdir():
                 os.remove(output_filename)
             ffmpeg.input(f'temp_video_images/%{n}d.png',
-                         framerate=fps).output(output_filename).run()
+                         framerate=视频输出帧数).output(output_filename).run()
             root.frame_info.set(f'已成功输出为视频')
             root.update()
 
@@ -853,7 +855,7 @@ def plays():
             root.frame_info.set('图片转换完成，正在输出字符画为图片...')
             root.update()
             try:
-                font = ImageFont.truetype(font_path, size=font_size)
+                font = ImageFont.truetype(字体路径, size=字体大小)
             except:
                 font = ImageFont.load_default()
             font_x_len, font_y_len = font.getsize(字符集[1])

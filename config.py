@@ -18,9 +18,9 @@
 屏幕高度 = 700
 字符画保存为文本文件 = True
 显示转换进度 = True
-fps = 30
-font_path = None
-font_size = 10
-width_resize = 1
-height_resize = 1
+视频输出帧数 = 30
+字体路径 = None
+字体大小 = 10
+图片宽度比例 = 1
+图片高度比例 = 1
 输出图片为彩色 = False
