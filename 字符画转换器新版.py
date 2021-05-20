@@ -450,7 +450,7 @@ class Root(Tk):
                 current_config_value = eval(current_config_value)
             except:
                 pass
-            self.config_contents.insert(END, current_config_value)
+            self.config_contents.insert(END, str(current_config_value))
 
     def choose_filename(self):
         filename = filedialog.askopenfilename(initialdir='.',
@@ -507,12 +507,13 @@ class Root(Tk):
                                background='black',
                                foreground='white',
                                insertbackground='white')
-            before_value = str(eval(real_value))
-
+            before_value = self.value_dict[real_value]
+            if type(before_value) != list:
+                before_value = str(before_value)
+            else:
+                before_value = eval(repr(before_value[1]))
             if before_value == 'None':
                 before_value = ''
-            elif before_value == '':
-                before_value = "''"
             value_entry.insert(END, before_value)
             value_entry.configure(font=('微软雅黑', 12))
             value_entry.place(x=x1, y=y1 + 25, width=width, height=height)
@@ -526,7 +527,9 @@ class Root(Tk):
             exec(f"self.checkvar{var_counter} = IntVar()")
             checkvar = eval(f"self.checkvar{var_counter}")
             var_counter += 1
-            before_value = eval(real_value)
+            before_value = self.value_dict[real_value]
+            if type(before_value) == list:
+                before_value = before_value[1]
             checkvar.set(1 if before_value else 0)
             value_checkbutton = Checkbutton(
                 self,
@@ -557,19 +560,14 @@ class Root(Tk):
             current_widgets.append(path_button)
         return current_widgets
 
-    def change_bool(self, real_value):
-        exec(f"{real_value} = {not self.value_dict[real_value][1]}", globals(),
-             globals())
+    def change_bool(self, value_name):
+        self.value_dict[value_name][1] = not self.value_dict[value_name][1]
 
     def save_current_contents(self, current_entry, real_value, is_str):
         try:
-            if is_str:
-                exec(f"{real_value} = '{current_entry.get('1.0', 'end-1c')}'",
-                     globals(), globals())
-            else:
-                exec(f"{real_value} = {current_entry.get('1.0', 'end-1c')}",
-                     globals(), globals())
-        except:
+            self.value_dict[real_value][1] = current_entry.get('1.0', 'end-1c')
+        except Exception as e:
+            print(str(e))
             pass
 
     def search_path(self, obj):
@@ -605,20 +603,22 @@ class Root(Tk):
                 if type(current_value[1]) == bool:
                     current = current_value[0].var.get()
                     current = True if current else False
-                    if current != current_value[1]:
+                    if current != eval(each):
                         change(each, current, str_msg)
-                        self.value_dict[each][1] = current
                         changed = True
+                        exec(f"{each} = {current}", globals(), globals())
                 else:
                     current = current_value[0].get('1.0', 'end-1c')
                     str_msg = current_value[2]
-                    if current != current_value[1]:
+                    if current == '':
+                        current = None
+                    if current != eval(each):
                         if current in ['', 'None']:
                             current = None
                             str_msg = False
                         change(each, current, str_msg)
-                        self.value_dict[each][1] = current
                         changed = True
+                        exec(f"{each} = {repr(current)}", globals(), globals())
         if changed:
             self.show_saved()
         else:
@@ -626,8 +626,6 @@ class Root(Tk):
 
 
 def plays():
-    #with open('config.py', encoding='utf-8-sig') as f:
-    #exec(f.read(), globals())
     length = len(字符集)
     K = 2**比特数
     unit = (K + 1) / length

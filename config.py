@@ -1,10 +1,10 @@
 ﻿#-*- coding:utf-8 -*-
 字符集 = 'M@N%W$E#RK&FXYI*l]}1/+i>"!~\';,`:.'
 背景图片 = 'background.png'
-缩放倍数 = 0.5
+缩放倍数 = 1
 比特数 = 8
 演示模式 = 0
-图片路径 = 'G:/university/MyAI project/py files/other py files/ascii_converter/previews/2.jpg'
+图片路径 = None
 视频帧图路径 = None
 视频路径 = None
 视频帧图片保存路径 = None
