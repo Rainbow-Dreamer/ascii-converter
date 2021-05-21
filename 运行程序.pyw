@@ -11,7 +11,9 @@ from ast import literal_eval
 from copy import deepcopy
 
 abs_path = os.path.dirname(os.path.abspath(__file__))
-os.chdir(abs_path)
+current_path = os.getcwd()
+os.chdir(current_path)
 sys.path.append(abs_path)
+sys.path.append(current_path)
 with open('字符画转换器.py', encoding='utf-8-sig') as f:
     exec(f.read(), globals())
