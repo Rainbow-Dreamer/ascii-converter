@@ -49,6 +49,11 @@ class Root(Tk):
                         highlightthickness=0,
                         font=('微软雅黑', 12))
         style.map('TButton', foreground=[('active', 'white')])
+        style.configure('New.TButton',
+                        borderwidth=0,
+                        focuscolor='none',
+                        highlightthickness=0,
+                        font=('微软雅黑', 10))
         style.configure('TEntry',
                         fieldbackground='black',
                         foreground='white',
@@ -90,9 +95,11 @@ class Root(Tk):
                         font=('微软雅黑', 12))
         style.configure('TScrollbar', background='white')
         self.button_img = ImageTk.PhotoImage(
-            Image.open('resources/button.png').resize((200, 107)))
+            Image.open('resources/button.png').resize((180, 100)))
         self.button_img2 = ImageTk.PhotoImage(
             Image.open('resources/button.png').resize((100, 40)))
+        self.button_img3 = ImageTk.PhotoImage(
+            Image.open('resources/button.png').resize((150, 40)))        
         bg_image = Image.open('resources/5072612.jpg')
         ratio = 800 / bg_image.width
         self.bg_image = ImageTk.PhotoImage(
@@ -100,26 +107,26 @@ class Root(Tk):
         self.bg_label = ttk.Label(
             self,
             image=self.bg_image,
-            text='\n' * 15 +
+            text='\n' * 18 +
             'made by Rainbow Dreamer\nqq: 2180502841\nB站账号: Rainbow_Dreamer\ngithub账号: Rainbow Dreamer',
             compound=CENTER)
         self.bg_label.configure(font=('微软雅黑', 10), foreground='white')
         self.bg_label.place(x=0, y=0)
         title_image = Image.open('resources/title.png')
-        self.title_image = ImageTk.PhotoImage(title_image.resize((200, 60)))
+        self.title_image = ImageTk.PhotoImage(title_image.resize((240, 100)))
         self.title_label = ttk.Label(self,
                                      image=self.title_image,
                                      text='字符画转换器',
                                      compound=CENTER)
         self.title_label.configure(font=('微软雅黑', 15), foreground='white')
-        self.title_label.place(x=280, y=10)
+        self.title_label.place(x=260, y=10)
         self.img_to_ascii_img_button = ttk.Button(
             self,
-            text='图片转字符画图片',
+            text='图片转字符画\n图片/文本',
             image=self.button_img,
             compound=CENTER,
             command=self.img_to_ascii_img_window)
-        self.img_to_ascii_img_button.place(x=140, y=100, width=200, height=107)
+        self.img_to_ascii_img_button.place(x=140, y=140, width=180, height=100)
         self.video_to_ascii_video_button = ttk.Button(
             self,
             text='视频转字符画视频',
@@ -127,9 +134,9 @@ class Root(Tk):
             compound=CENTER,
             command=self.video_to_ascii_video_window)
         self.video_to_ascii_video_button.place(x=440,
-                                               y=100,
-                                               width=200,
-                                               height=107)
+                                               y=140,
+                                               width=180,
+                                               height=100)
         self.video_to_ascii_img_button = ttk.Button(
             self,
             text='导出视频帧图片',
@@ -137,16 +144,16 @@ class Root(Tk):
             compound=CENTER,
             command=self.video_to_ascii_img_window)
         self.video_to_ascii_img_button.place(x=140,
-                                             y=250,
-                                             width=200,
-                                             height=107)
+                                             y=280,
+                                             width=180,
+                                             height=100)
         self.change_settings_button = ttk.Button(
             self,
             text='更改设置',
             image=self.button_img,
             compound=CENTER,
             command=self.change_settings_window)
-        self.change_settings_button.place(x=440, y=250, width=200, height=107)
+        self.change_settings_button.place(x=440, y=280, width=180, height=100)
         self.frame_info = StringVar()
         self.frame_show = ttk.Label(self,
                                     textvariable=self.frame_info,
@@ -164,16 +171,16 @@ class Root(Tk):
         self.change_settings_button.place_forget()
 
     def reset_main_window(self):
-        self.img_to_ascii_img_button.place(x=140, y=100, width=200, height=107)
+        self.img_to_ascii_img_button.place(x=140, y=140, width=180, height=100)
         self.video_to_ascii_video_button.place(x=440,
-                                               y=100,
-                                               width=200,
-                                               height=107)
+                                               y=140,
+                                               width=180,
+                                               height=100)
         self.video_to_ascii_img_button.place(x=140,
-                                             y=250,
-                                             width=200,
-                                             height=107)
-        self.change_settings_button.place(x=440, y=250, width=200, height=107)
+                                             y=280,
+                                             width=180,
+                                             height=100)
+        self.change_settings_button.place(x=440, y=280, width=180, height=100)
 
     def img_to_ascii_img_window(self):
         self.go_back = False
@@ -191,7 +198,7 @@ class Root(Tk):
         self.current_widgets.append(self.go_back_button)
 
         self.current_widgets += self.set_value('图片路径', '图片路径', True, 600, 50,
-                                               0, 100, True)
+                                               0, 115, True)
         self.current_widgets += self.set_value('缩放倍数', '缩放倍数', False, 80, 28,
                                                0, 200)
         self.current_widgets += self.set_value('比特数', '比特数', False, 80, 28, 0,
@@ -233,7 +240,8 @@ class Root(Tk):
                                       text='保存当前配置',
                                       command=self.save_current,
                                       image=self.button_img2,
-                                      compound=CENTER)
+                                      compound=CENTER,
+                                      style='New.TButton')
         self.save_button.place(x=600, y=350)
         self.current_widgets.append(self.save_button)
 
@@ -269,7 +277,7 @@ class Root(Tk):
         self.playing.place(x=150, y=330)
         self.current_widgets.append(self.playing)
 
-        self.frame_info.set('暂无读取帧')
+        self.frame_info.set('目前暂无动作')
         self.frame_show.place(x=0, y=400, width=290, height=70)
         self.current_widgets.append(self.frame_show)
 
@@ -314,25 +322,28 @@ class Root(Tk):
                                     autoseparators=True,
                                     maxundo=-1)
         self.config_contents.bind('<KeyRelease>', self.config_change)
-        self.config_contents.place(x=380, y=120, width=400, height=200)
+        self.config_contents.place(x=380, y=160, width=400, height=170)
         self.choose_filename_button = ttk.Button(self,
                                                  text='选择文件路径',
                                                  command=self.choose_filename,
                                                  image=self.button_img2,
-                                                 compound=CENTER)
+                                                 compound=CENTER,
+                                      style='New.TButton')
         self.choose_directory_button = ttk.Button(
             self,
             text='选择文件夹路径',
             command=self.choose_directory,
             image=self.button_img2,
-            compound=CENTER)
+            compound=CENTER,
+                                      style='New.TButton')
         self.choose_filename_button.place(x=0, y=240)
         self.choose_directory_button.place(x=0, y=300)
         self.save = ttk.Button(self,
                                text='保存当前配置',
                                command=self.save_current,
                                image=self.button_img2,
-                               compound=CENTER)
+                               compound=CENTER,
+                                      style='New.TButton')
         self.save.place(x=0, y=360)
         self.saved_text = ttk.Label(self, text='saved')
         self.search_text = ttk.Label(self, text='搜索设置参数')
@@ -348,16 +359,18 @@ class Root(Tk):
             command=lambda: self.change_search_inds(-1),
             width=8,
             image=self.button_img2,
-            compound=CENTER)
+            compound=CENTER,
+                                      style='New.TButton')
         self.down_button = ttk.Button(
             self,
             text='下一个',
             command=lambda: self.change_search_inds(1),
             width=8,
             image=self.button_img2,
-            compound=CENTER)
-        self.up_button.place(x=160, y=450)
-        self.down_button.place(x=280, y=450)
+            compound=CENTER,
+                                      style='New.TButton')
+        self.up_button.place(x=160, y=395)
+        self.down_button.place(x=160, y=450)
         self.search_inds_list = []
         self.choose_bool1 = ttk.Button(
             self,
@@ -376,11 +389,12 @@ class Root(Tk):
         self.change_sort_button = ttk.Button(self,
                                              text="以出现先后排序",
                                              command=self.change_sort,
-                                             image=self.button_img2,
-                                             compound=CENTER)
+                                             image=self.button_img3,
+                                             compound=CENTER,
+                                      style='New.TButton')
         self.sort_mode = 0
         self.change_sort()
-        self.change_sort_button.place(x=150, y=340)
+        self.change_sort_button.place(x=160, y=340)
         self.frame_show.place(x=500, y=330, width=290, height=70)
         self.current_widgets = [
             self.go_back_button, self.config_options_bar,
@@ -402,6 +416,8 @@ class Root(Tk):
         演示模式 = 1
         global 导出视频
         导出视频 = True
+        global 视频导出帧图片到文件夹
+        视频导出帧图片到文件夹 = False
         self.quit_main_window()
         self.current_widgets = []
 
@@ -414,7 +430,7 @@ class Root(Tk):
         self.current_widgets.append(self.go_back_button)
 
         self.current_widgets += self.set_value('视频路径', '视频路径', True, 600, 50,
-                                               0, 100, True)
+                                               0, 115, True)
         self.current_widgets += self.set_value('缩放倍数', '缩放倍数', False, 80, 28,
                                                0, 200)
         self.current_widgets += self.set_value('比特数', '比特数', False, 80, 28, 0,
@@ -436,12 +452,17 @@ class Root(Tk):
                                                300, 270)
         self.current_widgets += self.set_value('视频输出帧数', '视频输出帧数', False, 120,
                                                28, 450, 270)
+        self.current_widgets += self.set_value('图片宽度比例', '图片宽度比例', False, 100,
+                                               28, 300, 330)
+        self.current_widgets += self.set_value('图片高度比例', '图片高度比例', False, 100,
+                                           28, 450, 330)
 
         self.save_button = ttk.Button(self,
                                       text='保存当前配置',
                                       command=self.save_current,
                                       image=self.button_img2,
-                                      compound=CENTER)
+                                      compound=CENTER,
+                                      style='New.TButton')
         self.save_button.place(x=630, y=350)
         self.current_widgets.append(self.save_button)
 
@@ -477,7 +498,7 @@ class Root(Tk):
         self.playing.place(x=150, y=340)
         self.current_widgets.append(self.playing)
 
-        self.frame_info.set('暂无读取帧')
+        self.frame_info.set('目前暂无动作')
         self.frame_show.place(x=0, y=400, width=290, height=70)
         self.current_widgets.append(self.frame_show)
 
@@ -501,7 +522,7 @@ class Root(Tk):
         self.current_widgets.append(self.go_back_button)
 
         self.current_widgets += self.set_value('视频路径', '视频路径', True, 600, 50,
-                                               0, 100, True)
+                                               0, 115, True)
         self.current_widgets += self.set_value('视频转换帧数区间', '视频转换帧数区间', False,
                                                150, 28, 100, 200)
         self.current_widgets += self.set_value('视频帧图片保存路径',
@@ -519,7 +540,8 @@ class Root(Tk):
                                       text='保存当前配置',
                                       command=self.save_current,
                                       image=self.button_img2,
-                                      compound=CENTER)
+                                      compound=CENTER,
+                                      style='New.TButton')
         self.save_button.place(x=630, y=350)
         self.current_widgets.append(self.save_button)
 
@@ -531,7 +553,7 @@ class Root(Tk):
         self.playing.place(x=150, y=320)
         self.current_widgets.append(self.playing)
 
-        self.frame_info.set('暂无读取帧')
+        self.frame_info.set('目前暂无动作')
         self.frame_show.place(x=0, y=400, width=290, height=70)
         self.current_widgets.append(self.frame_show)
 
@@ -617,7 +639,7 @@ class Root(Tk):
     def show_current_config_options(self, e):
         if not self.already_place_config_name:
             self.already_place_config_name = True
-            self.config_name.place(x=380, y=84, height=35)
+            self.config_name.place(x=380, y=124, height=35)
         current_config = self.choose_config_options.get(ANCHOR)
         if current_config:
             self.config_name.configure(text=current_config)
@@ -897,7 +919,7 @@ def plays():
             vidcap = cv2.VideoCapture(current_value_dict['视频路径'])
             is_read, img = vidcap.read()
             if not is_read:
-                root.frame_info.set('视频路径不存在或者为空')
+                root.frame_info.set('视频路径不存在')
                 root.update()
                 return
             frames = []
@@ -1070,7 +1092,7 @@ def plays():
                 text_str = text_str_output
         except Exception as e:
             print(str(e))
-            root.frame_info.set('图片路径不存在或者为空')
+            root.frame_info.set('图片路径不存在')
             root.update()
             return
         root.frame_info.set('图片转换完成')
