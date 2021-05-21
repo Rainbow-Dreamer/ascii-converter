@@ -375,6 +375,85 @@ class Root(Tk):
         self.go_back = False
         global 演示模式
         演示模式 = 1
+        global 导出视频
+        导出视频 = True
+        self.quit_main_window()
+        self.current_widgets = []
+
+        self.go_back_button = ttk.Button(self,
+                                         text='返回',
+                                         command=self.go_back_main_window,
+                                         image=self.button_img2,
+                                         compound=CENTER)
+        self.go_back_button.place(x=600, y=420)
+        self.current_widgets.append(self.go_back_button)
+
+        self.current_widgets += self.set_value('视频路径', '视频路径', True, 600, 50,
+                                               0, 100, True)
+        self.current_widgets += self.set_value('缩放倍数', '缩放倍数', False, 80, 28,
+                                               0, 200)
+        self.current_widgets += self.set_value('比特数', '比特数', False, 80, 28, 0,
+                                               300)
+        self.current_widgets += self.set_value('视频转换帧数区间', '视频转换帧数区间', False, 150, 28, 150,
+                                               200)
+        self.current_widgets += self.set_value('视频帧图路径', '视频帧图路径', True, 300, 28, 350,
+                                               200, True, path_mode=1)
+        self.current_widgets += self.set_value('字体路径', '字体路径', True, 100, 28, 150,
+                                               270)
+        self.current_widgets += self.set_value('字体大小', '字体大小', False, 100, 28, 300,
+                                               270)
+        self.current_widgets += self.set_value('视频输出帧数', '视频输出帧数', False, 120, 28, 450,
+                                               270)
+        self.save_button = ttk.Button(self,
+                                      text='保存当前配置',
+                                      command=self.save_current,
+                                      image=self.button_img2,
+                                      compound=CENTER)
+        self.save_button.place(x=600, y=350)
+        self.current_widgets.append(self.save_button)
+
+        self.picture_color = IntVar()
+        img_color = self.value_dict['输出图片为彩色']
+        if type(img_color) == list:
+            img_color = img_color[1]
+        self.picture_color.set(1 if img_color else 0)
+        self.output_picture_color = Checkbutton(
+            self,
+            text='输出图片为彩色',
+            variable=self.picture_color,
+            command=lambda: self.change_bool('输出图片为彩色'),
+            background='black',
+            foreground='white',
+            borderwidth=0,
+            highlightthickness=0,
+            font=('微软雅黑', 12),
+            selectcolor='black',
+            activebackground='white')
+        self.output_picture_color.var = self.picture_color
+        self.output_picture_color.place(x=600, y=280, width=150, height=40)
+        self.value_dict['输出图片为彩色'] = [
+            self.output_picture_color, img_color, False
+        ]
+        self.current_widgets.append(self.output_picture_color)
+
+        self.playing = ttk.Button(self,
+                                  text='运行',
+                                  command=self.play,
+                                  image=self.button_img2,
+                                  compound=CENTER)
+        self.playing.place(x=150, y=340)
+        self.current_widgets.append(self.playing)
+
+        self.frame_info.set('暂无读取帧')
+        self.frame_show.place(x=0, y=400, width=290, height=70)
+        self.current_widgets.append(self.frame_show)
+
+    def video_to_ascii_img_window(self):
+        self.go_back = False
+        global 演示模式
+        演示模式 = 1
+        global 导出视频
+        导出视频 = False
         self.quit_main_window()
         self.current_widgets = []
 
@@ -446,11 +525,10 @@ class Root(Tk):
         self.frame_show.place(x=0, y=400, width=290, height=70)
         self.current_widgets.append(self.frame_show)
 
-    def video_to_ascii_img_window(self):
-        pass
-
     def go_back_main_window(self):
         self.go_back = True
+        global 导出视频
+        导出视频 = False
         for i in self.current_widgets:
             i.place_forget()
         self.reset_main_window()
@@ -583,6 +661,7 @@ class Root(Tk):
                   x1,
                   y1,
                   path_enable=False,
+                  path_mode=0,
                   mode=0):
         current_widgets = []
         global var_counter
@@ -642,7 +721,7 @@ class Root(Tk):
             path_button = ttk.Button(
                 self,
                 text='更改',
-                command=lambda: self.search_path(value_entry),
+                command=lambda: self.search_path(value_entry, path_mode),
                 image=self.button_img2,
                 compound=CENTER)
             path_button.place(x=x1 + width + 10, y=y1 + 5)
@@ -659,10 +738,14 @@ class Root(Tk):
             print(str(e))
             pass
 
-    def search_path(self, obj):
-        filename = filedialog.askopenfilename(initialdir='.',
-                                              title="选择文件",
-                                              filetype=(("所有文件", "*.*"), ))
+    def search_path(self, obj, mode=0):
+        if mode == 0:
+            filename = filedialog.askopenfilename(initialdir='.',
+                                                  title="选择文件",
+                                                  filetype=(("所有文件", "*.*"), ))
+        elif mode == 1:
+            filename = filedialog.askdirectory(initialdir='.',
+                                                  title="选择文件夹")
         if filename:
             obj.delete('1.0', END)
             obj.insert(END, filename)
@@ -753,7 +836,7 @@ def plays():
         im_resize = im.resize((WIDTH, HEIGHT), Image.ANTIALIAS)
         txt = ""
         if is_color and (current_value_dict['字符画保存为图片']
-                         or current_value_dict['导出视频']):
+                         or 导出视频):
             im_txt = Image.new("RGB",
                                (int(im.width / current_value_dict['缩放倍数']),
                                 int(im.height / current_value_dict['缩放倍数'])),
