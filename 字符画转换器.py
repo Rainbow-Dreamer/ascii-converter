@@ -1,6 +1,6 @@
 with open('config.py', encoding='utf-8-sig') as f:
     exec(f.read(), globals())
-
+演示模式 = 0
 
 def change(var, new, is_str=True):
     text = open('config.py', encoding='utf-8-sig').read()
@@ -202,7 +202,7 @@ def plays():
                     root.update()
                 txt += '\n'
             return txt
-
+    演示模式 = int(root.value_dict['演示模式'][0].get('1.0', END))
     if 演示模式 == 1:
         if 视频帧图路径:
             os.chdir(视频帧图路径)

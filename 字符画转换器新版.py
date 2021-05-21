@@ -154,6 +154,7 @@ class Root(Tk):
         global all_config_options
         all_config_options = get_all_config_options(text)
         self.value_dict = {i: eval(i) for i in all_config_options}
+        self.go_back = False
 
     def quit_main_window(self):
         self.img_to_ascii_img_button.place_forget()
@@ -174,6 +175,7 @@ class Root(Tk):
         self.change_settings_button.place(x=440, y=250, width=200, height=107)
 
     def img_to_ascii_img_window(self):
+        self.go_back = False
         global 演示模式
         演示模式 = 0
         self.quit_main_window()
@@ -194,7 +196,7 @@ class Root(Tk):
         self.current_widgets += self.set_value('比特数', '比特数', False, 80, 28, 0,
                                                300)
 
-        ascii_save_as_image_widgets = self.set_value('字符画保存为图片',
+        self.current_widgets += self.set_value('字符画保存为图片',
                                                      '字符画保存为图片',
                                                      False,
                                                      160,
@@ -202,10 +204,8 @@ class Root(Tk):
                                                      200,
                                                      260,
                                                      mode=1)
-        self.ascii_save_as_image = ascii_save_as_image_widgets[0]
-        self.current_widgets += ascii_save_as_image_widgets
 
-        ascii_save_as_text_widgets = self.set_value('字符画保存为文本文件',
+        self.current_widgets += self.set_value('字符画保存为文本文件',
                                                     '字符画保存为文本文件',
                                                     False,
                                                     200,
@@ -213,10 +213,8 @@ class Root(Tk):
                                                     200,
                                                     200,
                                                     mode=1)
-        self.ascii_save_as_text = ascii_save_as_text_widgets[0]
-        self.current_widgets += ascii_save_as_text_widgets
 
-        show_percentage_widgets = self.set_value('显示转换进度',
+        self.current_widgets += self.set_value('显示转换进度',
                                                  '显示转换进度',
                                                  False,
                                                  150,
@@ -224,8 +222,6 @@ class Root(Tk):
                                                  450,
                                                  200,
                                                  mode=1)
-        self.show_percentage = show_percentage_widgets[0]
-        self.current_widgets += show_percentage_widgets
 
         self.current_widgets += self.set_value('图片宽度比例', '图片宽度比例', False, 100,
                                                28, 400, 260)
@@ -241,7 +237,9 @@ class Root(Tk):
         self.current_widgets.append(self.save_button)
 
         self.picture_color = IntVar()
-        img_color = eval('输出图片为彩色')
+        img_color = self.value_dict['输出图片为彩色']
+        if type(img_color) == list:
+            img_color = img_color[1]
         self.picture_color.set(1 if img_color else 0)
         self.output_picture_color = Checkbutton(
             self,
@@ -275,6 +273,7 @@ class Root(Tk):
         self.current_widgets.append(self.frame_show)
 
     def change_settings_window(self):
+        self.go_back = False
         self.quit_main_window()
         self.go_back_button = ttk.Button(self,
                                          text='返回',
@@ -373,6 +372,7 @@ class Root(Tk):
         self.show_current_config_options(0)
 
     def video_to_ascii_video_window(self):
+        self.go_back = False
         global 演示模式
         演示模式 = 1
         self.quit_main_window()
@@ -392,11 +392,65 @@ class Root(Tk):
                                                0, 200)
         self.current_widgets += self.set_value('比特数', '比特数', False, 80, 28, 0,
                                                300)
+        self.current_widgets += self.set_value('视频转换帧数区间', '视频转换帧数区间', False, 150, 28, 150,
+                                               200)
+        self.current_widgets += self.set_value('导出视频', '导出视频', False, 120, 40, 350,
+                                               200, mode=1)
+        self.current_widgets += self.set_value('字体路径', '字体路径', False, 100, 28, 150,
+                                               270)
+        self.current_widgets += self.set_value('字体大小', '字体大小', False, 100, 28, 300,
+                                               270)
+        self.current_widgets += self.set_value('视频输出帧数', '视频输出帧数', False, 120, 28, 450,
+                                               270)
+        self.save_button = ttk.Button(self,
+                                      text='保存当前配置',
+                                      command=self.save_current,
+                                      image=self.button_img2,
+                                      compound=CENTER)
+        self.save_button.place(x=600, y=350)
+        self.current_widgets.append(self.save_button)
+
+        self.picture_color = IntVar()
+        img_color = self.value_dict['输出图片为彩色']
+        if type(img_color) == list:
+            img_color = img_color[1]
+        self.picture_color.set(1 if img_color else 0)
+        self.output_picture_color = Checkbutton(
+            self,
+            text='输出图片为彩色',
+            variable=self.picture_color,
+            command=lambda: self.change_bool('输出图片为彩色'),
+            background='black',
+            foreground='white',
+            borderwidth=0,
+            highlightthickness=0,
+            font=('微软雅黑', 12),
+            selectcolor='black',
+            activebackground='white')
+        self.output_picture_color.var = self.picture_color
+        self.output_picture_color.place(x=520, y=200, width=150, height=40)
+        self.value_dict['输出图片为彩色'] = [
+            self.output_picture_color, img_color, False
+        ]
+        self.current_widgets.append(self.output_picture_color)
+
+        self.playing = ttk.Button(self,
+                                  text='运行',
+                                  command=self.play,
+                                  image=self.button_img2,
+                                  compound=CENTER)
+        self.playing.place(x=150, y=340)
+        self.current_widgets.append(self.playing)
+
+        self.frame_info.set('暂无读取帧')
+        self.frame_show.place(x=0, y=400, width=290, height=70)
+        self.current_widgets.append(self.frame_show)
 
     def video_to_ascii_img_window(self):
         pass
 
     def go_back_main_window(self):
+        self.go_back = True
         for i in self.current_widgets:
             i.place_forget()
         self.reset_main_window()
@@ -647,7 +701,7 @@ class Root(Tk):
                     str_msg = current_value[2]
                     if current == '':
                         current = None
-                    if not str_msg:
+                    if not str_msg and current is not None:
                         current = eval(current)
                     if current in ['', 'None']:
                         current = None
@@ -733,13 +787,15 @@ def plays():
                 txt += '\n'
             return txt
 
-    if current_value_dict['演示模式'] == 1:
+    if 演示模式 == 1:
         if current_value_dict['视频帧图路径']:
             os.chdir(current_value_dict['视频帧图路径'])
             frames = []
             count = 0
             file_ls = os.listdir()
             for i in file_ls:
+                if root.go_back:
+                    break                
                 frames.append(Image.open(i))
                 count += 1
                 root.frame_info.set(f'正在读取视频帧{count}')
@@ -759,6 +815,8 @@ def plays():
                 start_frame = 0
                 if not current_value_dict['视频转换帧数区间']:
                     while is_read:
+                        if root.go_back:
+                            break                        
                         cv2.imwrite(f"{count}.jpg", img)
                         frames.append(
                             Image.fromarray(
@@ -773,6 +831,8 @@ def plays():
                     vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
                     is_read, img = vidcap.read()
                     for k in range(no_of_frames):
+                        if root.go_back:
+                            break                        
                         if is_read:
                             cv2.imwrite(f"{count}.jpg", img)
                             frames.append(
@@ -789,6 +849,8 @@ def plays():
                 start_frame = 0
                 if not current_value_dict['视频转换帧数区间']:
                     while is_read:
+                        if root.go_back:
+                            break                        
                         frames.append(
                             Image.fromarray(
                                 cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
@@ -802,6 +864,8 @@ def plays():
                     vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
                     is_read, img = vidcap.read()
                     for k in range(no_of_frames):
+                        if root.go_back:
+                            break                        
                         if is_read:
                             frames.append(
                                 Image.fromarray(
@@ -833,6 +897,9 @@ def plays():
             font_y_len = int(font_y_len * 1.37)
             if is_color == 0:
                 for i in range(num_frames):
+                    if root.go_back:
+                        os.chdir('..')
+                        break
                     root.frame_info.set(f'正在转换第{start_frame + i + 1}帧')
                     root.update()
                     im = frames[i]
@@ -852,6 +919,9 @@ def plays():
                     im_txt.save(f'{i:0{n}d}.png')
             else:
                 for i in range(num_frames):
+                    if root.go_back:
+                        os.chdir('..')
+                        break                    
                     root.frame_info.set(f'正在转换第{start_frame + i + 1}帧')
                     root.update()
                     text_str_output = img_to_ascii(frames[i])
@@ -865,10 +935,11 @@ def plays():
                         dr.text((x, y), txt[j], fill=colors[j], font=font)
                         x += font_x_len
                     im_txt.save(f'{i:0{n}d}.png')
-
             root.frame_info.set(f'转换完成，开始输出为视频..')
             root.update()
             os.chdir('..')
+            if root.go_back:
+                return            
             file_name = os.path.splitext(
                 os.path.basename(current_value_dict['视频路径']))[0]
             output_filename = f'ascii_{file_name}.mp4'
