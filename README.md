@@ -40,7 +40,7 @@ ascii字符画图片在软件所在路径下的一个文件夹内）。
 
 # English version
 
-[中文](ascii_converter) English
+[中文](#ascii_converter) English
 
 This is a character picture converter I developed independently, which can convert any pictures and videos to ascii character pictures.
 
