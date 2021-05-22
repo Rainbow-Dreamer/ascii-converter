@@ -99,7 +99,7 @@ class Root(Tk):
         self.button_img2 = ImageTk.PhotoImage(
             Image.open('resources/button.png').resize((100, 40)))
         self.button_img3 = ImageTk.PhotoImage(
-            Image.open('resources/button.png').resize((150, 40)))        
+            Image.open('resources/button.png').resize((150, 40)))
         bg_image = Image.open('resources/5072612.jpg')
         ratio = 800 / bg_image.width
         self.bg_image = ImageTk.PhotoImage(
@@ -328,14 +328,14 @@ class Root(Tk):
                                                  command=self.choose_filename,
                                                  image=self.button_img2,
                                                  compound=CENTER,
-                                      style='New.TButton')
+                                                 style='New.TButton')
         self.choose_directory_button = ttk.Button(
             self,
             text='选择文件夹路径',
             command=self.choose_directory,
             image=self.button_img2,
             compound=CENTER,
-                                      style='New.TButton')
+            style='New.TButton')
         self.choose_filename_button.place(x=0, y=240)
         self.choose_directory_button.place(x=0, y=300)
         self.save = ttk.Button(self,
@@ -343,7 +343,7 @@ class Root(Tk):
                                command=self.save_current,
                                image=self.button_img2,
                                compound=CENTER,
-                                      style='New.TButton')
+                               style='New.TButton')
         self.save.place(x=0, y=360)
         self.saved_text = ttk.Label(self, text='saved')
         self.search_text = ttk.Label(self, text='搜索设置参数')
@@ -360,7 +360,7 @@ class Root(Tk):
             width=8,
             image=self.button_img2,
             compound=CENTER,
-                                      style='New.TButton')
+            style='New.TButton')
         self.down_button = ttk.Button(
             self,
             text='下一个',
@@ -368,7 +368,7 @@ class Root(Tk):
             width=8,
             image=self.button_img2,
             compound=CENTER,
-                                      style='New.TButton')
+            style='New.TButton')
         self.up_button.place(x=160, y=395)
         self.down_button.place(x=160, y=450)
         self.search_inds_list = []
@@ -391,7 +391,7 @@ class Root(Tk):
                                              command=self.change_sort,
                                              image=self.button_img3,
                                              compound=CENTER,
-                                      style='New.TButton')
+                                             style='New.TButton')
         self.sort_mode = 0
         self.change_sort()
         self.change_sort_button.place(x=160, y=340)
@@ -455,7 +455,7 @@ class Root(Tk):
         self.current_widgets += self.set_value('图片宽度比例', '图片宽度比例', False, 100,
                                                28, 300, 330)
         self.current_widgets += self.set_value('图片高度比例', '图片高度比例', False, 100,
-                                           28, 450, 330)
+                                               28, 450, 330)
 
         self.save_button = ttk.Button(self,
                                       text='保存当前配置',
@@ -656,8 +656,7 @@ class Root(Tk):
     def choose_filename(self):
         filename = filedialog.askopenfilename(initialdir='.',
                                               title="选择文件路径",
-                                              filetype=(("all files",
-                                                         "*.*"), ))
+                                              filetype=(("所有文件", "*.*"), ))
         self.config_contents.delete('1.0', END)
         self.config_contents.insert(END, f"'{filename}'")
         self.config_change(0)
