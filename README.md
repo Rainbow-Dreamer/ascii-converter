@@ -35,4 +35,3 @@ ascii字符画图片在软件所在路径下的一个文件夹内）。
 
 ![image](previews/3.jpg)
 
-可选择输出为彩色ascii字符画的图片
