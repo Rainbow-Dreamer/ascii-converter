@@ -42,7 +42,6 @@ ascii字符画图片在软件所在路径下的一个文件夹内）。
 
 [中文](ascii_converter) English
 
-# ascii_converter
 This is a character picture converter I developed independently, which can convert any pictures and videos to ascii character pictures.
 
 You can select the path of the image or video file you want to convert by the system's own file browser box. Support outputting pictures as new picture/text files after conversion. The video will be output directly as ascii character picture video after conversion (at the same time, it will output each frame of the converted video within the specified frame number) ascii character pictures in a folder under the path of the software).
