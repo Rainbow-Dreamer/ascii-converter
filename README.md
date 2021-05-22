@@ -1,4 +1,4 @@
-# ascii_converter
+# ascii-converter
 
 中文 [English](#English-version)
 
@@ -40,7 +40,7 @@ ascii字符画图片在软件所在路径下的一个文件夹内）。
 
 # English version
 
-[中文](#ascii_converter) English
+[中文](#ascii-converter) English
 
 This is a character picture converter I developed independently, which can convert any pictures and videos to ascii character pictures.
 
@@ -60,14 +60,14 @@ The current latest version can be [click here](https://www.jianguoyun.com/p/DSYM
 
 The following is a screenshot of the main interface of this character drawing converter I wrote.
 
-![image](https://github.com/Rainbow-Dreamer/ascii_converter/blob/master/previews/4.jpg?raw=true)
+![image](https://github.com/Rainbow-Dreamer/ascii-converter/blob/master/previews/4.jpg?raw=true)
 
 ### Example of conversion effect
 
 Convert the following image to ascii at a scaling ratio of 1:1 (scaling factor of 1)
 
-![image](https://github.com/Rainbow-Dreamer/ascii_converter/blob/master/previews/2.jpg?raw=True)
+![image](https://github.com/Rainbow-Dreamer/ascii-converter/blob/master/previews/2.jpg?raw=True)
 
 Open the converted text file with ascii characters in a text editor
 
-![image](https://github.com/Rainbow-Dreamer/ascii_converter/blob/master/previews/3.jpg?raw=True)
+![image](https://github.com/Rainbow-Dreamer/ascii-converter/blob/master/previews/3.jpg?raw=True)
