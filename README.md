@@ -1,4 +1,7 @@
 # ascii_converter
+
+中文 [English](#Englishversion)
+
 这是我一个人独立开发完成的字符画转换器，可以将任何图片和视频转换为ascii字符画。
 
 大家可以通过系统自带的文件浏览框自选想要转换的图片或者视频文件的路径，
@@ -35,3 +38,4 @@ ascii字符画图片在软件所在路径下的一个文件夹内）。
 
 ![image](previews/3.jpg)
 
+# English version
