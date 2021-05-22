@@ -1,4 +1,4 @@
-# ascii_converter
+# ascii-converter
 This is a character picture converter I developed independently, which can convert any pictures and videos to ascii character pictures.
 
 You can select the path of the image or video file you want to convert by the system's own file browser box. Support outputting pictures as new picture/text files after conversion. The video will be output directly as ascii character picture video after conversion (at the same time, it will output each frame of the converted video within the specified frame number) ascii character pictures in a folder under the path of the software).
@@ -17,15 +17,15 @@ The current latest version can be [click here](https://www.jianguoyun.com/p/DSYM
 
 The following is a screenshot of the main interface of this character drawing converter I wrote.
 
-![image](https://github.com/Rainbow-Dreamer/ascii_converter/blob/master/previews/4.jpg?raw=true)
+![image](https://github.com/Rainbow-Dreamer/ascii-converter/blob/master/previews/4.jpg?raw=true)
 
 ### Example of conversion effect
 
 Convert the following image to ascii at a scaling ratio of 1:1 (scaling factor of 1)
 
-![image](https://github.com/Rainbow-Dreamer/ascii_converter/blob/master/previews/2.jpg?raw=True)
+![image](https://github.com/Rainbow-Dreamer/ascii-converter/blob/master/previews/2.jpg?raw=True)
 
 Open the converted text file with ascii characters in a text editor
 
-![image](https://github.com/Rainbow-Dreamer/ascii_converter/blob/master/previews/3.jpg?raw=True)
+![image](https://github.com/Rainbow-Dreamer/ascii-converter/blob/master/previews/3.jpg?raw=True)
 
