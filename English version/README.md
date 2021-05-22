@@ -5,7 +5,7 @@ You can select the path of the image or video file you want to convert by the sy
 
 You can choose the range of frames you want to convert and the number of frames of the output video, set the scaling ratio and the font type and size of the picture or video frames.
 
-Besides, there are many other parameters that can be set. The software is in Chinese, so you can directly read the parameter names to customize them yourself.
+Besides, there are many other parameters that can be set.
 
 You can choose to output as color ascii characters to draw pictures and videos.
 
@@ -17,7 +17,7 @@ The current latest version can be [click here](https://www.jianguoyun.com/p/DSYM
 
 The following is a screenshot of the main interface of this character drawing converter I wrote.
 
-![image](https://github.com/Rainbow-Dreamer/ascii_converter/blob/master/previews/1.jpg?raw=true)
+![image](https://github.com/Rainbow-Dreamer/ascii_converter/blob/master/previews/4.jpg?raw=true)
 
 ### Example of conversion effect
 
