@@ -1070,7 +1070,7 @@ def plays():
                 os.remove(output_filename)
             ffmpeg.input(f'temp_video_images/%{n}d.png',
                          framerate=current_value_dict['视频输出帧数']).output(
-                             output_filename).run()
+                             output_filename, pix_fmt='yuv420p').run()
             root.frame_info.set(f'已成功输出为视频')
             root.update()
 

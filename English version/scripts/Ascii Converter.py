@@ -1108,7 +1108,7 @@ def plays():
             ffmpeg.input(
                 f'temp_video_images/%{n}d.png',
                 framerate=current_value_dict['video_frame_rate']).output(
-                    output_filename).run()
+                    output_filename, pix_fmt='yuv420p').run()
             root.frame_info.set(f'Video has been successfully exported')
             root.update()
 
