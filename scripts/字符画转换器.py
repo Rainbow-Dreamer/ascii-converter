@@ -1005,7 +1005,6 @@ def plays():
                             break
         root.frame_info.set('视频帧读取完成，开始转换')
         root.update()
-        counter = 0
         if 导出视频:
             if video_frames_path:
                 os.chdir(abs_path)

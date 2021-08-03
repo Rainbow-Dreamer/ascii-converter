@@ -1037,7 +1037,6 @@ def plays():
         root.frame_info.set(
             'Reading video frames are finished,\nstart to convert')
         root.update()
-        counter = 0
         if output_video:
             if video_frames_path:
                 os.chdir(abs_path)
