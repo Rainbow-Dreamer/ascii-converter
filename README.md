@@ -13,7 +13,7 @@ Besides, there are many other parameters that can be set.
 You can choose to output colored ASCII pictures and videos.
 
 (2020/12/14 Changes in the latest version: the previous function of displaying character pictures on a new screen was not felt to be very necessary, so it was removed in the current latest version)  
-(2021/5/21 I have recently rewritten the whole ASCII art converter, now here is the new version, if you want to download the old version you can [click here](https://www.jianguoyun.com/p/DWBzGQIQhPG0CBidmvUD) download)  
+(2021/5/21 I have recently rewritten the whole ASCII art converter, now here is the new version, if you want to download the old version you can [click here](https://www.jianguoyun.com/p/DWBzGQIQhPG0CBidmvUD) to download)  
 To download the current latest version you can [click here](https://www.jianguoyun.com/p/DSYMiNgQhPG0CBiLmvUD)
 
 ### Main interface
