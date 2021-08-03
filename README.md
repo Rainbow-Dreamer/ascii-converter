@@ -1,6 +1,6 @@
 # ascii-converter
 
-[中文](#ascii-converter中文版介绍) English
+[中文](#ascii-converter-1) English
 
 This is an ASCII art converter I developed on my own, which can convert any pictures and videos to ASCII art images, texts and videos.
 
@@ -32,7 +32,7 @@ Open the converted text file with ascii characters in a text editor
 
 ![image](https://github.com/Rainbow-Dreamer/ascii-converter/blob/master/previews/3.jpg?raw=True)
 
-# ascii-converter中文版介绍
+# ascii-converter
 
 中文 [English](#ascii-converter)
 
