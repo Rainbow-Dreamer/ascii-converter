@@ -902,11 +902,14 @@ def plays():
             return txt
 
     if 演示模式 == 1:
-        if current_value_dict['视频帧图路径']:
-            os.chdir(current_value_dict['视频帧图路径'])
+        video_frames_path = current_value_dict['视频帧图路径']
+        if video_frames_path:
+            abs_path = os.getcwd()
+            os.chdir(video_frames_path)
             frames = []
             count = 0
-            file_ls = os.listdir()
+            file_ls = [f for f in os.listdir() if os.path.isfile(f)]
+            file_ls.sort(key=lambda x: int(os.path.splitext(x)[0]))
             for i in file_ls:
                 if root.go_back:
                     break
@@ -914,6 +917,7 @@ def plays():
                 count += 1
                 root.frame_info.set(f'正在读取视频帧{count}')
                 root.update()
+            start_frame = 0
         else:
             vidcap = cv2.VideoCapture(current_value_dict['视频路径'])
             is_read, img = vidcap.read()
@@ -925,7 +929,6 @@ def plays():
             count = 0
             if 视频导出帧图片到文件夹:
                 try:
-                    os.mkdir(current_value_dict['视频帧图片保存路径'])
                     os.chdir(current_value_dict['视频帧图片保存路径'])
                 except:
                     if not os.path.exists('video_frame_ascii_images'):
@@ -936,7 +939,7 @@ def plays():
                     while is_read:
                         if root.go_back:
                             break
-                        cv2.imwrite(f"{count}.jpg", img)
+                        cv2.imwrite(f"{count}.png", img)
                         frames.append(
                             Image.fromarray(
                                 cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
@@ -953,7 +956,7 @@ def plays():
                         if root.go_back:
                             break
                         if is_read:
-                            cv2.imwrite(f"{count}.jpg", img)
+                            cv2.imwrite(f"{count}.png", img)
                             frames.append(
                                 Image.fromarray(
                                     cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
@@ -1004,6 +1007,8 @@ def plays():
         root.update()
         counter = 0
         if 导出视频:
+            if video_frames_path:
+                os.chdir(abs_path)
             try:
                 os.mkdir('temp_video_images')
             except:
@@ -1063,8 +1068,12 @@ def plays():
             os.chdir('..')
             if root.go_back:
                 return
-            file_name = os.path.splitext(
-                os.path.basename(current_value_dict['视频路径']))[0]
+            if video_frames_path:
+                file_name = os.path.splitext(
+                    os.path.basename(video_frames_path))[0]
+            else:
+                file_name = os.path.splitext(
+                    os.path.basename(current_value_dict['视频路径']))[0]
             output_filename = f'ascii_{file_name}.mp4'
             if output_filename in os.listdir():
                 os.remove(output_filename)
