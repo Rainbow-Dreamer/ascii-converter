@@ -24,7 +24,7 @@ The following is a screenshot of the main interface of this ASCII art converter 
 
 ### Example of conversion effect
 
-Convert the following image to ASCII at a scaling ratio of 1:1 (scaling factor of 1)
+Convert the following image to ASCII at a scaling ratio of 1:2 (scaling factor of 2)
 
 ![image](https://github.com/Rainbow-Dreamer/ascii-converter/blob/master/previews/2.jpg?raw=True)
 
@@ -64,7 +64,7 @@ ASCII字符画图片在软件所在路径下的一个文件夹内）。
 
 ### 转换效果示例
 
-把以下的图片按照缩放比例1:1（缩放倍数为1）转换为ASCII字符画
+把以下的图片按照缩放比例1:2（缩放倍数为2）转换为ASCII字符画
 
 ![image](previews/2.jpg)
 
