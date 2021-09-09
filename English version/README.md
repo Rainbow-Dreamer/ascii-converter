@@ -22,7 +22,7 @@ The following is a screenshot of the main interface of this ASCII art converter 
 
 ### Example of conversion effect
 
-Convert the following image to ASCII at a scaling ratio of 1:1 (scaling factor of 1)
+Convert the following image to ASCII at a scaling ratio of 1:2 (scaling factor of 2)
 
 ![image](https://github.com/Rainbow-Dreamer/ascii-converter/blob/master/previews/2.jpg?raw=True)
 
