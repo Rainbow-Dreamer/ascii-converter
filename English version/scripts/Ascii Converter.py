@@ -1084,6 +1084,8 @@ def plays():
                             y += font_y_len
                         dr.text((x, y), text_str[j], fill='black', font=font)
                         x += font_x_len
+                    if root.go_back:
+                        break
                     im_txt.save(f'{i:0{n}d}.png')
             else:
                 for i in range(num_frames):
@@ -1106,6 +1108,8 @@ def plays():
                             y += font_y_len
                         dr.text((x, y), txt[j], fill=colors[j], font=font)
                         x += font_x_len
+                    if root.go_back:
+                        break
                     im_txt.save(f'{i:0{n}d}.png')
             root.frame_info.set(
                 'Conversion are finished,\nstart to export video..')
