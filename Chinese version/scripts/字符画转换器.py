@@ -2,6 +2,7 @@ with open('scripts/config.py', encoding='utf-8-sig') as f:
     text = f.read()
     exec(text, globals())
 var_counter = 1
+abs_path = os.getcwd()
 
 
 def get_all_config_options(text):
@@ -164,6 +165,12 @@ class Root(Tk):
         self.value_dict = {i: eval(i) for i in all_config_options}
         self.go_back = False
 
+        try:
+            with open('browse memory.txt', encoding='utf-8-sig') as f:
+                self.last_place = f.read()
+        except:
+            self.last_place = "."
+
     def quit_main_window(self):
         self.img_to_ascii_img_button.place_forget()
         self.video_to_ascii_video_button.place_forget()
@@ -186,6 +193,8 @@ class Root(Tk):
         self.go_back = False
         global 演示模式
         演示模式 = 0
+        global 导出视频
+        导出视频 = False
         self.quit_main_window()
         self.current_widgets = []
 
@@ -558,6 +567,7 @@ class Root(Tk):
         self.current_widgets.append(self.frame_show)
 
     def go_back_main_window(self):
+        os.chdir(abs_path)
         self.go_back = True
         global 导出视频
         导出视频 = False
@@ -654,7 +664,7 @@ class Root(Tk):
             self.config_contents.insert(END, str(current_config_value))
 
     def choose_filename(self):
-        filename = filedialog.askopenfilename(initialdir='.',
+        filename = filedialog.askopenfilename(initialdir=self.last_place,
                                               title="选择文件路径",
                                               filetype=(("所有文件", "*.*"), ))
         self.config_contents.delete('1.0', END)
@@ -663,7 +673,7 @@ class Root(Tk):
 
     def choose_directory(self):
         directory = filedialog.askdirectory(
-            initialdir='.',
+            initialdir=self.last_place,
             title="选择文件夹路径",
         )
         self.config_contents.delete('1.0', END)
@@ -773,15 +783,20 @@ class Root(Tk):
 
     def search_path(self, obj, mode=0):
         if mode == 0:
-            filename = filedialog.askopenfilename(initialdir='.',
+            filename = filedialog.askopenfilename(initialdir=self.last_place,
                                                   title="选择文件",
                                                   filetype=(("所有文件", "*.*"), ))
         elif mode == 1:
-            filename = filedialog.askdirectory(initialdir='.', title="选择文件夹")
+            filename = filedialog.askdirectory(initialdir=self.last_place,
+                                               title="选择文件夹")
         if filename:
             obj.delete('1.0', END)
             obj.insert(END, filename)
             obj.func(1)
+            memory = os.path.dirname(filename)
+            with open('browse memory.txt', 'w', encoding='utf-8-sig') as f:
+                f.write(memory)
+            self.last_place = memory
 
     def show_saved(self):
         self.frame_info.set('当前配置保存完成')
@@ -904,28 +919,15 @@ def plays():
     if 演示模式 == 1:
         video_frames_path = current_value_dict['视频帧图路径']
         if video_frames_path:
-            abs_path = os.getcwd()
             os.chdir(video_frames_path)
-            frames = []
-            count = 0
             file_ls = [f for f in os.listdir() if os.path.isfile(f)]
             file_ls.sort(key=lambda x: int(os.path.splitext(x)[0]))
-            for i in file_ls:
-                if root.go_back:
-                    break
-                frames.append(Image.open(i))
-                count += 1
-                root.frame_info.set(f'正在读取视频帧{count}')
-                root.update()
+            frames = (Image.open(i) for i in file_ls)
             start_frame = 0
         else:
-            vidcap = cv2.VideoCapture(current_value_dict['视频路径'])
-            is_read, img = vidcap.read()
-            if not is_read:
-                root.frame_info.set('视频路径不存在')
-                root.update()
+            if not current_value_dict['视频路径']:
                 return
-            frames = []
+            vidcap = cv2.VideoCapture(current_value_dict['视频路径'])
             count = 0
             if 视频导出帧图片到文件夹:
                 try:
@@ -934,32 +936,38 @@ def plays():
                     if not os.path.exists('video_frame_ascii_images'):
                         os.mkdir('video_frame_ascii_images')
                     os.chdir('video_frame_ascii_images')
+                    for each in os.listdir():
+                        os.remove(each)
                 start_frame = 0
                 if not current_value_dict['视频转换帧数区间']:
+                    whole_frame_number = int(
+                        vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
+                    frames = (Image.fromarray(
+                        cv2.cvtColor(vidcap.read()[1], cv2.COLOR_BGR2RGB))
+                              for k in range(whole_frame_number))
+                    is_read, img = vidcap.read()
                     while is_read:
                         if root.go_back:
                             break
                         cv2.imwrite(f"{count}.png", img)
-                        frames.append(
-                            Image.fromarray(
-                                cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
                         is_read, img = vidcap.read()
                         count += 1
                         root.frame_info.set(f'正在读取并导出视频帧{count}')
                         root.update()
+                    vidcap.set(cv2.CAP_PROP_POS_FRAMES, 0)
                 else:
                     start_frame, to_frame = current_value_dict['视频转换帧数区间']
                     no_of_frames = to_frame - start_frame
                     vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
+                    frames = (Image.fromarray(
+                        cv2.cvtColor(vidcap.read()[1], cv2.COLOR_BGR2RGB))
+                              for k in range(no_of_frames))
                     is_read, img = vidcap.read()
                     for k in range(no_of_frames):
                         if root.go_back:
                             break
                         if is_read:
                             cv2.imwrite(f"{count}.png", img)
-                            frames.append(
-                                Image.fromarray(
-                                    cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
                             is_read, img = vidcap.read()
                             count += 1
                             root.frame_info.set(
@@ -967,53 +975,50 @@ def plays():
                             root.update()
                         else:
                             break
-                os.chdir('..')
+                    vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
+                os.chdir(abs_path)
                 root.frame_info.set('视频帧图片导出完成')
                 root.update()
                 return
             else:
                 start_frame = 0
                 if not current_value_dict['视频转换帧数区间']:
-                    while is_read:
-                        if root.go_back:
-                            break
-                        frames.append(
-                            Image.fromarray(
-                                cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
-                        is_read, img = vidcap.read()
-                        count += 1
-                        root.frame_info.set(f'正在读取视频帧{count}')
-                        root.update()
+                    whole_frame_number = int(
+                        vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
+                    frames = (Image.fromarray(
+                        cv2.cvtColor(vidcap.read()[1], cv2.COLOR_BGR2RGB))
+                              for k in range(whole_frame_number))
+                    frame_length = whole_frame_number
                 else:
                     start_frame, to_frame = current_value_dict['视频转换帧数区间']
                     no_of_frames = to_frame - start_frame
+                    frame_length = no_of_frames
                     vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
-                    is_read, img = vidcap.read()
-                    for k in range(no_of_frames):
-                        if root.go_back:
-                            break
-                        if is_read:
-                            frames.append(
-                                Image.fromarray(
-                                    cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
-                            is_read, img = vidcap.read()
-                            count += 1
-                            root.frame_info.set(
-                                f'正在读取视频帧{start_frame + count}')
-                            root.update()
-                        else:
-                            break
-        root.frame_info.set('视频帧读取完成，开始转换')
-        root.update()
+                    frames = (Image.fromarray(
+                        cv2.cvtColor(vidcap.read()[1], cv2.COLOR_BGR2RGB))
+                              for k in range(no_of_frames))
         if 导出视频:
             if video_frames_path:
+                file_name = os.path.splitext(
+                    os.path.basename(video_frames_path))[0]
+            else:
+                file_name = os.path.splitext(
+                    os.path.basename(current_value_dict['视频路径']))[0]
+            output_filename = filedialog.asksaveasfilename(
+                initialdir='.',
+                initialfile=f'ascii_{file_name}.mp4',
+                title="选择输出视频的文件路径",
+                filetype=(("所有文件", "*.*"), ))
+            if not output_filename:
+                return
+            if video_frames_path:
                 os.chdir(abs_path)
-            try:
+            if not os.path.exists('temp_video_images'):
                 os.mkdir('temp_video_images')
-            except:
-                pass
             os.chdir('temp_video_images')
-            num_frames = len(frames)
+            for each in os.listdir():
+                os.remove(each)
+            num_frames = frame_length
             n = len(str(num_frames))
             try:
                 font = ImageFont.truetype(current_value_dict['字体路径'],
@@ -1025,11 +1030,15 @@ def plays():
             if is_color == 0:
                 for i in range(num_frames):
                     if root.go_back:
-                        os.chdir('..')
                         break
-                    root.frame_info.set(f'正在转换第{start_frame + i + 1}帧')
+                    root.frame_info.set(
+                        f'正在转换第{start_frame + i + 1}/{start_frame + num_frames + 1}帧'
+                    )
                     root.update()
-                    im = frames[i]
+                    try:
+                        im = next(frames)
+                    except:
+                        break
                     text_str = img_to_ascii(im)
                     im_txt = Image.new(
                         "L", (int(im.width / current_value_dict['缩放倍数']),
@@ -1047,11 +1056,15 @@ def plays():
             else:
                 for i in range(num_frames):
                     if root.go_back:
-                        os.chdir('..')
                         break
-                    root.frame_info.set(f'正在转换第{start_frame + i + 1}帧')
+                    root.frame_info.set(
+                        f'正在转换第{start_frame + i + 1}/{start_frame + num_frames + 1}帧'
+                    )
                     root.update()
-                    text_str_output = img_to_ascii(frames[i])
+                    try:
+                        text_str_output = img_to_ascii(next(frames))
+                    except:
+                        break
                     txt, colors, im_txt = text_str_output
                     dr = ImageDraw.Draw(im_txt)
                     x = y = 0
@@ -1062,31 +1075,19 @@ def plays():
                         dr.text((x, y), txt[j], fill=colors[j], font=font)
                         x += font_x_len
                     im_txt.save(f'{i:0{n}d}.png')
-            root.frame_info.set(f'转换完成，开始输出为视频..')
+            root.frame_info.set('转换完成，开始输出为视频..')
             root.update()
-            os.chdir('..')
+            os.chdir(abs_path)
             if root.go_back:
                 return
-            if video_frames_path:
-                file_name = os.path.splitext(
-                    os.path.basename(video_frames_path))[0]
-            else:
-                file_name = os.path.splitext(
-                    os.path.basename(current_value_dict['视频路径']))[0]
-            output_filename = f'ascii_{file_name}.mp4'
-            if output_filename in os.listdir():
-                os.remove(output_filename)
+            current_framerate = current_value_dict['视频输出帧数']
+            if not current_framerate:
+                current_framerate = vidcap.get(cv2.CAP_PROP_FPS)
             ffmpeg.input(f'temp_video_images/%{n}d.png',
-                         framerate=current_value_dict['视频输出帧数']).output(
+                         framerate=current_framerate).output(
                              output_filename, pix_fmt='yuv420p').run()
-            root.frame_info.set(f'已成功输出为视频')
+            root.frame_info.set('已成功输出为视频')
             root.update()
-
-        text_str_output = img_to_ascii(frames[0])
-        if type(text_str_output) != str:
-            text_str = text_str_output[0]
-        else:
-            text_str = text_str_output
     else:
         root.frame_info.set('图片转换中')
         root.update()
@@ -1109,14 +1110,27 @@ def plays():
         if current_value_dict['字符画保存为文本文件']:
             root.frame_info.set('图片转换完成，正在写入字符画为\n文本文件...')
             root.update()
-            with open(f'ascii_{file_name}.txt', 'w',
-                      encoding='utf-8-sig') as f:
+            output_filename = filedialog.asksaveasfilename(
+                initialdir='.',
+                initialfile=f'ascii_{file_name}.txt',
+                title="选择输出字符画文本文件的路径",
+                filetype=(("所有文件", "*.*"), ))
+            if not output_filename:
+                return
+            with open(output_filename, 'w', encoding='utf-8-sig') as f:
                 f.write(text_str)
             root.frame_info.set('已成功写入文本文件')
             root.update()
         if current_value_dict['字符画保存为图片']:
             root.frame_info.set('图片转换完成，正在输出字符画为图片...')
             root.update()
+            output_filename = filedialog.asksaveasfilename(
+                initialdir='.',
+                initialfile=f'ascii_{file_name}.png',
+                title="选择输出字符画图片的路径",
+                filetype=(("所有文件", "*.*"), ))
+            if not output_filename:
+                return
             try:
                 font = ImageFont.truetype(current_value_dict['字体路径'],
                                           size=current_value_dict['字体大小'])
@@ -1137,7 +1151,7 @@ def plays():
                         y += font_y_len
                     dr.text((x, y), text_str[i], fill='black', font=font)
                     x += font_x_len
-                im_txt.save(f'ascii_{file_name}.png')
+                im_txt.save(output_filename)
 
             else:
                 txt, colors, im_txt = text_str_output
@@ -1149,7 +1163,7 @@ def plays():
                         y += font_y_len
                     dr.text((x, y), txt[i], fill=colors[i], font=font)
                     x += font_x_len
-                im_txt.save(f'ascii_{file_name}.png')
+                im_txt.save(output_filename)
 
             root.frame_info.set('已成功输出为图片')
             root.update()
