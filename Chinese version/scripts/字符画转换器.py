@@ -1032,7 +1032,7 @@ def plays():
                     if root.go_back:
                         break
                     root.frame_info.set(
-                        f'正在转换第{start_frame + i + 1}/{start_frame + num_frames + 1}帧'
+                        f'正在转换第{start_frame + i + 1}/{start_frame + num_frames}帧'
                     )
                     root.update()
                     try:
@@ -1060,7 +1060,7 @@ def plays():
                     if root.go_back:
                         break
                     root.frame_info.set(
-                        f'正在转换第{start_frame + i + 1}/{start_frame + num_frames + 1}帧'
+                        f'正在转换第{start_frame + i + 1}/{start_frame + num_frames}帧'
                     )
                     root.update()
                     try:

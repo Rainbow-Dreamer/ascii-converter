@@ -1063,7 +1063,7 @@ def plays():
                     if root.go_back:
                         break
                     root.frame_info.set(
-                        f'Converting video frame {start_frame + i + 1}/{start_frame + num_frames + 1}'
+                        f'Converting video frame {start_frame + i + 1}/{start_frame + num_frames}'
                     )
                     root.update()
                     try:
@@ -1092,7 +1092,7 @@ def plays():
                     if root.go_back:
                         break
                     root.frame_info.set(
-                        f'Converting video frame {start_frame + i + 1}/{start_frame + num_frames + 1}'
+                        f'Converting video frame {start_frame + i + 1}/{start_frame + num_frames}'
                     )
                     root.update()
                     try:
