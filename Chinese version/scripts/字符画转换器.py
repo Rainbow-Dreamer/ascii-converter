@@ -668,7 +668,7 @@ class Root(Tk):
                                               title="选择文件路径",
                                               filetype=(("所有文件", "*.*"), ))
         self.config_contents.delete('1.0', END)
-        self.config_contents.insert(END, f"'{filename}'")
+        self.config_contents.insert(END, filename)
         self.config_change(0)
 
     def choose_directory(self):
@@ -677,7 +677,7 @@ class Root(Tk):
             title="选择文件夹路径",
         )
         self.config_contents.delete('1.0', END)
-        self.config_contents.insert(END, f"'{directory}'")
+        self.config_contents.insert(END, directory)
         self.config_change(0)
 
     def insert_value(self, value):
