@@ -40,9 +40,9 @@ Open the converted text file with ASCII characters in a text editor
 
 This ASCII converter currently only supports Windows.
 
-You can download the latest version [here](https://www.jianguoyun.com/p/DSYMiNgQhPG0CBiLmvUD)
+You can download the latest version [here](https://www.jianguoyun.com/p/DQQGsNAQhPG0CBiDs6QE)
 
-For the old version, you can download [here](https://www.jianguoyun.com/p/DWBzGQIQhPG0CBidmvUD)
+For the old version, you can download [here](https://www.jianguoyun.com/p/DYVuhLsQhPG0CBiCs6QE)
 
 ## Changelog
 
@@ -92,9 +92,9 @@ For the old version, you can download [here](https://www.jianguoyun.com/p/DWBzGQ
 
 这个ASCII字符画转换器目前只支持Windows。
 
-你可以从[这里](https://www.jianguoyun.com/p/DSYMiNgQhPG0CBiLmvUD)下载最新的版本
+你可以从[这里](https://www.jianguoyun.com/p/DQQGsNAQhPG0CBiDs6QE)下载最新的版本
 
-你可以从[这里](https://www.jianguoyun.com/p/DWBzGQIQhPG0CBidmvUD)下载旧版本
+你可以从[这里](https://www.jianguoyun.com/p/DYVuhLsQhPG0CBiCs6QE)下载旧版本
 
 ## 更新日志
 
