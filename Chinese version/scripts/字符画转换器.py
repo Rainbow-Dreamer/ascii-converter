@@ -667,6 +667,8 @@ class Root(Tk):
         filename = filedialog.askopenfilename(initialdir=self.last_place,
                                               title="选择文件路径",
                                               filetype=(("所有文件", "*.*"), ))
+        if not filename:
+            return
         self.config_contents.delete('1.0', END)
         self.config_contents.insert(END, filename)
         self.config_change(0)
@@ -676,6 +678,8 @@ class Root(Tk):
             initialdir=self.last_place,
             title="选择文件夹路径",
         )
+        if not directory:
+            return
         self.config_contents.delete('1.0', END)
         self.config_contents.insert(END, directory)
         self.config_change(0)
