@@ -165,6 +165,10 @@ class Root(Tk):
                                     anchor='nw')
         global all_config_options
         all_config_options = get_all_config_options(text)
+        global translate_all_config_options
+        translate_all_config_options = [
+            translate_dict[i] for i in all_config_options
+        ]
         self.value_dict = {i: eval(i) for i in all_config_options}
         self.go_back = False
 
@@ -643,7 +647,7 @@ class Root(Tk):
             return
         self.search_inds_list = [
             i for i in range(self.options_num)
-            if current in all_config_options[i]
+            if current in translate_all_config_options[i]
         ]
         if self.search_inds_list:
             self.search_inds = 0
