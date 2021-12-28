@@ -35,6 +35,7 @@ def change(var, new, is_str=True):
 
 
 class Root(Tk):
+
     def __init__(self):
         super(Root, self).__init__()
         self.title("Ascii Converter 字符画转换器")
@@ -877,17 +878,19 @@ def plays():
         return current_value_dict['字符集'][int(gray / unit)]
 
     def img_to_ascii(im, show_percentage=False):
-        WIDTH = int((im.width * current_value_dict['图片宽度比例'] / 6) /
-                    current_value_dict['缩放倍数'])
-        HEIGHT = int((im.height * current_value_dict['图片高度比例'] / 12) /
-                     current_value_dict['缩放倍数'])
+        WIDTH = int(
+            (im.width * current_value_dict['图片宽度比例'] /
+             current_value_dict['图片宽度比例缩放倍数']) / current_value_dict['缩放倍数'])
+        HEIGHT = int(
+            (im.height * current_value_dict['图片高度比例'] /
+             current_value_dict['图片高度比例缩放倍数']) / current_value_dict['缩放倍数'])
         if show_percentage:
             whole_count = WIDTH * HEIGHT
             count = 0
         im_resize = im.resize((WIDTH, HEIGHT), Image.ANTIALIAS)
         txt = ""
         if is_color and (current_value_dict['字符画保存为图片'] or 导出视频):
-            im_txt = Image.new("RGB",
+            im_txt = Image.new(current_value_dict['彩色字符画图片样式'],
                                (int(im.width / current_value_dict['缩放倍数']),
                                 int(im.height / current_value_dict['缩放倍数'])),
                                (2**current_value_dict['比特数'] - 1,
@@ -1014,6 +1017,7 @@ def plays():
                 title="选择输出视频的文件路径",
                 filetype=(("所有文件", "*.*"), ))
             if not output_filename:
+                root.frame_info.set('已取消输出')
                 return
             if video_frames_path:
                 os.chdir(abs_path)
@@ -1031,6 +1035,12 @@ def plays():
                 font = ImageFont.load_default()
             font_x_len, font_y_len = font.getsize(current_value_dict['字符集'][1])
             font_y_len = int(font_y_len * 1.37)
+            字符画图片横向间距 = current_value_dict['字符画图片横向间距']
+            字符画图片纵向间距 = current_value_dict['字符画图片纵向间距']
+            if 字符画图片横向间距 is not None:
+                font_x_len = float(字符画图片横向间距)
+            if 字符画图片纵向间距 is not None:
+                font_y_len = float(字符画图片纵向间距)
             if is_color == 0:
                 for i in range(num_frames):
                     if root.go_back:
@@ -1045,16 +1055,18 @@ def plays():
                         break
                     text_str = img_to_ascii(im)
                     im_txt = Image.new(
-                        "L", (int(im.width / current_value_dict['缩放倍数']),
-                              int(im.height / current_value_dict['缩放倍数'])),
-                        'white')
+                        current_value_dict['字符画图片格式'],
+                        (int(im.width / current_value_dict['缩放倍数']),
+                         int(im.height / current_value_dict['缩放倍数'])),
+                        current_value_dict['字符画图片初始背景色'])
                     dr = ImageDraw.Draw(im_txt)
                     x = y = 0
+                    字符画图片字符颜色 = current_value_dict['字符画图片字符颜色']
                     for j in range(len(text_str)):
                         if text_str[j] == "\n":
                             x = 0
                             y += font_y_len
-                        dr.text((x, y), text_str[j], fill='black', font=font)
+                        dr.text((x, y), text_str[j], fill=字符画图片字符颜色, font=font)
                         x += font_x_len
                     if root.go_back:
                         break
@@ -1124,6 +1136,7 @@ def plays():
                 title="选择输出字符画文本文件的路径",
                 filetype=(("所有文件", "*.*"), ))
             if not output_filename:
+                root.frame_info.set('已取消输出')
                 return
             with open(output_filename, 'w', encoding='utf-8-sig') as f:
                 f.write(text_str)
@@ -1138,6 +1151,7 @@ def plays():
                 title="选择输出字符画图片的路径",
                 filetype=(("所有文件", "*.*"), ))
             if not output_filename:
+                root.frame_info.set('已取消输出')
                 return
             try:
                 font = ImageFont.truetype(current_value_dict['字体路径'],
@@ -1146,20 +1160,29 @@ def plays():
                 font = ImageFont.load_default()
             font_x_len, font_y_len = font.getsize(current_value_dict['字符集'][1])
             font_y_len = int(font_y_len * 1.37)
+            字符画图片横向间距 = current_value_dict['字符画图片横向间距']
+            字符画图片纵向间距 = current_value_dict['字符画图片纵向间距']
+            if 字符画图片横向间距 is not None:
+                font_x_len = float(字符画图片横向间距)
+            if 字符画图片纵向间距 is not None:
+                font_y_len = float(字符画图片纵向间距)
             if is_color == 0:
                 im_txt = Image.new(
-                    "L", (int(im.width / current_value_dict['缩放倍数']),
-                          int(im.height / current_value_dict['缩放倍数'])),
-                    'white')
+                    current_value_dict['字符画图片格式'],
+                    (int(im.width / current_value_dict['缩放倍数']),
+                     int(im.height / current_value_dict['缩放倍数'])),
+                    current_value_dict['字符画图片初始背景色'])
                 dr = ImageDraw.Draw(im_txt)
                 x = y = 0
+                字符画图片字符颜色 = current_value_dict['字符画图片字符颜色']
                 for i in range(len(text_str)):
                     if text_str[i] == "\n":
                         x = 0
                         y += font_y_len
-                    dr.text((x, y), text_str[i], fill='black', font=font)
+                    dr.text((x, y), text_str[i], fill=字符画图片字符颜色, font=font)
                     x += font_x_len
                 im_txt.save(output_filename)
+                print(current_value_dict['字符画图片字符颜色'])
 
             else:
                 txt, colors, im_txt = text_str_output
