@@ -987,7 +987,8 @@ class Root(Tk):
                     f'正在转换第{start_frame + i + 1}/{start_frame + num_frames}帧')
                 self.update()
                 try:
-                    text_str_output = self.img_to_ascii(next(frames))
+                    text_str_output = self.img_to_ascii(next(frames),
+                                                        mode=self.is_color)
                 except:
                     break
                 txt, colors, im_txt = text_str_output
