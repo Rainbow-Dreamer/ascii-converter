@@ -35,6 +35,7 @@ def change(var, new, is_str=True):
 
 
 class Root(Tk):
+
     def __init__(self):
         super(Root, self).__init__()
         self.title("Ascii Converter")
@@ -132,7 +133,7 @@ class Root(Tk):
         self.title_label.place(x=260, y=10)
         self.img_to_ascii_img_button = ttk.Button(
             self,
-            text='Images to Ascii\nImages/Texts',
+            text='Image to Ascii\nImages/Texts',
             image=self.button_img,
             compound=CENTER,
             command=self.img_to_ascii_img_window)
@@ -222,8 +223,8 @@ class Root(Tk):
         self.current_widgets += self.set_value('bit number', 'bit_number',
                                                False, 120, 28, 0, 300)
 
-        self.current_widgets += self.set_value('save as ascii images',
-                                               'save_as_ascii_images',
+        self.current_widgets += self.set_value('save as ascii image',
+                                               'save_as_ascii_image',
                                                False,
                                                220,
                                                40,
@@ -267,15 +268,15 @@ class Root(Tk):
         self.current_widgets.append(self.save_button)
 
         self.picture_color = IntVar()
-        img_color = self.value_dict['colored_images']
+        img_color = self.value_dict['colored_image']
         if type(img_color) == list:
             img_color = img_color[1]
         self.picture_color.set(1 if img_color else 0)
         self.output_picture_color = Checkbutton(
             self,
-            text='colored images',
+            text='colored image',
             variable=self.picture_color,
-            command=lambda: self.change_bool('colored_images'),
+            command=lambda: self.change_bool('colored_image'),
             background='black',
             foreground='white',
             borderwidth=0,
@@ -285,7 +286,7 @@ class Root(Tk):
             activebackground='white')
         self.output_picture_color.var = self.picture_color
         self.output_picture_color.place(x=620, y=200, width=160, height=40)
-        self.value_dict['colored_images'] = [
+        self.value_dict['colored_image'] = [
             self.output_picture_color, img_color, False
         ]
         self.current_widgets.append(self.output_picture_color)
@@ -493,15 +494,15 @@ class Root(Tk):
         self.current_widgets.append(self.save_button)
 
         self.picture_color = IntVar()
-        img_color = self.value_dict['colored_images']
+        img_color = self.value_dict['colored_image']
         if type(img_color) == list:
             img_color = img_color[1]
         self.picture_color.set(1 if img_color else 0)
         self.output_picture_color = Checkbutton(
             self,
-            text='colored images',
+            text='colored image',
             variable=self.picture_color,
-            command=lambda: self.change_bool('colored_images'),
+            command=lambda: self.change_bool('colored_image'),
             background='black',
             foreground='white',
             borderwidth=0,
@@ -511,7 +512,7 @@ class Root(Tk):
             activebackground='white')
         self.output_picture_color.var = self.picture_color
         self.output_picture_color.place(x=620, y=280, width=160, height=40)
-        self.value_dict['colored_images'] = [
+        self.value_dict['colored_image'] = [
             self.output_picture_color, img_color, False
         ]
         self.current_widgets.append(self.output_picture_color)
@@ -898,21 +899,23 @@ def plays():
         return current_value_dict['ascii_character_set'][int(gray / unit)]
 
     def img_to_ascii(im, show_percentage=False):
-        WIDTH = int((im.width * current_value_dict['image_width_ratio'] / 6) /
+        WIDTH = int((im.width * current_value_dict['image_width_ratio'] /
+                     current_value_dict['image_width_ratio_scale']) /
                     current_value_dict['resize_ratio'])
-        HEIGHT = int(
-            (im.height * current_value_dict['image_height_ratio'] / 12) /
-            current_value_dict['resize_ratio'])
+        HEIGHT = int((im.height * current_value_dict['image_height_ratio'] /
+                      current_value_dict['image_height_ratio_scale']) /
+                     current_value_dict['resize_ratio'])
         if show_percentage:
             whole_count = WIDTH * HEIGHT
             count = 0
         im_resize = im.resize((WIDTH, HEIGHT), Image.ANTIALIAS)
         txt = ""
-        if is_color and (current_value_dict['save_as_ascii_images']
+        if is_color and (current_value_dict['save_as_ascii_image']
                          or output_video):
             im_txt = Image.new(
-                "RGB", (int(im.width / current_value_dict['resize_ratio']),
-                        int(im.height / current_value_dict['resize_ratio'])),
+                current_value_dict['colored_ascii_image_mode'],
+                (int(im.width / current_value_dict['resize_ratio']),
+                 int(im.height / current_value_dict['resize_ratio'])),
                 (2**current_value_dict['bit_number'] - 1,
                  2**current_value_dict['bit_number'] - 1,
                  2**current_value_dict['bit_number'] - 1))
@@ -1044,6 +1047,7 @@ def plays():
                 title="Choose the file path of the exported video",
                 filetype=(("All files", "*.*"), ))
             if not output_filename:
+                root.frame_info.set('canceled exporting')
                 return
             if video_frames_path:
                 os.chdir(abs_path)
@@ -1062,6 +1066,12 @@ def plays():
             font_x_len, font_y_len = font.getsize(
                 current_value_dict['ascii_character_set'][1])
             font_y_len = int(font_y_len * 1.37)
+            ascii_image_padding_x = current_value_dict['ascii_image_padding_x']
+            ascii_image_padding_y = current_value_dict['ascii_image_padding_y']
+            if ascii_image_padding_x is not None:
+                font_x_len = float(ascii_image_padding_x)
+            if ascii_image_padding_y is not None:
+                font_y_len = float(ascii_image_padding_y)
             if is_color == 0:
                 for i in range(num_frames):
                     if root.go_back:
@@ -1076,17 +1086,22 @@ def plays():
                         break
                     text_str = img_to_ascii(im)
                     im_txt = Image.new(
-                        "L",
+                        current_value_dict['ascii_image_mode'],
                         (int(im.width / current_value_dict['resize_ratio']),
                          int(im.height / current_value_dict['resize_ratio'])),
-                        'white')
+                        current_value_dict['ascii_image_init_bg_color'])
                     dr = ImageDraw.Draw(im_txt)
                     x = y = 0
+                    ascii_image_character_color = current_value_dict[
+                        'ascii_image_character_color']
                     for j in range(len(text_str)):
                         if text_str[j] == "\n":
                             x = 0
                             y += font_y_len
-                        dr.text((x, y), text_str[j], fill='black', font=font)
+                        dr.text((x, y),
+                                text_str[j],
+                                fill=ascii_image_character_color,
+                                font=font)
                         x += font_x_len
                     if root.go_back:
                         break
@@ -1160,12 +1175,13 @@ def plays():
                 title="Choose the file path of the exported ASCII text file",
                 filetype=(("All files", "*.*"), ))
             if not output_filename:
+                root.frame_info.set('canceled exporting')
                 return
             with open(output_filename, 'w', encoding='utf-8-sig') as f:
                 f.write(text_str)
             root.frame_info.set('Successfully writing to text file')
             root.update()
-        if current_value_dict['save_as_ascii_images']:
+        if current_value_dict['save_as_ascii_image']:
             root.frame_info.set(
                 'Converting images are finished,\nwriting ascii result to image...'
             )
@@ -1176,6 +1192,7 @@ def plays():
                 title="Choose the file path of the exported ASCII image file",
                 filetype=(("All files", "*.*"), ))
             if not output_filename:
+                root.frame_info.set('canceled exporting')
                 return
             try:
                 font = ImageFont.truetype(current_value_dict['font_path'],
@@ -1187,16 +1204,22 @@ def plays():
             font_y_len = int(font_y_len * 1.37)
             if is_color == 0:
                 im_txt = Image.new(
-                    "L", (int(im.width / current_value_dict['resize_ratio']),
-                          int(im.height / current_value_dict['resize_ratio'])),
-                    'white')
+                    current_value_dict['ascii_image_mode'],
+                    (int(im.width / current_value_dict['resize_ratio']),
+                     int(im.height / current_value_dict['resize_ratio'])),
+                    current_value_dict['ascii_image_init_bg_color'])
                 dr = ImageDraw.Draw(im_txt)
                 x = y = 0
+                ascii_image_character_color = current_value_dict[
+                    'ascii_image_character_color']
                 for i in range(len(text_str)):
                     if text_str[i] == "\n":
                         x = 0
                         y += font_y_len
-                    dr.text((x, y), text_str[i], fill='black', font=font)
+                    dr.text((x, y),
+                            text_str[i],
+                            fill=ascii_image_character_color,
+                            font=font)
                     x += font_x_len
                 im_txt.save(output_filename)
 

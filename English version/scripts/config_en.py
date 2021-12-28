@@ -1,4 +1,4 @@
-﻿#-*- coding:utf-8 -*-
+#-*- coding:utf-8 -*-
 ascii_character_set = 'M@N%W$E#RK&FXYI*l]}1/+i>"!~\';,`:.'
 resize_ratio = 1
 bit_number = 8
@@ -6,8 +6,8 @@ image_path = None
 video_frame_path = None
 video_path = None
 video_frames_save_path = None
-video_frames_interval = (0, 300)
-save_as_ascii_images = False
+video_frames_interval = None
+save_as_ascii_image = False
 save_as_ascii_text = True
 show_convert_percentages = True
 video_frame_rate = 24
@@ -15,4 +15,12 @@ font_path = None
 font_size = 6
 image_width_ratio = 1
 image_height_ratio = 1
-colored_images = False
+image_width_ratio_scale = 6
+image_height_ratio_scale = 12
+colored_image = False
+ascii_image_padding_x = None
+ascii_image_padding_y = None
+ascii_image_mode = 'L'
+colored_ascii_image_mode = 'RGB'
+ascii_image_init_bg_color = 'white'
+ascii_image_character_color = 'black'
