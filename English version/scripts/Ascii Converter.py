@@ -1,4 +1,4 @@
-with open('scripts/config_en.py', encoding='utf-8-sig') as f:
+with open('scripts/config.py', encoding='utf-8-sig') as f:
     text = f.read()
     exec(text, globals())
 var_counter = 1
@@ -21,7 +21,7 @@ def get_all_config_options(text):
 
 
 def change(var, new, is_str=True):
-    text = open('scripts/config_en.py', encoding='utf-8-sig').read()
+    text = open('scripts/config.py', encoding='utf-8-sig').read()
     text_ls = list(text)
     var_len = len(var) + 1
     var_ind = text.index('\n' + var) + var_len
@@ -30,7 +30,7 @@ def change(var, new, is_str=True):
         text_ls[var_ind:var_ind + next_line] = f' = {repr(new)}'
     else:
         text_ls[var_ind:var_ind + next_line] = f" = {new}"
-    with open('scripts/config_en.py', 'w', encoding='utf-8-sig') as f:
+    with open('scripts/config.py', 'w', encoding='utf-8') as f:
         f.write(''.join(text_ls))
 
 

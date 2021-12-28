@@ -32,7 +32,7 @@ def change(var, new, is_str=True):
         text_ls[var_ind:var_ind + next_line] = f' = {repr(new)}'
     else:
         text_ls[var_ind:var_ind + next_line] = f" = {new}"
-    with open('scripts/config.py', 'w', encoding='utf-8-sig') as f:
+    with open('scripts/config.py', 'w', encoding='utf-8') as f:
         f.write(''.join(text_ls))
 
 
@@ -325,7 +325,6 @@ class Root(Tk):
         global alpha_config
         alpha_config = all_config_options.copy()
         for k in all_config_options:
-            print(translate_dict[k])
             self.choose_config_options.insert(END, translate_dict[k])
         self.choose_config_options.place(x=0, y=30, width=220)
         self.config_options_bar.config(
@@ -618,7 +617,7 @@ class Root(Tk):
         try:
             current = self.config_contents.get('1.0', 'end-1c')
             current_new = '"' + current.replace('"', '\\"') + '"'
-            self.value_dict[current_config] = current
+            self.value_dict[translate_dict_reverse[current_config]] = current
         except Exception as e:
             print(str(e))
             pass
@@ -665,7 +664,8 @@ class Root(Tk):
         if current_config:
             self.config_name.configure(text=current_config)
             self.config_contents.delete('1.0', END)
-            current_config_value = self.value_dict[translate_dict_reverse[current_config]]
+            current_config_value = self.value_dict[
+                translate_dict_reverse[current_config]]
             if type(current_config_value) == list:
                 current_config_value = current_config_value[1]
             try:
@@ -724,7 +724,7 @@ class Root(Tk):
         current_widgets = []
         global var_counter
         if mode == 0:
-            value_label = ttk.Label(self, text=value_name)
+            value_label = ttk.Label(self, text=translate_dict[value_name])
             value_label.place(x=x1, y=y1, width=width, height=25)
             value_entry = Text(self,
                                undo=True,
@@ -759,7 +759,7 @@ class Root(Tk):
             checkvar.set(1 if before_value else 0)
             value_checkbutton = Checkbutton(
                 self,
-                text=value_name,
+                text=translate_dict[value_name],
                 variable=checkvar,
                 command=lambda: self.change_bool(value_name),
                 background='black',
