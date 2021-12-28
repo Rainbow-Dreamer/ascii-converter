@@ -1,7 +1,8 @@
+from ast import literal_eval
+
 with open('scripts/config.py', encoding='utf-8-sig') as f:
     text = f.read()
     exec(text, globals())
-var_counter = 1
 abs_path = os.getcwd()
 
 
@@ -35,7 +36,6 @@ def change(var, new, is_str=True):
 
 
 class Root(Tk):
-
     def __init__(self):
         super(Root, self).__init__()
         self.title("Ascii Converter")
@@ -43,6 +43,7 @@ class Root(Tk):
         self.resizable(0, 0)
         self.wm_iconbitmap('resources/ascii.ico')
         self.value_dict = {}
+        self.var_counter = 1
         style = ttk.Style()
         style.theme_use('alt')
         style.configure('TButton',
@@ -153,7 +154,7 @@ class Root(Tk):
             text='Extract Frames\nFrom Videos',
             image=self.button_img,
             compound=CENTER,
-            command=self.video_to_ascii_img_window)
+            command=self.video_to_img_window)
         self.video_to_ascii_img_button.place(x=140,
                                              y=280,
                                              width=180,
@@ -200,10 +201,6 @@ class Root(Tk):
 
     def img_to_ascii_img_window(self):
         self.go_back = False
-        global convert_mode
-        convert_mode = 0
-        global output_video
-        output_video = False
         self.quit_main_window()
         self.current_widgets = []
 
@@ -215,30 +212,32 @@ class Root(Tk):
         self.go_back_button.place(x=600, y=420)
         self.current_widgets.append(self.go_back_button)
 
+        self.save_as_ascii_text_button = ttk.Button(
+            self,
+            text='image → ascii text',
+            command=self.image_to_ascii_text,
+            image=self.button_img3,
+            compound=CENTER,
+            style='New.TButton')
+        self.save_as_ascii_text_button.place(x=150, y=230)
+        self.current_widgets.append(self.save_as_ascii_text_button)
+
+        self.save_as_ascii_image_button = ttk.Button(
+            self,
+            text='image → ascii image',
+            command=self.image_to_ascii_image,
+            image=self.button_img3,
+            compound=CENTER,
+            style='New.TButton')
+        self.save_as_ascii_image_button.place(x=150, y=300)
+        self.current_widgets.append(self.save_as_ascii_image_button)
+
         self.current_widgets += self.set_value('image path', 'image_path',
                                                True, 600, 50, 0, 115, True)
         self.current_widgets += self.set_value('resize ratio', 'resize_ratio',
                                                False, 120, 28, 0, 200)
         self.current_widgets += self.set_value('bit number', 'bit_number',
                                                False, 120, 28, 0, 300)
-
-        self.current_widgets += self.set_value('save as ascii image',
-                                               'save_as_ascii_image',
-                                               False,
-                                               220,
-                                               40,
-                                               160,
-                                               260,
-                                               mode=1)
-
-        self.current_widgets += self.set_value('save as ascii text',
-                                               'save_as_ascii_text',
-                                               False,
-                                               200,
-                                               40,
-                                               200,
-                                               200,
-                                               mode=1)
 
         self.current_widgets += self.set_value('show convert percentages',
                                                'show_convert_percentages',
@@ -289,14 +288,6 @@ class Root(Tk):
             self.output_picture_color, img_color, False
         ]
         self.current_widgets.append(self.output_picture_color)
-
-        self.playing = ttk.Button(self,
-                                  text='Start',
-                                  command=self.play,
-                                  image=self.button_img2,
-                                  compound=CENTER)
-        self.playing.place(x=150, y=330)
-        self.current_widgets.append(self.playing)
 
         self.frame_info.set('No actions at this time')
         self.frame_show.place(x=0, y=400, width=260, height=70)
@@ -431,12 +422,6 @@ class Root(Tk):
 
     def video_to_ascii_video_window(self):
         self.go_back = False
-        global convert_mode
-        convert_mode = 1
-        global output_video
-        output_video = True
-        global output_video_frames
-        output_video_frames = False
         self.quit_main_window()
         self.current_widgets = []
 
@@ -448,6 +433,27 @@ class Root(Tk):
         self.go_back_button.place(x=630, y=420)
         self.current_widgets.append(self.go_back_button)
 
+        self.start_video_to_ascii_video_button = ttk.Button(
+            self,
+            text='video → ascii video',
+            command=self.video_to_ascii_video,
+            image=self.button_img5,
+            compound=CENTER,
+            style='New.TButton')
+        self.start_video_to_ascii_video_button.place(x=350, y=210)
+        self.current_widgets.append(self.start_video_to_ascii_video_button)
+
+        self.start_video_frames_to_ascii_video_button = ttk.Button(
+            self,
+            text='frames → ascii video',
+            command=lambda: self.video_to_ascii_video(mode=1),
+            image=self.button_img5,
+            compound=CENTER,
+            style='New.TButton')
+        self.start_video_frames_to_ascii_video_button.place(x=570, y=210)
+        self.current_widgets.append(
+            self.start_video_frames_to_ascii_video_button)
+
         self.current_widgets += self.set_value('video path', 'video_path',
                                                True, 600, 50, 0, 115, True)
         self.current_widgets += self.set_value('resize ratio', 'resize_ratio',
@@ -457,15 +463,6 @@ class Root(Tk):
         self.current_widgets += self.set_value('video frames interval',
                                                'video_frames_interval', False,
                                                200, 28, 140, 200)
-        self.current_widgets += self.set_value('video frame path',
-                                               'video_frame_path',
-                                               True,
-                                               300,
-                                               28,
-                                               350,
-                                               200,
-                                               True,
-                                               path_mode=1)
         self.current_widgets += self.set_value('font path', 'font_path', True,
                                                100, 28, 150, 270)
         self.current_widgets += self.set_value('font size', 'font_size', False,
@@ -513,26 +510,12 @@ class Root(Tk):
         ]
         self.current_widgets.append(self.output_picture_color)
 
-        self.playing = ttk.Button(self,
-                                  text='Start',
-                                  command=self.play,
-                                  image=self.button_img2,
-                                  compound=CENTER)
-        self.playing.place(x=150, y=340)
-        self.current_widgets.append(self.playing)
-
         self.frame_info.set('No actions at this time')
         self.frame_show.place(x=0, y=400, width=260, height=70)
         self.current_widgets.append(self.frame_show)
 
-    def video_to_ascii_img_window(self):
+    def video_to_img_window(self):
         self.go_back = False
-        global convert_mode
-        convert_mode = 1
-        global output_video
-        output_video = False
-        global output_video_frames
-        output_video_frames = True
         self.quit_main_window()
         self.current_widgets = []
 
@@ -544,20 +527,20 @@ class Root(Tk):
         self.go_back_button.place(x=630, y=420)
         self.current_widgets.append(self.go_back_button)
 
+        self.start_video_to_frames_button = ttk.Button(
+            self,
+            text='video → frames',
+            command=self.video_to_img,
+            image=self.button_img3,
+            compound=CENTER)
+        self.start_video_to_frames_button.place(x=350, y=210)
+        self.current_widgets.append(self.start_video_to_frames_button)
+
         self.current_widgets += self.set_value('video path', 'video_path',
                                                True, 600, 50, 0, 115, True)
         self.current_widgets += self.set_value('video frames interval',
                                                'video_frames_interval', False,
                                                200, 28, 70, 200)
-        self.current_widgets += self.set_value('video frames save path',
-                                               'video_frames_save_path',
-                                               False,
-                                               300,
-                                               28,
-                                               300,
-                                               200,
-                                               True,
-                                               path_mode=1)
         self.picture_color = IntVar()
         self.picture_color.set(1)
         self.save_button = ttk.Button(self,
@@ -569,14 +552,6 @@ class Root(Tk):
         self.save_button.place(x=630, y=350)
         self.current_widgets.append(self.save_button)
 
-        self.playing = ttk.Button(self,
-                                  text='Start',
-                                  command=self.play,
-                                  image=self.button_img2,
-                                  compound=CENTER)
-        self.playing.place(x=150, y=320)
-        self.current_widgets.append(self.playing)
-
         self.frame_info.set('No actions at this time')
         self.frame_show.place(x=0, y=400, width=260, height=70)
         self.current_widgets.append(self.frame_show)
@@ -584,15 +559,10 @@ class Root(Tk):
     def go_back_main_window(self):
         os.chdir(abs_path)
         self.go_back = True
-        global output_video
-        output_video = False
-        global output_video_frames
-        output_video_frames = False
         for i in self.current_widgets:
             i.place_forget()
         self.reset_main_window()
-        global var_counter
-        var_counter = 1
+        self.var_counter = 1
 
     def change_sort(self):
         if self.sort_mode == 0:
@@ -709,10 +679,437 @@ class Root(Tk):
             current_focus.delete('1.0', END)
             current_focus.insert(END, value)
 
-    def play(self):
-        global is_color
-        is_color = self.picture_color.get()
-        plays()
+    def get_char(self, r, g, b, alpha=None):
+        if alpha == 0:
+            return " "
+        elif alpha is None:
+            alpha = self.K
+        gray = int(0.2126 * r + 0.7152 * g + 0.0722 * b)
+        return self.current_value_dict['ascii_character_set'][int(gray /
+                                                                  self.unit)]
+
+    def img_to_ascii(self, im, show_percentage=False, mode=0):
+        WIDTH = int((im.width * self.current_value_dict['image_width_ratio'] /
+                     self.current_value_dict['image_width_ratio_scale']) /
+                    self.current_value_dict['resize_ratio'])
+        HEIGHT = int(
+            (im.height * self.current_value_dict['image_height_ratio'] /
+             self.current_value_dict['image_height_ratio_scale']) /
+            self.current_value_dict['resize_ratio'])
+        if show_percentage:
+            whole_count = WIDTH * HEIGHT
+            count = 0
+        im_resize = im.resize((WIDTH, HEIGHT), Image.ANTIALIAS)
+        txt = ""
+        if mode == 1:
+            im_txt = Image.new(
+                self.current_value_dict['colored_ascii_image_mode'],
+                (int(im.width / self.current_value_dict['resize_ratio']),
+                 int(im.height / self.current_value_dict['resize_ratio'])),
+                (2**self.current_value_dict['bit_number'] - 1,
+                 2**self.current_value_dict['bit_number'] - 1,
+                 2**self.current_value_dict['bit_number'] - 1))
+            colors = []
+            for i in range(HEIGHT):
+                for j in range(WIDTH):
+                    pixel = im_resize.getpixel((j, i))
+                    colors.append(pixel)
+                    txt += self.get_char(*pixel)
+                if show_percentage:
+                    count += WIDTH
+                    self.frame_info.set(
+                        f'Conversion progress:  {round((count/whole_count)*100, 3)}%'
+                    )
+                    self.update()
+                txt += '\n'
+                colors.append((255, 255, 255))
+            return txt, colors, im_txt
+        else:
+            for i in range(HEIGHT):
+                for j in range(WIDTH):
+                    pixel = im_resize.getpixel((j, i))
+                    txt += self.get_char(*pixel)
+                if show_percentage:
+                    count += WIDTH
+                    self.frame_info.set(
+                        f'Conversion progress:  {round((count/whole_count)*100, 3)}%'
+                    )
+                    self.update()
+                txt += '\n'
+            return txt
+
+    def image_to_ascii_text(self):
+        self.frame_info.set('Converting images..')
+        self.update()
+        self.reinit()
+        if not self.current_value_dict['image_path'] or not os.path.isfile(
+                self.current_value_dict['image_path']):
+            self.frame_info.set('This image path does not exist')
+            return
+        try:
+            im = Image.open(self.current_value_dict['image_path'])
+            text_str_output = self.img_to_ascii(
+                im, self.current_value_dict['show_convert_percentages'])
+            if type(text_str_output) != str:
+                text_str = text_str_output[0]
+            else:
+                text_str = text_str_output
+        except Exception as e:
+            print(str(e))
+            self.frame_info.set('This image path does not exist')
+            self.update()
+            return
+        self.frame_info.set('Converting images are finished')
+        self.update()
+        file_name = os.path.splitext(
+            os.path.basename(self.current_value_dict['image_path']))[0]
+        self.frame_info.set(
+            'Converting images are finished,\nwriting ascii result to text...')
+        self.update()
+        output_filename = filedialog.asksaveasfilename(
+            initialdir='.',
+            initialfile=f'ascii_{file_name}.txt',
+            title="Choose the file path of the exported ASCII text file",
+            filetype=(("All files", "*.*"), ))
+        if not output_filename:
+            self.frame_info.set('canceled exporting')
+            return
+        with open(output_filename, 'w', encoding='utf-8') as f:
+            f.write(text_str)
+        self.frame_info.set('Successfully writing to text file')
+        self.update()
+
+    def image_to_ascii_image(self):
+        self.frame_info.set('Converting images..')
+        self.update()
+        self.reinit()
+        if not self.current_value_dict['image_path'] or not os.path.isfile(
+                self.current_value_dict['image_path']):
+            self.frame_info.set('This image path does not exist')
+            return
+        try:
+            im = Image.open(self.current_value_dict['image_path'])
+            text_str_output = self.img_to_ascii(
+                im,
+                self.current_value_dict['show_convert_percentages'],
+                mode=self.is_color)
+            if type(text_str_output) != str:
+                text_str = text_str_output[0]
+            else:
+                text_str = text_str_output
+        except Exception as e:
+            print(str(e))
+            self.frame_info.set('This image path does not exist')
+            self.update()
+            return
+        self.frame_info.set('Converting images are finished')
+        self.update()
+        file_name = os.path.splitext(
+            os.path.basename(self.current_value_dict['image_path']))[0]
+        self.frame_info.set(
+            'Converting images are finished,\nwriting ascii result to image...'
+        )
+        self.update()
+        output_filename = filedialog.asksaveasfilename(
+            initialdir='.',
+            initialfile=f'ascii_{file_name}.png',
+            title="Choose the file path of the exported ASCII image file",
+            filetype=(("All files", "*.*"), ))
+        if not output_filename:
+            self.frame_info.set('canceled exporting')
+            return
+        try:
+            font = ImageFont.truetype(
+                self.current_value_dict['font_path'],
+                size=self.current_value_dict['font_size'])
+        except:
+            font = ImageFont.load_default()
+        font_x_len, font_y_len = font.getsize(
+            self.current_value_dict['ascii_character_set'][1])
+        font_y_len = int(font_y_len * 1.37)
+        ascii_image_padding_x = self.current_value_dict[
+            'ascii_image_padding_x']
+        ascii_image_padding_y = self.current_value_dict[
+            'ascii_image_padding_y']
+        if ascii_image_padding_x is not None:
+            font_x_len = float(ascii_image_padding_x)
+        if ascii_image_padding_y is not None:
+            font_y_len = float(ascii_image_padding_y)
+        if self.is_color == 0:
+            im_txt = Image.new(
+                self.current_value_dict['ascii_image_mode'],
+                (int(im.width / self.current_value_dict['resize_ratio']),
+                 int(im.height / self.current_value_dict['resize_ratio'])),
+                self.current_value_dict['ascii_image_init_bg_color'])
+            dr = ImageDraw.Draw(im_txt)
+            x = y = 0
+            ascii_image_character_color = self.current_value_dict[
+                'ascii_image_character_color']
+            for i in range(len(text_str)):
+                if text_str[i] == "\n":
+                    x = 0
+                    y += font_y_len
+                dr.text((x, y),
+                        text_str[i],
+                        fill=ascii_image_character_color,
+                        font=font)
+                x += font_x_len
+            im_txt.save(output_filename)
+
+        else:
+            txt, colors, im_txt = text_str_output
+            dr = ImageDraw.Draw(im_txt)
+            x = y = 0
+            for i in range(len(txt)):
+                if txt[i] == "\n":
+                    x = 0
+                    y += font_y_len
+                dr.text((x, y), txt[i], fill=colors[i], font=font)
+                x += font_x_len
+            im_txt.save(output_filename)
+
+        self.frame_info.set('Successfully writing to image file')
+        self.update()
+
+    def video_to_ascii_video(self, mode=0):
+        self.reinit()
+        video_frames_path = None
+        if mode == 1:
+            video_frames_path = filedialog.askdirectory(
+                initialdir=self.last_place, title="Choose video frames path")
+            if not video_frames_path:
+                return
+        if video_frames_path:
+            os.chdir(video_frames_path)
+            file_ls = [f for f in os.listdir() if os.path.isfile(f)]
+            file_ls.sort(key=lambda x: int(os.path.splitext(x)[0]))
+            frames = (Image.open(i) for i in file_ls)
+            start_frame = 0
+        else:
+            if not self.current_value_dict['video_path'] or not os.path.isfile(
+                    self.current_value_dict['video_path']):
+                self.frame_info.set('This video path does not exist')
+                return
+            vidcap = cv2.VideoCapture(self.current_value_dict['video_path'])
+            count = 0
+            start_frame = 0
+            if not self.current_value_dict['video_frames_interval']:
+                whole_frame_number = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
+                frames = (Image.fromarray(
+                    cv2.cvtColor(vidcap.read()[1], cv2.COLOR_BGR2RGB))
+                          for k in range(whole_frame_number))
+                frame_length = whole_frame_number
+            else:
+                start_frame, to_frame = literal_eval(
+                    self.current_value_dict['video_frames_interval'])
+                no_of_frames = to_frame - start_frame
+                frame_length = no_of_frames
+                vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
+                frames = (Image.fromarray(
+                    cv2.cvtColor(vidcap.read()[1], cv2.COLOR_BGR2RGB))
+                          for k in range(no_of_frames))
+        if video_frames_path:
+            file_name = os.path.splitext(
+                os.path.basename(video_frames_path))[0]
+        else:
+            file_name = os.path.splitext(
+                os.path.basename(self.current_value_dict['video_path']))[0]
+        output_filename = filedialog.asksaveasfilename(
+            initialdir='.',
+            initialfile=f'ascii_{file_name}.mp4',
+            title="Choose the file path of the exported video",
+            filetype=(("All files", "*.*"), ))
+        if not output_filename:
+            self.frame_info.set('canceled exporting')
+            return
+        if video_frames_path:
+            os.chdir(abs_path)
+        if not os.path.exists('temp_video_images'):
+            os.mkdir('temp_video_images')
+        os.chdir('temp_video_images')
+        for each in os.listdir():
+            os.remove(each)
+        num_frames = frame_length
+        n = len(str(num_frames))
+        try:
+            font = ImageFont.truetype(
+                self.current_value_dict['font_path'],
+                size=self.current_value_dict['font_size'])
+        except:
+            font = ImageFont.load_default()
+        font_x_len, font_y_len = font.getsize(
+            self.current_value_dict['ascii_character_set'][1])
+        font_y_len = int(font_y_len * 1.37)
+        ascii_image_padding_x = self.current_value_dict[
+            'ascii_image_padding_x']
+        ascii_image_padding_y = self.current_value_dict[
+            'ascii_image_padding_y']
+        if ascii_image_padding_x is not None:
+            font_x_len = float(ascii_image_padding_x)
+        if ascii_image_padding_y is not None:
+            font_y_len = float(ascii_image_padding_y)
+        if self.is_color == 0:
+            for i in range(num_frames):
+                if self.go_back:
+                    break
+                self.frame_info.set(
+                    f'Converting video frame {start_frame + i + 1}/{start_frame + num_frames}'
+                )
+                self.update()
+                try:
+                    im = next(frames)
+                except:
+                    break
+                text_str = self.img_to_ascii(im)
+                im_txt = Image.new(
+                    self.current_value_dict['ascii_image_mode'],
+                    (int(im.width / self.current_value_dict['resize_ratio']),
+                     int(im.height / self.current_value_dict['resize_ratio'])),
+                    self.current_value_dict['ascii_image_init_bg_color'])
+                dr = ImageDraw.Draw(im_txt)
+                x = y = 0
+                ascii_image_character_color = self.current_value_dict[
+                    'ascii_image_character_color']
+                for j in range(len(text_str)):
+                    if text_str[j] == "\n":
+                        x = 0
+                        y += font_y_len
+                    dr.text((x, y),
+                            text_str[j],
+                            fill=ascii_image_character_color,
+                            font=font)
+                    x += font_x_len
+                if self.go_back:
+                    break
+                im_txt.save(f'{i:0{n}d}.png')
+        else:
+            for i in range(num_frames):
+                if self.go_back:
+                    break
+                self.frame_info.set(
+                    f'Converting video frame {start_frame + i + 1}/{start_frame + num_frames}'
+                )
+                self.update()
+                try:
+                    text_str_output = self.img_to_ascii(next(frames),
+                                                        mode=self.is_color)
+                except:
+                    break
+                txt, colors, im_txt = text_str_output
+                dr = ImageDraw.Draw(im_txt)
+                x = y = 0
+                for j in range(len(txt)):
+                    if txt[j] == "\n":
+                        x = 0
+                        y += font_y_len
+                    dr.text((x, y), txt[j], fill=colors[j], font=font)
+                    x += font_x_len
+                if self.go_back:
+                    break
+                im_txt.save(f'{i:0{n}d}.png')
+        self.frame_info.set(
+            'Conversion are finished,\nstart to export video..')
+        self.update()
+        os.chdir(abs_path)
+        if self.go_back:
+            return
+        current_framerate = self.current_value_dict['video_frame_rate']
+        if not current_framerate:
+            current_framerate = vidcap.get(cv2.CAP_PROP_FPS)
+        ffmpeg.input(f'temp_video_images/%{n}d.png',
+                     framerate=current_framerate).output(
+                         output_filename, pix_fmt='yuv420p').run()
+        self.frame_info.set('Video has been successfully exported')
+        self.update()
+
+    def video_to_img(self):
+        self.reinit()
+        if not self.current_value_dict['video_path'] or not os.path.isfile(
+                self.current_value_dict['video_path']):
+            self.frame_info.set('This video path does not exist')
+            return
+        video_frames_save_path = filedialog.askdirectory(
+            initialdir=self.last_place,
+            title="Choose the path to save video frames")
+        if not video_frames_save_path:
+            return
+        try:
+            os.chdir(video_frames_save_path)
+        except:
+            if not os.path.exists('video_frame_ascii_images'):
+                os.mkdir('video_frame_ascii_images')
+            os.chdir('video_frame_ascii_images')
+            for each in os.listdir():
+                os.remove(each)
+        vidcap = cv2.VideoCapture(self.current_value_dict['video_path'])
+        count = 0
+        start_frame = 0
+        if not self.current_value_dict['video_frames_interval']:
+            whole_frame_number = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
+            num_frames = whole_frame_number
+            frames = (Image.fromarray(
+                cv2.cvtColor(vidcap.read()[1], cv2.COLOR_BGR2RGB))
+                      for k in range(whole_frame_number))
+            is_read, img = vidcap.read()
+            while is_read:
+                if self.go_back:
+                    break
+                cv2.imwrite(f"{count}.png", img)
+                is_read, img = vidcap.read()
+                count += 1
+                self.frame_info.set(
+                    f'Reading and exporting video frame  {count}/{start_frame + num_frames}'
+                )
+                self.update()
+            vidcap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+        else:
+            start_frame, to_frame = literal_eval(
+                self.current_value_dict['video_frames_interval'])
+            no_of_frames = to_frame - start_frame
+            num_frames = no_of_frames
+            vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
+            frames = (Image.fromarray(
+                cv2.cvtColor(vidcap.read()[1], cv2.COLOR_BGR2RGB))
+                      for k in range(no_of_frames))
+            is_read, img = vidcap.read()
+            for k in range(no_of_frames):
+                if self.go_back:
+                    break
+                if is_read:
+                    cv2.imwrite(f"{count}.png", img)
+                    is_read, img = vidcap.read()
+                    count += 1
+                    self.frame_info.set(
+                        f'Reading and exporting video frame  {start_frame + count}/{start_frame + num_frames}'
+                    )
+                    self.update()
+                else:
+                    break
+            vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
+        os.chdir(abs_path)
+        self.frame_info.set(
+            'Video frames are successfully\nexported as images')
+        self.update()
+        return
+
+    def reinit(self):
+        self.is_color = self.picture_color.get()
+        self.current_value_dict = deepcopy({
+            i: (j[1] if type(j) == list else j)
+            for i, j in self.value_dict.items()
+        })
+        self.current_value_dict = {
+            i: eval(j) if (type(eval(i)) != str and eval(i) != None
+                           and type(j) == str and j not in ['', 'None']) else j
+            for i, j in self.current_value_dict.items()
+        }
+        self.current_value_dict = {
+            i: (None if j in ['', 'None'] else j)
+            for i, j in self.current_value_dict.items()
+        }
+        length = len(self.current_value_dict['ascii_character_set'])
+        self.K = 2**self.current_value_dict['bit_number']
+        self.unit = (self.K + 1) / length
 
     def set_value(self,
                   value_name,
@@ -727,7 +1124,6 @@ class Root(Tk):
                   mode=0,
                   font_size=12):
         current_widgets = []
-        global var_counter
         if mode == 0:
             value_label = ttk.Label(self, text=value_name)
             value_label.place(x=x1, y=y1, width=width, height=25)
@@ -755,9 +1151,9 @@ class Root(Tk):
                 value_entry, real_value, is_str)
             value_entry.bind('<KeyRelease>', value_entry.func)
         elif mode == 1:
-            exec(f"self.checkvar{var_counter} = IntVar()")
-            checkvar = eval(f"self.checkvar{var_counter}")
-            var_counter += 1
+            exec(f"self.checkvar{self.var_counter} = IntVar()")
+            checkvar = eval(f"self.checkvar{self.var_counter}")
+            self.var_counter += 1
             before_value = self.value_dict[real_value]
             if type(before_value) == list:
                 before_value = before_value[1]
@@ -815,7 +1211,7 @@ class Root(Tk):
             obj.insert(END, filename)
             obj.func(1)
             memory = os.path.dirname(filename)
-            with open('browse memory.txt', 'w', encoding='utf-8-sig') as f:
+            with open('browse memory.txt', 'w', encoding='utf-8') as f:
                 f.write(memory)
             self.last_place = memory
 
@@ -866,372 +1262,7 @@ class Root(Tk):
         if changed:
             self.show_saved()
         else:
-            self.frame_info.set('There\'s no changes in\ncurrent settings')
-
-
-def plays():
-    current_value_dict = deepcopy({
-        i: (j[1] if type(j) == list else j)
-        for i, j in root.value_dict.items()
-    })
-    current_value_dict = {
-        i: eval(j) if (type(eval(i)) != str and eval(i) != None
-                       and type(j) == str and j not in ['', 'None']) else j
-        for i, j in current_value_dict.items()
-    }
-    current_value_dict = {
-        i: (None if j in ['', 'None'] else j)
-        for i, j in current_value_dict.items()
-    }
-    length = len(current_value_dict['ascii_character_set'])
-    K = 2**current_value_dict['bit_number']
-    unit = (K + 1) / length
-
-    def get_char(r, g, b, alpha=K):
-        if alpha == 0:
-            return " "
-        gray = int(0.2126 * r + 0.7152 * g + 0.0722 * b)
-        return current_value_dict['ascii_character_set'][int(gray / unit)]
-
-    def img_to_ascii(im, show_percentage=False):
-        WIDTH = int((im.width * current_value_dict['image_width_ratio'] /
-                     current_value_dict['image_width_ratio_scale']) /
-                    current_value_dict['resize_ratio'])
-        HEIGHT = int((im.height * current_value_dict['image_height_ratio'] /
-                      current_value_dict['image_height_ratio_scale']) /
-                     current_value_dict['resize_ratio'])
-        if show_percentage:
-            whole_count = WIDTH * HEIGHT
-            count = 0
-        im_resize = im.resize((WIDTH, HEIGHT), Image.ANTIALIAS)
-        txt = ""
-        if is_color and (current_value_dict['save_as_ascii_image']
-                         or output_video):
-            im_txt = Image.new(
-                current_value_dict['colored_ascii_image_mode'],
-                (int(im.width / current_value_dict['resize_ratio']),
-                 int(im.height / current_value_dict['resize_ratio'])),
-                (2**current_value_dict['bit_number'] - 1,
-                 2**current_value_dict['bit_number'] - 1,
-                 2**current_value_dict['bit_number'] - 1))
-            colors = []
-            for i in range(HEIGHT):
-                for j in range(WIDTH):
-                    pixel = im_resize.getpixel((j, i))
-                    colors.append(pixel)
-                    txt += get_char(*pixel)
-                if show_percentage:
-                    count += WIDTH
-                    root.frame_info.set(
-                        f'Conversion progress:  {round((count/whole_count)*100, 3)}%'
-                    )
-                    root.update()
-                txt += '\n'
-                colors.append((255, 255, 255))
-            return txt, colors, im_txt
-        else:
-            for i in range(HEIGHT):
-                for j in range(WIDTH):
-                    pixel = im_resize.getpixel((j, i))
-                    txt += get_char(*pixel)
-                if show_percentage:
-                    count += WIDTH
-                    root.frame_info.set(
-                        f'Conversion progress:  {round((count/whole_count)*100, 3)}%'
-                    )
-                    root.update()
-                txt += '\n'
-            return txt
-
-    if convert_mode == 1:
-        video_frames_path = current_value_dict['video_frame_path']
-        if video_frames_path:
-            os.chdir(video_frames_path)
-            file_ls = [f for f in os.listdir() if os.path.isfile(f)]
-            file_ls.sort(key=lambda x: int(os.path.splitext(x)[0]))
-            frames = (Image.open(i) for i in file_ls)
-            start_frame = 0
-        else:
-            if not current_value_dict['video_path']:
-                return
-            vidcap = cv2.VideoCapture(current_value_dict['video_path'])
-            count = 0
-            if output_video_frames:
-                try:
-                    os.chdir(current_value_dict['video_frames_save_path'])
-                except:
-                    if not os.path.exists('video_frame_ascii_images'):
-                        os.mkdir('video_frame_ascii_images')
-                    os.chdir('video_frame_ascii_images')
-                    for each in os.listdir():
-                        os.remove(each)
-                start_frame = 0
-                if not current_value_dict['video_frames_interval']:
-                    whole_frame_number = int(
-                        vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
-                    frames = (Image.fromarray(
-                        cv2.cvtColor(vidcap.read()[1], cv2.COLOR_BGR2RGB))
-                              for k in range(whole_frame_number))
-                    is_read, img = vidcap.read()
-                    while is_read:
-                        if root.go_back:
-                            break
-                        cv2.imwrite(f"{count}.png", img)
-                        is_read, img = vidcap.read()
-                        count += 1
-                        root.frame_info.set(
-                            f'Reading and exporting video frame {count}')
-                        root.update()
-                    vidcap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-                else:
-                    start_frame, to_frame = current_value_dict[
-                        'video_frames_interval']
-                    no_of_frames = to_frame - start_frame
-                    vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
-                    frames = (Image.fromarray(
-                        cv2.cvtColor(vidcap.read()[1], cv2.COLOR_BGR2RGB))
-                              for k in range(no_of_frames))
-                    is_read, img = vidcap.read()
-                    for k in range(no_of_frames):
-                        if root.go_back:
-                            break
-                        if is_read:
-                            cv2.imwrite(f"{count}.png", img)
-                            is_read, img = vidcap.read()
-                            count += 1
-                            root.frame_info.set(
-                                f'Reading and exporting video frame {start_frame + count}'
-                            )
-                            root.update()
-                        else:
-                            break
-                    vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
-                os.chdir(abs_path)
-                root.frame_info.set(
-                    'Video frames are successfully\nexported as images')
-                root.update()
-                return
-            else:
-                start_frame = 0
-                if not current_value_dict['video_frames_interval']:
-                    whole_frame_number = int(
-                        vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
-                    frames = (Image.fromarray(
-                        cv2.cvtColor(vidcap.read()[1], cv2.COLOR_BGR2RGB))
-                              for k in range(whole_frame_number))
-                    frame_length = whole_frame_number
-                else:
-                    start_frame, to_frame = current_value_dict[
-                        'video_frames_interval']
-                    no_of_frames = to_frame - start_frame
-                    frame_length = no_of_frames
-                    vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
-                    frames = (Image.fromarray(
-                        cv2.cvtColor(vidcap.read()[1], cv2.COLOR_BGR2RGB))
-                              for k in range(no_of_frames))
-        if output_video:
-            if video_frames_path:
-                file_name = os.path.splitext(
-                    os.path.basename(video_frames_path))[0]
-            else:
-                file_name = os.path.splitext(
-                    os.path.basename(current_value_dict['video_path']))[0]
-            output_filename = filedialog.asksaveasfilename(
-                initialdir='.',
-                initialfile=f'ascii_{file_name}.mp4',
-                title="Choose the file path of the exported video",
-                filetype=(("All files", "*.*"), ))
-            if not output_filename:
-                root.frame_info.set('canceled exporting')
-                return
-            if video_frames_path:
-                os.chdir(abs_path)
-            if not os.path.exists('temp_video_images'):
-                os.mkdir('temp_video_images')
-            os.chdir('temp_video_images')
-            for each in os.listdir():
-                os.remove(each)
-            num_frames = frame_length
-            n = len(str(num_frames))
-            try:
-                font = ImageFont.truetype(current_value_dict['font_path'],
-                                          size=current_value_dict['font_size'])
-            except:
-                font = ImageFont.load_default()
-            font_x_len, font_y_len = font.getsize(
-                current_value_dict['ascii_character_set'][1])
-            font_y_len = int(font_y_len * 1.37)
-            ascii_image_padding_x = current_value_dict['ascii_image_padding_x']
-            ascii_image_padding_y = current_value_dict['ascii_image_padding_y']
-            if ascii_image_padding_x is not None:
-                font_x_len = float(ascii_image_padding_x)
-            if ascii_image_padding_y is not None:
-                font_y_len = float(ascii_image_padding_y)
-            if is_color == 0:
-                for i in range(num_frames):
-                    if root.go_back:
-                        break
-                    root.frame_info.set(
-                        f'Converting video frame {start_frame + i + 1}/{start_frame + num_frames}'
-                    )
-                    root.update()
-                    try:
-                        im = next(frames)
-                    except:
-                        break
-                    text_str = img_to_ascii(im)
-                    im_txt = Image.new(
-                        current_value_dict['ascii_image_mode'],
-                        (int(im.width / current_value_dict['resize_ratio']),
-                         int(im.height / current_value_dict['resize_ratio'])),
-                        current_value_dict['ascii_image_init_bg_color'])
-                    dr = ImageDraw.Draw(im_txt)
-                    x = y = 0
-                    ascii_image_character_color = current_value_dict[
-                        'ascii_image_character_color']
-                    for j in range(len(text_str)):
-                        if text_str[j] == "\n":
-                            x = 0
-                            y += font_y_len
-                        dr.text((x, y),
-                                text_str[j],
-                                fill=ascii_image_character_color,
-                                font=font)
-                        x += font_x_len
-                    if root.go_back:
-                        break
-                    im_txt.save(f'{i:0{n}d}.png')
-            else:
-                for i in range(num_frames):
-                    if root.go_back:
-                        break
-                    root.frame_info.set(
-                        f'Converting video frame {start_frame + i + 1}/{start_frame + num_frames}'
-                    )
-                    root.update()
-                    try:
-                        text_str_output = img_to_ascii(next(frames))
-                    except:
-                        break
-                    txt, colors, im_txt = text_str_output
-                    dr = ImageDraw.Draw(im_txt)
-                    x = y = 0
-                    for j in range(len(txt)):
-                        if txt[j] == "\n":
-                            x = 0
-                            y += font_y_len
-                        dr.text((x, y), txt[j], fill=colors[j], font=font)
-                        x += font_x_len
-                    if root.go_back:
-                        break
-                    im_txt.save(f'{i:0{n}d}.png')
-            root.frame_info.set(
-                'Conversion are finished,\nstart to export video..')
-            root.update()
-            os.chdir(abs_path)
-            if root.go_back:
-                return
-            current_framerate = current_value_dict['video_frame_rate']
-            if not current_framerate:
-                current_framerate = vidcap.get(cv2.CAP_PROP_FPS)
-            ffmpeg.input(f'temp_video_images/%{n}d.png',
-                         framerate=current_framerate).output(
-                             output_filename, pix_fmt='yuv420p').run()
-            root.frame_info.set('Video has been successfully exported')
-            root.update()
-    else:
-        root.frame_info.set('Converting images..')
-        root.update()
-        try:
-            im = Image.open(current_value_dict['image_path'])
-            text_str_output = img_to_ascii(
-                im, current_value_dict['show_convert_percentages'])
-            if type(text_str_output) != str:
-                text_str = text_str_output[0]
-            else:
-                text_str = text_str_output
-        except Exception as e:
-            print(str(e))
-            root.frame_info.set('This image path does not exist')
-            root.update()
-            return
-        root.frame_info.set('Converting images are finished')
-        root.update()
-        file_name = os.path.splitext(
-            os.path.basename(current_value_dict['image_path']))[0]
-        if current_value_dict['save_as_ascii_text']:
-            root.frame_info.set(
-                'Converting images are finished,\nwriting ascii result to text...'
-            )
-            root.update()
-            output_filename = filedialog.asksaveasfilename(
-                initialdir='.',
-                initialfile=f'ascii_{file_name}.txt',
-                title="Choose the file path of the exported ASCII text file",
-                filetype=(("All files", "*.*"), ))
-            if not output_filename:
-                root.frame_info.set('canceled exporting')
-                return
-            with open(output_filename, 'w', encoding='utf-8-sig') as f:
-                f.write(text_str)
-            root.frame_info.set('Successfully writing to text file')
-            root.update()
-        if current_value_dict['save_as_ascii_image']:
-            root.frame_info.set(
-                'Converting images are finished,\nwriting ascii result to image...'
-            )
-            root.update()
-            output_filename = filedialog.asksaveasfilename(
-                initialdir='.',
-                initialfile=f'ascii_{file_name}.png',
-                title="Choose the file path of the exported ASCII image file",
-                filetype=(("All files", "*.*"), ))
-            if not output_filename:
-                root.frame_info.set('canceled exporting')
-                return
-            try:
-                font = ImageFont.truetype(current_value_dict['font_path'],
-                                          size=current_value_dict['font_size'])
-            except:
-                font = ImageFont.load_default()
-            font_x_len, font_y_len = font.getsize(
-                current_value_dict['ascii_character_set'][1])
-            font_y_len = int(font_y_len * 1.37)
-            if is_color == 0:
-                im_txt = Image.new(
-                    current_value_dict['ascii_image_mode'],
-                    (int(im.width / current_value_dict['resize_ratio']),
-                     int(im.height / current_value_dict['resize_ratio'])),
-                    current_value_dict['ascii_image_init_bg_color'])
-                dr = ImageDraw.Draw(im_txt)
-                x = y = 0
-                ascii_image_character_color = current_value_dict[
-                    'ascii_image_character_color']
-                for i in range(len(text_str)):
-                    if text_str[i] == "\n":
-                        x = 0
-                        y += font_y_len
-                    dr.text((x, y),
-                            text_str[i],
-                            fill=ascii_image_character_color,
-                            font=font)
-                    x += font_x_len
-                im_txt.save(output_filename)
-
-            else:
-                txt, colors, im_txt = text_str_output
-                dr = ImageDraw.Draw(im_txt)
-                x = y = 0
-                for i in range(len(txt)):
-                    if txt[i] == "\n":
-                        x = 0
-                        y += font_y_len
-                    dr.text((x, y), txt[i], fill=colors[i], font=font)
-                    x += font_x_len
-                im_txt.save(output_filename)
-
-            root.frame_info.set('Successfully writing to image file')
-            root.update()
+            self.frame_info.set('There\'s no changes in current settings')
 
 
 root = Root()
