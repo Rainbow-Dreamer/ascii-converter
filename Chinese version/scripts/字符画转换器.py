@@ -1182,7 +1182,6 @@ def plays():
                     dr.text((x, y), text_str[i], fill=字符画图片字符颜色, font=font)
                     x += font_x_len
                 im_txt.save(output_filename)
-                print(current_value_dict['字符画图片字符颜色'])
 
             else:
                 txt, colors, im_txt = text_str_output
