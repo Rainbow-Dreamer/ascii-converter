@@ -4,6 +4,8 @@ with open('scripts/config.py', encoding='utf-8-sig') as f:
 var_counter = 1
 abs_path = os.getcwd()
 
+from scripts.translate import translate_dict, translate_dict_reverse
+
 
 def get_all_config_options(text):
     result = []
@@ -207,15 +209,15 @@ class Root(Tk):
         self.go_back_button.place(x=600, y=420)
         self.current_widgets.append(self.go_back_button)
 
-        self.current_widgets += self.set_value('图片路径', '图片路径', True, 600, 50,
-                                               0, 115, True)
-        self.current_widgets += self.set_value('缩放倍数', '缩放倍数', False, 80, 28,
-                                               0, 200)
-        self.current_widgets += self.set_value('比特数', '比特数', False, 80, 28, 0,
-                                               300)
+        self.current_widgets += self.set_value('image_path', 'image_path',
+                                               True, 600, 50, 0, 115, True)
+        self.current_widgets += self.set_value('resize_ratio', 'resize_ratio',
+                                               False, 80, 28, 0, 200)
+        self.current_widgets += self.set_value('bit_number', 'bit_number',
+                                               False, 80, 28, 0, 300)
 
-        self.current_widgets += self.set_value('字符画保存为图片',
-                                               '字符画保存为图片',
+        self.current_widgets += self.set_value('save_as_ascii_image',
+                                               'save_as_ascii_image',
                                                False,
                                                160,
                                                40,
@@ -223,8 +225,8 @@ class Root(Tk):
                                                260,
                                                mode=1)
 
-        self.current_widgets += self.set_value('字符画保存为文本文件',
-                                               '字符画保存为文本文件',
+        self.current_widgets += self.set_value('save_as_ascii_text',
+                                               'save_as_ascii_text',
                                                False,
                                                200,
                                                40,
@@ -232,8 +234,8 @@ class Root(Tk):
                                                200,
                                                mode=1)
 
-        self.current_widgets += self.set_value('显示转换进度',
-                                               '显示转换进度',
+        self.current_widgets += self.set_value('show_convert_percentages',
+                                               'show_convert_percentages',
                                                False,
                                                150,
                                                40,
@@ -241,10 +243,12 @@ class Root(Tk):
                                                200,
                                                mode=1)
 
-        self.current_widgets += self.set_value('图片宽度比例', '图片宽度比例', False, 100,
+        self.current_widgets += self.set_value('image_width_ratio',
+                                               'image_width_ratio', False, 100,
                                                28, 400, 260)
-        self.current_widgets += self.set_value('图片高度比例', '图片高度比例', False, 100,
-                                               28, 550, 260)
+        self.current_widgets += self.set_value('image_height_ratio',
+                                               'image_height_ratio', False,
+                                               100, 28, 550, 260)
 
         self.save_button = ttk.Button(self,
                                       text='保存当前配置',
@@ -256,7 +260,7 @@ class Root(Tk):
         self.current_widgets.append(self.save_button)
 
         self.picture_color = IntVar()
-        img_color = self.value_dict['输出图片为彩色']
+        img_color = self.value_dict['colored_image']
         if type(img_color) == list:
             img_color = img_color[1]
         self.picture_color.set(1 if img_color else 0)
@@ -264,7 +268,7 @@ class Root(Tk):
             self,
             text='输出图片为彩色',
             variable=self.picture_color,
-            command=lambda: self.change_bool('输出图片为彩色'),
+            command=lambda: self.change_bool('colored_image'),
             background='black',
             foreground='white',
             borderwidth=0,
@@ -274,7 +278,7 @@ class Root(Tk):
             activebackground='white')
         self.output_picture_color.var = self.picture_color
         self.output_picture_color.place(x=620, y=200, width=150, height=40)
-        self.value_dict['输出图片为彩色'] = [
+        self.value_dict['colored_image'] = [
             self.output_picture_color, img_color, False
         ]
         self.current_widgets.append(self.output_picture_color)
@@ -321,7 +325,8 @@ class Root(Tk):
         global alpha_config
         alpha_config = all_config_options.copy()
         for k in all_config_options:
-            self.choose_config_options.insert(END, k)
+            print(translate_dict[k])
+            self.choose_config_options.insert(END, translate_dict[k])
         self.choose_config_options.place(x=0, y=30, width=220)
         self.config_options_bar.config(
             command=self.choose_config_options.yview)
@@ -439,16 +444,17 @@ class Root(Tk):
         self.go_back_button.place(x=630, y=420)
         self.current_widgets.append(self.go_back_button)
 
-        self.current_widgets += self.set_value('视频路径', '视频路径', True, 600, 50,
-                                               0, 115, True)
-        self.current_widgets += self.set_value('缩放倍数', '缩放倍数', False, 80, 28,
-                                               0, 200)
-        self.current_widgets += self.set_value('比特数', '比特数', False, 80, 28, 0,
-                                               300)
-        self.current_widgets += self.set_value('视频转换帧数区间', '视频转换帧数区间', False,
+        self.current_widgets += self.set_value('video_path', 'video_path',
+                                               True, 600, 50, 0, 115, True)
+        self.current_widgets += self.set_value('resize_ratio', 'resize_ratio',
+                                               False, 80, 28, 0, 200)
+        self.current_widgets += self.set_value('bit_number', 'bit_number',
+                                               False, 80, 28, 0, 300)
+        self.current_widgets += self.set_value('video_frames_save_path',
+                                               'video_frames_save_path', False,
                                                150, 28, 150, 200)
-        self.current_widgets += self.set_value('视频帧图路径',
-                                               '视频帧图路径',
+        self.current_widgets += self.set_value('video_frame_path',
+                                               'video_frame_path',
                                                True,
                                                300,
                                                28,
@@ -456,16 +462,19 @@ class Root(Tk):
                                                200,
                                                True,
                                                path_mode=1)
-        self.current_widgets += self.set_value('字体路径', '字体路径', True, 100, 28,
-                                               150, 270)
-        self.current_widgets += self.set_value('字体大小', '字体大小', False, 100, 28,
-                                               300, 270)
-        self.current_widgets += self.set_value('视频输出帧数', '视频输出帧数', False, 120,
+        self.current_widgets += self.set_value('font_path', 'font_path', True,
+                                               100, 28, 150, 270)
+        self.current_widgets += self.set_value('font_size', 'font_size', False,
+                                               100, 28, 300, 270)
+        self.current_widgets += self.set_value('video_frame_rate',
+                                               'video_frame_rate', False, 120,
                                                28, 450, 270)
-        self.current_widgets += self.set_value('图片宽度比例', '图片宽度比例', False, 100,
+        self.current_widgets += self.set_value('image_width_ratio',
+                                               'image_width_ratio', False, 100,
                                                28, 300, 330)
-        self.current_widgets += self.set_value('图片高度比例', '图片高度比例', False, 100,
-                                               28, 450, 330)
+        self.current_widgets += self.set_value('image_height_ratio',
+                                               'image_height_ratio', False,
+                                               100, 28, 450, 330)
 
         self.save_button = ttk.Button(self,
                                       text='保存当前配置',
@@ -477,7 +486,7 @@ class Root(Tk):
         self.current_widgets.append(self.save_button)
 
         self.picture_color = IntVar()
-        img_color = self.value_dict['输出图片为彩色']
+        img_color = self.value_dict['colored_image']
         if type(img_color) == list:
             img_color = img_color[1]
         self.picture_color.set(1 if img_color else 0)
@@ -485,7 +494,7 @@ class Root(Tk):
             self,
             text='输出图片为彩色',
             variable=self.picture_color,
-            command=lambda: self.change_bool('输出图片为彩色'),
+            command=lambda: self.change_bool('colored_image'),
             background='black',
             foreground='white',
             borderwidth=0,
@@ -495,7 +504,7 @@ class Root(Tk):
             activebackground='white')
         self.output_picture_color.var = self.picture_color
         self.output_picture_color.place(x=600, y=280, width=150, height=40)
-        self.value_dict['输出图片为彩色'] = [
+        self.value_dict['colored_image'] = [
             self.output_picture_color, img_color, False
         ]
         self.current_widgets.append(self.output_picture_color)
@@ -531,12 +540,13 @@ class Root(Tk):
         self.go_back_button.place(x=630, y=420)
         self.current_widgets.append(self.go_back_button)
 
-        self.current_widgets += self.set_value('视频路径', '视频路径', True, 600, 50,
-                                               0, 115, True)
-        self.current_widgets += self.set_value('视频转换帧数区间', '视频转换帧数区间', False,
+        self.current_widgets += self.set_value('video_path', 'video_path',
+                                               True, 600, 50, 0, 115, True)
+        self.current_widgets += self.set_value('video_frames_save_path',
+                                               'video_frames_save_path', False,
                                                150, 28, 100, 200)
-        self.current_widgets += self.set_value('视频帧图片保存路径',
-                                               '视频帧图片保存路径',
+        self.current_widgets += self.set_value('video_frames_save_path',
+                                               'video_frames_save_path',
                                                False,
                                                300,
                                                28,
@@ -588,14 +598,14 @@ class Root(Tk):
             all_config_options = config_original.copy()
             self.choose_config_options.delete(0, END)
             for k in all_config_options:
-                self.choose_config_options.insert(END, k)
+                self.choose_config_options.insert(END, translate_dict[k])
         else:
             self.sort_mode = 0
             self.change_sort_button.config(text='以字母或笔画排序')
             all_config_options = alpha_config.copy()
             self.choose_config_options.delete(0, END)
             for k in all_config_options:
-                self.choose_config_options.insert(END, k)
+                self.choose_config_options.insert(END, translate_dict[k])
         self.search()
 
     def insert_bool(self, content):
@@ -655,7 +665,7 @@ class Root(Tk):
         if current_config:
             self.config_name.configure(text=current_config)
             self.config_contents.delete('1.0', END)
-            current_config_value = self.value_dict[current_config]
+            current_config_value = self.value_dict[translate_dict_reverse[current_config]]
             if type(current_config_value) == list:
                 current_config_value = current_config_value[1]
             try:
@@ -867,35 +877,36 @@ def plays():
         i: (None if j in ['', 'None'] else j)
         for i, j in current_value_dict.items()
     }
-    length = len(current_value_dict['字符集'])
-    K = 2**current_value_dict['比特数']
+    length = len(current_value_dict['ascii_character_set'])
+    K = 2**current_value_dict['bit_number']
     unit = (K + 1) / length
 
     def get_char(r, g, b, alpha=K):
         if alpha == 0:
             return " "
         gray = int(0.2126 * r + 0.7152 * g + 0.0722 * b)
-        return current_value_dict['字符集'][int(gray / unit)]
+        return current_value_dict['ascii_character_set'][int(gray / unit)]
 
     def img_to_ascii(im, show_percentage=False):
-        WIDTH = int(
-            (im.width * current_value_dict['图片宽度比例'] /
-             current_value_dict['图片宽度比例缩放倍数']) / current_value_dict['缩放倍数'])
-        HEIGHT = int(
-            (im.height * current_value_dict['图片高度比例'] /
-             current_value_dict['图片高度比例缩放倍数']) / current_value_dict['缩放倍数'])
+        WIDTH = int((im.width * current_value_dict['image_width_ratio'] /
+                     current_value_dict['image_width_ratio_scale']) /
+                    current_value_dict['resize_ratio'])
+        HEIGHT = int((im.height * current_value_dict['image_height_ratio'] /
+                      current_value_dict['image_height_ratio_scale']) /
+                     current_value_dict['resize_ratio'])
         if show_percentage:
             whole_count = WIDTH * HEIGHT
             count = 0
         im_resize = im.resize((WIDTH, HEIGHT), Image.ANTIALIAS)
         txt = ""
-        if is_color and (current_value_dict['字符画保存为图片'] or 导出视频):
-            im_txt = Image.new(current_value_dict['彩色字符画图片样式'],
-                               (int(im.width / current_value_dict['缩放倍数']),
-                                int(im.height / current_value_dict['缩放倍数'])),
-                               (2**current_value_dict['比特数'] - 1,
-                                2**current_value_dict['比特数'] - 1,
-                                2**current_value_dict['比特数'] - 1))
+        if is_color and (current_value_dict['save_as_ascii_image'] or 导出视频):
+            im_txt = Image.new(
+                current_value_dict['colored_ascii_image_mode'],
+                (int(im.width / current_value_dict['resize_ratio']),
+                 int(im.height / current_value_dict['resize_ratio'])),
+                (2**current_value_dict['bit_number'] - 1,
+                 2**current_value_dict['bit_number'] - 1,
+                 2**current_value_dict['bit_number'] - 1))
             colors = []
             for i in range(HEIGHT):
                 for j in range(WIDTH):
@@ -924,7 +935,7 @@ def plays():
             return txt
 
     if 演示模式 == 1:
-        video_frames_path = current_value_dict['视频帧图路径']
+        video_frames_path = current_value_dict['video_frame_path']
         if video_frames_path:
             os.chdir(video_frames_path)
             file_ls = [f for f in os.listdir() if os.path.isfile(f)]
@@ -932,13 +943,13 @@ def plays():
             frames = (Image.open(i) for i in file_ls)
             start_frame = 0
         else:
-            if not current_value_dict['视频路径']:
+            if not current_value_dict['video_path']:
                 return
-            vidcap = cv2.VideoCapture(current_value_dict['视频路径'])
+            vidcap = cv2.VideoCapture(current_value_dict['video_path'])
             count = 0
             if 视频导出帧图片到文件夹:
                 try:
-                    os.chdir(current_value_dict['视频帧图片保存路径'])
+                    os.chdir(current_value_dict['video_frames_save_path'])
                 except:
                     if not os.path.exists('video_frame_ascii_images'):
                         os.mkdir('video_frame_ascii_images')
@@ -946,7 +957,7 @@ def plays():
                     for each in os.listdir():
                         os.remove(each)
                 start_frame = 0
-                if not current_value_dict['视频转换帧数区间']:
+                if not current_value_dict['video_frames_save_path']:
                     whole_frame_number = int(
                         vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
                     frames = (Image.fromarray(
@@ -963,7 +974,8 @@ def plays():
                         root.update()
                     vidcap.set(cv2.CAP_PROP_POS_FRAMES, 0)
                 else:
-                    start_frame, to_frame = current_value_dict['视频转换帧数区间']
+                    start_frame, to_frame = current_value_dict[
+                        'video_frames_save_path']
                     no_of_frames = to_frame - start_frame
                     vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
                     frames = (Image.fromarray(
@@ -989,7 +1001,7 @@ def plays():
                 return
             else:
                 start_frame = 0
-                if not current_value_dict['视频转换帧数区间']:
+                if not current_value_dict['video_frames_save_path']:
                     whole_frame_number = int(
                         vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
                     frames = (Image.fromarray(
@@ -997,7 +1009,8 @@ def plays():
                               for k in range(whole_frame_number))
                     frame_length = whole_frame_number
                 else:
-                    start_frame, to_frame = current_value_dict['视频转换帧数区间']
+                    start_frame, to_frame = current_value_dict[
+                        'video_frames_save_path']
                     no_of_frames = to_frame - start_frame
                     frame_length = no_of_frames
                     vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
@@ -1010,7 +1023,7 @@ def plays():
                     os.path.basename(video_frames_path))[0]
             else:
                 file_name = os.path.splitext(
-                    os.path.basename(current_value_dict['视频路径']))[0]
+                    os.path.basename(current_value_dict['video_path']))[0]
             output_filename = filedialog.asksaveasfilename(
                 initialdir='.',
                 initialfile=f'ascii_{file_name}.mp4',
@@ -1029,18 +1042,19 @@ def plays():
             num_frames = frame_length
             n = len(str(num_frames))
             try:
-                font = ImageFont.truetype(current_value_dict['字体路径'],
-                                          size=current_value_dict['字体大小'])
+                font = ImageFont.truetype(current_value_dict['font_path'],
+                                          size=current_value_dict['font_size'])
             except:
                 font = ImageFont.load_default()
-            font_x_len, font_y_len = font.getsize(current_value_dict['字符集'][1])
+            font_x_len, font_y_len = font.getsize(
+                current_value_dict['ascii_character_set'][1])
             font_y_len = int(font_y_len * 1.37)
-            字符画图片横向间距 = current_value_dict['字符画图片横向间距']
-            字符画图片纵向间距 = current_value_dict['字符画图片纵向间距']
-            if 字符画图片横向间距 is not None:
-                font_x_len = float(字符画图片横向间距)
-            if 字符画图片纵向间距 is not None:
-                font_y_len = float(字符画图片纵向间距)
+            ascii_image_padding_x = current_value_dict['ascii_image_padding_x']
+            ascii_image_padding_y = current_value_dict['ascii_image_padding_y']
+            if ascii_image_padding_x is not None:
+                font_x_len = float(ascii_image_padding_x)
+            if ascii_image_padding_y is not None:
+                font_y_len = float(ascii_image_padding_y)
             if is_color == 0:
                 for i in range(num_frames):
                     if root.go_back:
@@ -1055,18 +1069,22 @@ def plays():
                         break
                     text_str = img_to_ascii(im)
                     im_txt = Image.new(
-                        current_value_dict['字符画图片格式'],
-                        (int(im.width / current_value_dict['缩放倍数']),
-                         int(im.height / current_value_dict['缩放倍数'])),
-                        current_value_dict['字符画图片初始背景色'])
+                        current_value_dict['ascii_image_mode'],
+                        (int(im.width / current_value_dict['resize_ratio']),
+                         int(im.height / current_value_dict['resize_ratio'])),
+                        current_value_dict['ascii_image_init_bg_color'])
                     dr = ImageDraw.Draw(im_txt)
                     x = y = 0
-                    字符画图片字符颜色 = current_value_dict['字符画图片字符颜色']
+                    ascii_image_character_color = current_value_dict[
+                        'ascii_image_character_color']
                     for j in range(len(text_str)):
                         if text_str[j] == "\n":
                             x = 0
                             y += font_y_len
-                        dr.text((x, y), text_str[j], fill=字符画图片字符颜色, font=font)
+                        dr.text((x, y),
+                                text_str[j],
+                                fill=ascii_image_character_color,
+                                font=font)
                         x += font_x_len
                     if root.go_back:
                         break
@@ -1100,7 +1118,7 @@ def plays():
             os.chdir(abs_path)
             if root.go_back:
                 return
-            current_framerate = current_value_dict['视频输出帧数']
+            current_framerate = current_value_dict['video_frame_rate']
             if not current_framerate:
                 current_framerate = vidcap.get(cv2.CAP_PROP_FPS)
             ffmpeg.input(f'temp_video_images/%{n}d.png',
@@ -1112,8 +1130,9 @@ def plays():
         root.frame_info.set('图片转换中')
         root.update()
         try:
-            im = Image.open(current_value_dict['图片路径'])
-            text_str_output = img_to_ascii(im, current_value_dict['显示转换进度'])
+            im = Image.open(current_value_dict['image_path'])
+            text_str_output = img_to_ascii(
+                im, current_value_dict['show_convert_percentages'])
             if type(text_str_output) != str:
                 text_str = text_str_output[0]
             else:
@@ -1126,8 +1145,8 @@ def plays():
         root.frame_info.set('图片转换完成')
         root.update()
         file_name = os.path.splitext(
-            os.path.basename(current_value_dict['图片路径']))[0]
-        if current_value_dict['字符画保存为文本文件']:
+            os.path.basename(current_value_dict['image_path']))[0]
+        if current_value_dict['save_as_ascii_text']:
             root.frame_info.set('图片转换完成，正在写入字符画为\n文本文件...')
             root.update()
             output_filename = filedialog.asksaveasfilename(
@@ -1142,7 +1161,7 @@ def plays():
                 f.write(text_str)
             root.frame_info.set('已成功写入文本文件')
             root.update()
-        if current_value_dict['字符画保存为图片']:
+        if current_value_dict['save_as_ascii_image']:
             root.frame_info.set('图片转换完成，正在输出字符画为图片...')
             root.update()
             output_filename = filedialog.asksaveasfilename(
@@ -1154,32 +1173,37 @@ def plays():
                 root.frame_info.set('已取消输出')
                 return
             try:
-                font = ImageFont.truetype(current_value_dict['字体路径'],
-                                          size=current_value_dict['字体大小'])
+                font = ImageFont.truetype(current_value_dict['font_path'],
+                                          size=current_value_dict['font_size'])
             except:
                 font = ImageFont.load_default()
-            font_x_len, font_y_len = font.getsize(current_value_dict['字符集'][1])
+            font_x_len, font_y_len = font.getsize(
+                current_value_dict['ascii_character_set'][1])
             font_y_len = int(font_y_len * 1.37)
-            字符画图片横向间距 = current_value_dict['字符画图片横向间距']
-            字符画图片纵向间距 = current_value_dict['字符画图片纵向间距']
-            if 字符画图片横向间距 is not None:
-                font_x_len = float(字符画图片横向间距)
-            if 字符画图片纵向间距 is not None:
-                font_y_len = float(字符画图片纵向间距)
+            ascii_image_padding_x = current_value_dict['ascii_image_padding_x']
+            ascii_image_padding_y = current_value_dict['ascii_image_padding_y']
+            if ascii_image_padding_x is not None:
+                font_x_len = float(ascii_image_padding_x)
+            if ascii_image_padding_y is not None:
+                font_y_len = float(ascii_image_padding_y)
             if is_color == 0:
                 im_txt = Image.new(
-                    current_value_dict['字符画图片格式'],
-                    (int(im.width / current_value_dict['缩放倍数']),
-                     int(im.height / current_value_dict['缩放倍数'])),
-                    current_value_dict['字符画图片初始背景色'])
+                    current_value_dict['ascii_image_mode'],
+                    (int(im.width / current_value_dict['resize_ratio']),
+                     int(im.height / current_value_dict['resize_ratio'])),
+                    current_value_dict['ascii_image_init_bg_color'])
                 dr = ImageDraw.Draw(im_txt)
                 x = y = 0
-                字符画图片字符颜色 = current_value_dict['字符画图片字符颜色']
+                ascii_image_character_color = current_value_dict[
+                    'ascii_image_character_color']
                 for i in range(len(text_str)):
                     if text_str[i] == "\n":
                         x = 0
                         y += font_y_len
-                    dr.text((x, y), text_str[i], fill=字符画图片字符颜色, font=font)
+                    dr.text((x, y),
+                            text_str[i],
+                            fill=ascii_image_character_color,
+                            font=font)
                     x += font_x_len
                 im_txt.save(output_filename)
 
