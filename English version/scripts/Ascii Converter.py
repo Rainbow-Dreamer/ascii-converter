@@ -170,9 +170,8 @@ class Root(Tk):
                                     textvariable=self.frame_info,
                                     style='New.TLabel',
                                     anchor='nw')
-        global all_config_options
-        all_config_options = get_all_config_options(text)
-        self.value_dict = {i: eval(i) for i in all_config_options}
+        self.all_config_options = get_all_config_options(text)
+        self.value_dict = {i: eval(i) for i in self.all_config_options}
         self.go_back = False
 
         try:
@@ -321,18 +320,15 @@ class Root(Tk):
             foreground='white')
         self.choose_config_options.bind('<<ListboxSelect>>',
                                         self.show_current_config_options)
-        self.options_num = len(all_config_options)
-        global all_config_options_ind
-        all_config_options_ind = {
-            all_config_options[i]: i
+        self.options_num = len(self.all_config_options)
+        self.all_config_options_ind = {
+            self.all_config_options[i]: i
             for i in range(self.options_num)
         }
-        global config_original
-        config_original = all_config_options.copy()
-        all_config_options.sort(key=lambda s: s.lower())
-        global alpha_config
-        alpha_config = all_config_options.copy()
-        for k in all_config_options:
+        self.config_original = self.all_config_options.copy()
+        self.all_config_options.sort(key=lambda s: s.lower())
+        self.alpha_config = self.all_config_options.copy()
+        for k in self.all_config_options:
             self.choose_config_options.insert(END, k)
         self.choose_config_options.place(x=0, y=30, width=220)
         self.config_options_bar.config(
@@ -599,20 +595,19 @@ class Root(Tk):
         var_counter = 1
 
     def change_sort(self):
-        global all_config_options
         if self.sort_mode == 0:
             self.sort_mode = 1
             self.change_sort_button.config(text='Sort in order of appearance')
-            all_config_options = config_original.copy()
+            self.all_config_options = self.config_original.copy()
             self.choose_config_options.delete(0, END)
-            for k in all_config_options:
+            for k in self.all_config_options:
                 self.choose_config_options.insert(END, k)
         else:
             self.sort_mode = 0
             self.change_sort_button.config(text='Sort in alphabetical order')
-            all_config_options = alpha_config.copy()
+            self.all_config_options = self.alpha_config.copy()
             self.choose_config_options.delete(0, END)
-            for k in all_config_options:
+            for k in self.all_config_options:
                 self.choose_config_options.insert(END, k)
         self.search()
 
@@ -652,7 +647,7 @@ class Root(Tk):
             return
         self.search_inds_list = [
             i for i in range(self.options_num)
-            if current in all_config_options[i]
+            if current in self.all_config_options[i]
         ]
         if self.search_inds_list:
             self.search_inds = 0
