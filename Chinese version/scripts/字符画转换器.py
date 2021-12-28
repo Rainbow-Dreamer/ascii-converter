@@ -196,8 +196,6 @@ class Root(Tk):
 
     def img_to_ascii_img_window(self):
         self.go_back = False
-        self.convert_mode = 0
-        self.output_as_video = False
         self.quit_main_window()
         self.current_widgets = []
 
@@ -417,9 +415,6 @@ class Root(Tk):
 
     def video_to_ascii_video_window(self):
         self.go_back = False
-        self.convert_mode = 1
-        self.output_as_video = True
-        self.output_video_frames_to_folder = False
         self.quit_main_window()
         self.current_widgets = []
 
@@ -514,9 +509,6 @@ class Root(Tk):
 
     def video_to_img_window(self):
         self.go_back = False
-        self.convert_mode = 1
-        self.output_as_video = False
-        self.output_video_frames_to_folder = True
         self.quit_main_window()
         self.current_widgets = []
 
@@ -560,8 +552,6 @@ class Root(Tk):
     def go_back_main_window(self):
         os.chdir(abs_path)
         self.go_back = True
-        self.output_as_video = False
-        self.output_video_frames_to_folder = False
         for i in self.current_widgets:
             i.place_forget()
         self.reset_main_window()
