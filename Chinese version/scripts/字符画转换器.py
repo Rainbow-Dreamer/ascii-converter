@@ -1,10 +1,10 @@
+from scripts.translate import translate_dict, translate_dict_reverse
+from ast import literal_eval
+
 with open('scripts/config.py', encoding='utf-8-sig') as f:
     text = f.read()
     exec(text, globals())
 abs_path = os.getcwd()
-
-from scripts.translate import translate_dict, translate_dict_reverse
-from ast import literal_eval
 
 
 def get_all_config_options(text):
@@ -37,7 +37,6 @@ def change(var, new, is_str=True):
 
 
 class Root(Tk):
-
     def __init__(self):
         super(Root, self).__init__()
         self.title("Ascii Converter 字符画转换器")
