@@ -1022,15 +1022,10 @@ class Root(Tk):
         current_framerate = self.current_value_dict['video_frame_rate']
         if not current_framerate:
             current_framerate = vidcap.get(cv2.CAP_PROP_FPS)
-        try:
-            ffmpeg.input(f'temp_video_images/%{n}d.png',
-                         framerate=current_framerate).output(
-                             output_filename,
-                             pix_fmt='yuv420p').run(overwrite_output=True)
-        except:
-            import traceback
-            self.bg_label.configure(text=traceback.format_exc())
-            return
+        ffmpeg.input(f'temp_video_images/%{n}d.png',
+                     framerate=current_framerate).output(
+                         output_filename,
+                         pix_fmt='yuv420p').run(overwrite_output=True)
         self.frame_info.set('Video has been successfully exported')
         self.update()
 
