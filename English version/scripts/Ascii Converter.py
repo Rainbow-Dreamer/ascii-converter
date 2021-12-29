@@ -36,6 +36,7 @@ def change(var, new, is_str=True):
 
 
 class Root(Tk):
+
     def __init__(self):
         super(Root, self).__init__()
         self.title("Ascii Converter")
@@ -883,8 +884,13 @@ class Root(Tk):
             os.chdir(video_frames_path)
             file_ls = [f for f in os.listdir() if os.path.isfile(f)]
             file_ls.sort(key=lambda x: int(os.path.splitext(x)[0]))
+            file_ls = [
+                os.path.normpath(os.path.join(os.sep, video_frames_path, i))
+                for i in file_ls
+            ]
             frames = (Image.open(i) for i in file_ls)
             start_frame = 0
+            frame_length = len(file_ls)
         else:
             if not self.current_value_dict['video_path'] or not os.path.isfile(
                     self.current_value_dict['video_path']):
@@ -1016,9 +1022,15 @@ class Root(Tk):
         current_framerate = self.current_value_dict['video_frame_rate']
         if not current_framerate:
             current_framerate = vidcap.get(cv2.CAP_PROP_FPS)
-        ffmpeg.input(f'temp_video_images/%{n}d.png',
-                     framerate=current_framerate).output(
-                         output_filename, pix_fmt='yuv420p').run()
+        try:
+            ffmpeg.input(f'temp_video_images/%{n}d.png',
+                         framerate=current_framerate).output(
+                             output_filename,
+                             pix_fmt='yuv420p').run(overwrite_output=True)
+        except:
+            import traceback
+            self.bg_label.configure(text=traceback.format_exc())
+            return
         self.frame_info.set('Video has been successfully exported')
         self.update()
 
@@ -1058,7 +1070,7 @@ class Root(Tk):
                 is_read, img = vidcap.read()
                 count += 1
                 self.frame_info.set(
-                    f'Reading and exporting video frame  {count}/{start_frame + num_frames}'
+                    f'Reading and exporting\nvideo frame {count}/{start_frame + num_frames}'
                 )
                 self.update()
             vidcap.set(cv2.CAP_PROP_POS_FRAMES, 0)
@@ -1080,7 +1092,7 @@ class Root(Tk):
                     is_read, img = vidcap.read()
                     count += 1
                     self.frame_info.set(
-                        f'Reading and exporting video frame  {start_frame + count}/{start_frame + num_frames}'
+                        f'Reading and exporting\nvideo frame {start_frame + count}/{start_frame + num_frames}'
                     )
                     self.update()
                 else:
