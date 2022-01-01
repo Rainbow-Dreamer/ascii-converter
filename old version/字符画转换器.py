@@ -339,7 +339,9 @@ def plays():
             font_y_len = int(font_y_len * 1.37)
             if is_color == 0:
                 for i in range(num_frames):
-                    root.frame_info.set(f'正在转换第{start_frame + i + 1}帧')
+                    root.frame_info.set(
+                        f'正在转换第{start_frame + i + 1}/{start_frame + num_frames}帧'
+                    )
                     root.update()
                     im = frames[i]
                     text_str = img_to_ascii(im)
@@ -357,7 +359,9 @@ def plays():
                     im_txt.save(f'{i:0{n}d}.png')
             else:
                 for i in range(num_frames):
-                    root.frame_info.set(f'正在转换第{start_frame + i + 1}帧')
+                    root.frame_info.set(
+                        f'正在转换第{start_frame + i + 1}/{start_frame + num_frames}帧'
+                    )
                     root.update()
                     text_str_output = img_to_ascii(frames[i])
                     txt, colors, im_txt = text_str_output
@@ -382,8 +386,9 @@ def plays():
             if output_filename in os.listdir():
                 os.remove(output_filename)
             ffmpeg.input(f'temp_video_images/%{n}d.png',
-                         framerate=视频输出帧数).output(output_filename,
-                                                  pix_fmt='yuv420p').run()
+                         framerate=视频输出帧数).output(
+                             output_filename,
+                             pix_fmt='yuv420p').run(overwrite_output=True)
             root.frame_info.set(f'已成功输出为视频')
             root.update()
 
