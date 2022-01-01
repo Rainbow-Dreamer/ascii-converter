@@ -37,7 +37,6 @@ def change(var, new, is_str=True):
 
 
 class Root(Tk):
-
     def __init__(self):
         super(Root, self).__init__()
         self.title("Ascii Converter 字符画转换器")
