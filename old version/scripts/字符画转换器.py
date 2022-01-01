@@ -252,8 +252,7 @@ def plays():
             if not 视频转换帧数区间:
                 while is_read:
                     frames.append(
-                        Image.fromarray(
-                            cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
+                        Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
                     is_read, img = vidcap.read()
                     count += 1
                     root.frame_info.set(f'正在读取视频帧{count}/{whole_frame_number}')
@@ -271,7 +270,8 @@ def plays():
                         is_read, img = vidcap.read()
                         count += 1
                         root.frame_info.set(
-                            f'正在读取视频帧{start_frame + count}/{start_frame + no_of_frames}')
+                            f'正在读取视频帧{start_frame + count}/{start_frame + no_of_frames}'
+                        )
                         root.update()
                     else:
                         break
