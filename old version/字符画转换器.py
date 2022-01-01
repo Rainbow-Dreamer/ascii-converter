@@ -22,18 +22,18 @@ class Root(Tk):
         self.title("字符画转换器")
         self.minsize(900, 700)
         self.value_dict = {}
-        self.set_value('字符集', '字符集', True, 600, 60, 0, 0)
+        self.set_value('字符集', '字符集', True, 600, 60, 0, 50)
         self.set_value('缩放倍数', '缩放倍数', False, 80, 40, 0, 140)
-        self.set_value('比特数', '比特数', False, 80, 40, 0, 240)
-        self.set_value('演示模式', '演示模式', False, 80, 40, 0, 290)
-        self.set_value('图片路径', '图片路径', True, 600, 40, 0, 390, True)
+        self.set_value('比特数', '比特数', False, 80, 40, 0, 210)
+        self.set_value('演示模式', '演示模式', False, 80, 40, 0, 270)
+        self.set_value('图片路径', '图片路径', True, 600, 50, 0, 390, True)
         self.set_value('视频路径', '视频路径', True, 500, 50, 100, 140, True)
         self.set_value('视频帧图路径',
                        '视频帧图路径',
                        True,
                        500,
                        50,
-                       150,
+                       100,
                        210,
                        True,
                        path_mode=1)
@@ -42,26 +42,26 @@ class Root(Tk):
                        True,
                        500,
                        50,
-                       150,
+                       100,
                        270,
                        True,
                        path_mode=1)
-        self.set_value('视频导出帧图片到文件夹', '视频导出帧图片到文件夹', False, 150, 40, 150, 330)
-        self.set_value('视频转换帧数区间', '视频转换帧数区间', False, 150, 40, 200, 450)
-        self.set_value('字符画保存为图片', '字符画保存为图片', False, 150, 40, 200, 500)
-        self.set_value('字符画保存为文本文件', '字符画保存为文本文件', False, 150, 40, 500, 330)
-        self.set_value('显示转换进度', '显示转换进度', False, 150, 40, 730, 410)
-        self.set_value('导出视频', '导出视频', False, 150, 40, 730, 520)
-        self.set_value('导出视频帧数', '视频输出帧数', False, 100, 40, 350, 580)
-        self.set_value('导出视频字体', '字体路径', True, 100, 40, 500, 580)
-        self.set_value('导出视频字体大小', '字体大小', False, 120, 40, 650, 580)
-        self.set_value('图片宽度比例', '图片宽度比例', False, 100, 40, 300, 630)
-        self.set_value('图片高度比例', '图片高度比例', False, 100, 40, 450, 630)
+        self.set_value('视频导出帧图片到文件夹', '视频导出帧图片到文件夹', False, 150, 40, 100, 330)
+        self.set_value('视频转换帧数区间', '视频转换帧数区间', False, 150, 40, 0, 450)
+        self.set_value('字符画保存为图片', '字符画保存为图片', False, 150, 40, 500, 330)
+        self.set_value('字符画保存为文本文件', '字符画保存为文本文件', False, 150, 40, 300, 330)
+        self.set_value('显示转换进度', '显示转换进度', False, 150, 40, 0, 500)
+        self.set_value('导出视频', '导出视频', False, 150, 40, 200, 450)
+        self.set_value('导出视频帧数', '视频输出帧数', False, 100, 40, 200, 500)
+        self.set_value('导出视频字体', '字体路径', True, 100, 40, 0, 550)
+        self.set_value('导出视频字体大小', '字体大小', False, 120, 40, 200, 550)
+        self.set_value('图片宽度比例', '图片宽度比例', False, 100, 40, 0, 600)
+        self.set_value('图片高度比例', '图片高度比例', False, 100, 40, 200, 600)
         self.save = ttk.Button(self, text="save", command=self.save_current)
-        self.save.place(x=500, y=490)
+        self.save.place(x=500, y=470)
         self.saved_text = ttk.Label(self, text='saved')
         self.playing = ttk.Button(self, text='运行', command=self.play)
-        self.playing.place(x=600, y=490)
+        self.playing.place(x=610, y=470)
         self.frame_info = StringVar()
         self.frame_info.set('暂无读取帧')
         self.frame_show = ttk.Label(self, textvariable=self.frame_info)
@@ -71,7 +71,7 @@ class Root(Tk):
             text=
             '每次运行之前要记得先\n点击save按钮保存配置哦~\n演示模式为0：转换图片为ascii字符画\n演示模式为1：转换视频为ascii字符画视频'
         )
-        self.msg_label.place(x=620, y=10)
+        self.msg_label.place(x=620, y=50)
         self.set_true_button = ttk.Button(self,
                                           text='True',
                                           command=lambda: self.insert_value(1),
@@ -81,15 +81,15 @@ class Root(Tk):
             text='False',
             command=lambda: self.insert_value(0),
             takefocus=False)
-        self.set_true_button.place(x=0, y=600)
-        self.set_false_button.place(x=100, y=600)
+        self.set_true_button.place(x=350, y=615)
+        self.set_false_button.place(x=450, y=615)
         self.picture_color = IntVar()
         self.output_picture_color = Checkbutton(self,
                                                 text='输出图片为彩色',
                                                 variable=self.picture_color,
                                                 onvalue=1,
                                                 offvalue=0)
-        self.output_picture_color.place(x=200, y=560)
+        self.output_picture_color.place(x=365, y=465)
 
     def insert_value(self, value):
         if value == 1:
