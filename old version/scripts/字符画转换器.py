@@ -329,6 +329,8 @@ def plays():
             except:
                 pass
             os.chdir('temp_video_images')
+            for each in os.listdir():
+                os.remove(each)
             num_frames = len(frames)
             n = len(str(num_frames))
             try:
