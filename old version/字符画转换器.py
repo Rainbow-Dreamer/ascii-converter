@@ -1,9 +1,9 @@
-with open('config.py', encoding='utf-8-sig') as f:
+with open('config.py', encoding='utf-8') as f:
     exec(f.read(), globals())
 
 
 def change(var, new, is_str=True):
-    text = open('config.py', encoding='utf-8-sig').read()
+    text = open('config.py', encoding='utf-8').read()
     text_ls = list(text)
     var_len = len(var) + 1
     var_ind = text.index('\n' + var) + var_len
@@ -12,7 +12,7 @@ def change(var, new, is_str=True):
         text_ls[var_ind:var_ind + next_line] = f' = {repr(new)}'
     else:
         text_ls[var_ind:var_ind + next_line] = f" = {new}"
-    with open('config.py', 'w', encoding='utf-8-sig') as f:
+    with open('config.py', 'w', encoding='utf-8') as f:
         f.write(''.join(text_ls))
 
 
@@ -173,7 +173,7 @@ class Root(Tk):
 
 
 def plays():
-    with open('config.py', encoding='utf-8-sig') as f:
+    with open('config.py', encoding='utf-8') as f:
         exec(f.read(), globals())
     length = len(字符集)
     K = 2**比特数
@@ -413,7 +413,7 @@ def plays():
             root.frame_info.set('图片转换完成，正在写入字符画为\n文本文件...')
             root.update()
             with open(f'ascii_{file_name}.txt', 'w',
-                      encoding='utf-8-sig') as f:
+                      encoding='utf-8') as f:
                 f.write(text_str)
             root.frame_info.set('已成功写入文本文件')
             root.update()
