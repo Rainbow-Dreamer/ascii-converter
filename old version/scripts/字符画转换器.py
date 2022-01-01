@@ -46,10 +46,9 @@ class Root(Tk):
                        270,
                        True,
                        path_mode=1)
-        self.set_value('视频导出帧图片到文件夹', '视频导出帧图片到文件夹', False, 150, 40, 100, 330)
         self.set_value('视频转换帧数区间', '视频转换帧数区间', False, 150, 40, 0, 450)
-        self.set_value('字符画保存为图片', '字符画保存为图片', False, 150, 40, 500, 330)
-        self.set_value('字符画保存为文本文件', '字符画保存为文本文件', False, 150, 40, 300, 330)
+        self.set_value('字符画保存为图片', '字符画保存为图片', False, 150, 40, 300, 330)
+        self.set_value('字符画保存为文本文件', '字符画保存为文本文件', False, 150, 40, 100, 330)
         self.set_value('显示转换进度', '显示转换进度', False, 150, 40, 0, 500)
         self.set_value('导出视频', '导出视频', False, 150, 40, 200, 450)
         self.set_value('导出视频帧数', '视频输出帧数', False, 100, 40, 200, 500)
@@ -232,10 +231,11 @@ def plays():
             count = 0
             file_ls = [f for f in os.listdir() if os.path.isfile(f)]
             file_ls.sort(key=lambda x: int(os.path.splitext(x)[0]))
+            frames_length = len(file_ls)
             for i in file_ls:
                 frames.append(Image.open(i))
                 count += 1
-                root.frame_info.set(f'正在读取视频帧{count}')
+                root.frame_info.set(f'正在读取视频帧{count}/{frames_length}')
                 root.update()
             start_frame = 0
         else:
@@ -247,81 +247,37 @@ def plays():
                 return
             frames = []
             count = 0
-            if 视频导出帧图片到文件夹:
-                abs_path = os.getcwd()
-                try:
-                    os.chdir(视频帧图片保存路径)
-                except:
-                    if not os.path.exists('video_frame_ascii_images'):
-                        os.mkdir('video_frame_ascii_images')
-                    os.chdir('video_frame_ascii_images')
-                start_frame = 0
-                global 导出视频
-                导出视频 = False
-                if not 视频转换帧数区间:
-                    while is_read:
-                        cv2.imwrite(f"{count}.png", img)
-                        frames.append(
-                            Image.fromarray(
-                                cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
-                        is_read, img = vidcap.read()
-                        count += 1
-                        root.frame_info.set(f'正在读取视频帧{count}')
-                        root.update()
-                else:
-                    start_frame, to_frame = 视频转换帧数区间
-                    no_of_frames = to_frame - start_frame
-                    vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
+            start_frame = 0
+            whole_frame_number = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
+            if not 视频转换帧数区间:
+                while is_read:
+                    frames.append(
+                        Image.fromarray(
+                            cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
                     is_read, img = vidcap.read()
-                    for k in range(no_of_frames):
-                        if is_read:
-                            cv2.imwrite(f"{count}.png", img)
-                            frames.append(
-                                Image.fromarray(
-                                    cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
-                            is_read, img = vidcap.read()
-                            count += 1
-                            root.frame_info.set(
-                                f'正在读取视频帧{start_frame + count}')
-                            root.update()
-                        else:
-                            break
+                    count += 1
+                    root.frame_info.set(f'正在读取视频帧{count}/{whole_frame_number}')
+                    root.update()
             else:
-                start_frame = 0
-                if not 视频转换帧数区间:
-                    while is_read:
+                start_frame, to_frame = 视频转换帧数区间
+                no_of_frames = to_frame - start_frame
+                vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
+                is_read, img = vidcap.read()
+                for k in range(no_of_frames):
+                    if is_read:
                         frames.append(
                             Image.fromarray(
                                 cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
                         is_read, img = vidcap.read()
                         count += 1
-                        root.frame_info.set(f'正在读取视频帧{count}')
+                        root.frame_info.set(
+                            f'正在读取视频帧{start_frame + count}/{start_frame + no_of_frames}')
                         root.update()
-                else:
-                    start_frame, to_frame = 视频转换帧数区间
-                    no_of_frames = to_frame - start_frame
-                    vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
-                    is_read, img = vidcap.read()
-                    for k in range(no_of_frames):
-                        if is_read:
-                            frames.append(
-                                Image.fromarray(
-                                    cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
-                            is_read, img = vidcap.read()
-                            count += 1
-                            root.frame_info.set(
-                                f'正在读取视频帧{start_frame + count}')
-                            root.update()
-                        else:
-                            break
+                    else:
+                        break
         if 导出视频:
             root.frame_info.set('视频帧读取完成，开始转换')
             root.update()
-        elif 视频导出帧图片到文件夹:
-            root.frame_info.set('视频帧图片导出完成')
-            root.update()
-            os.chdir(abs_path)
-        if 导出视频:
             if 视频帧图路径:
                 os.chdir(abs_path)
             try:
