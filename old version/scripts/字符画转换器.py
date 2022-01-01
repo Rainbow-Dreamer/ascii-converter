@@ -103,7 +103,7 @@ class Root(Tk):
     def play(self):
         global is_color
         is_color = self.picture_color.get()
-        plays()
+        self.plays()
 
     def set_value(self,
                   value_name,
@@ -170,21 +170,15 @@ class Root(Tk):
         if changed:
             self.show_saved()
 
-
-def plays():
-    with open('scripts/config.py', encoding='utf-8') as f:
-        exec(f.read(), globals())
-    length = len(字符集)
-    K = 2**比特数
-    unit = (K + 1) / length
-
-    def get_char(r, g, b, alpha=K):
+    def get_char(self, r, g, b, alpha=None):
         if alpha == 0:
             return " "
+        if alpha is None:
+            alpha = self.K
         gray = int(0.2126 * r + 0.7152 * g + 0.0722 * b)
-        return 字符集[int(gray / unit)]
+        return 字符集[int(gray / self.unit)]
 
-    def img_to_ascii(im, show_percentage=False):
+    def img_to_ascii(self, im, show_percentage=False):
         WIDTH = int((im.width * 图片宽度比例 / 6) / 缩放倍数)
         HEIGHT = int((im.height * 图片高度比例 / 12) / 缩放倍数)
         if show_percentage:
@@ -201,12 +195,12 @@ def plays():
                 for j in range(WIDTH):
                     pixel = im_resize.getpixel((j, i))
                     colors.append(pixel)
-                    txt += get_char(*pixel)
+                    txt += self.get_char(*pixel)
                 if show_percentage:
                     count += WIDTH
-                    root.frame_info.set(
+                    self.frame_info.set(
                         f'转换进度:  {round((count/whole_count)*100, 3)}%')
-                    root.update()
+                    self.update()
                 txt += '\n'
                 colors.append((255, 255, 255))
             return txt, colors, im_txt
@@ -214,209 +208,222 @@ def plays():
             for i in range(HEIGHT):
                 for j in range(WIDTH):
                     pixel = im_resize.getpixel((j, i))
-                    txt += get_char(*pixel)
+                    txt += self.get_char(*pixel)
                 if show_percentage:
                     count += WIDTH
-                    root.frame_info.set(
+                    self.frame_info.set(
                         f'转换进度:  {round((count/whole_count)*100, 3)}%')
-                    root.update()
+                    self.update()
                 txt += '\n'
             return txt
 
-    if 演示模式 == 1:
-        if 视频帧图路径:
-            abs_path = os.getcwd()
-            os.chdir(视频帧图路径)
-            frames = []
-            count = 0
-            file_ls = [f for f in os.listdir() if os.path.isfile(f)]
-            file_ls.sort(key=lambda x: int(os.path.splitext(x)[0]))
-            frames_length = len(file_ls)
-            for i in file_ls:
-                frames.append(Image.open(i))
-                count += 1
-                root.frame_info.set(f'正在读取视频帧{count}/{frames_length}')
-                root.update()
-            start_frame = 0
-        else:
-            vidcap = cv2.VideoCapture(视频路径)
-            is_read, img = vidcap.read()
-            if not is_read:
-                root.frame_info.set('视频路径不存在或者为空')
-                root.update()
-                return
-            frames = []
-            count = 0
-            start_frame = 0
-            whole_frame_number = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
-            if not 视频转换帧数区间:
-                while is_read:
-                    frames.append(
-                        Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
-                    is_read, img = vidcap.read()
+    def plays(self):
+        with open('scripts/config.py', encoding='utf-8') as f:
+            exec(f.read(), globals())
+        length = len(字符集)
+        self.K = 2**比特数
+        self.unit = (self.K + 1) / length
+
+        if 演示模式 == 1:
+            if 视频帧图路径:
+                abs_path = os.getcwd()
+                os.chdir(视频帧图路径)
+                frames = []
+                count = 0
+                file_ls = [f for f in os.listdir() if os.path.isfile(f)]
+                file_ls.sort(key=lambda x: int(os.path.splitext(x)[0]))
+                frames_length = len(file_ls)
+                for i in file_ls:
+                    frames.append(Image.open(i))
                     count += 1
-                    root.frame_info.set(f'正在读取视频帧{count}/{whole_frame_number}')
-                    root.update()
+                    self.frame_info.set(f'正在读取视频帧{count}/{frames_length}')
+                    self.update()
+                start_frame = 0
             else:
-                start_frame, to_frame = 视频转换帧数区间
-                no_of_frames = to_frame - start_frame
-                vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
+                vidcap = cv2.VideoCapture(视频路径)
                 is_read, img = vidcap.read()
-                for k in range(no_of_frames):
-                    if is_read:
+                if not is_read:
+                    self.frame_info.set('视频路径不存在或者为空')
+                    self.update()
+                    return
+                frames = []
+                count = 0
+                start_frame = 0
+                whole_frame_number = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
+                if not 视频转换帧数区间:
+                    while is_read:
                         frames.append(
                             Image.fromarray(
                                 cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
                         is_read, img = vidcap.read()
                         count += 1
-                        root.frame_info.set(
-                            f'正在读取视频帧{start_frame + count}/{start_frame + no_of_frames}'
+                        self.frame_info.set(
+                            f'正在读取视频帧{count}/{whole_frame_number}')
+                        self.update()
+                else:
+                    start_frame, to_frame = 视频转换帧数区间
+                    no_of_frames = to_frame - start_frame
+                    vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
+                    is_read, img = vidcap.read()
+                    for k in range(no_of_frames):
+                        if is_read:
+                            frames.append(
+                                Image.fromarray(
+                                    cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
+                            is_read, img = vidcap.read()
+                            count += 1
+                            self.frame_info.set(
+                                f'正在读取视频帧{start_frame + count}/{start_frame + no_of_frames}'
+                            )
+                            self.update()
+                        else:
+                            break
+            if 导出视频:
+                self.frame_info.set('视频帧读取完成，开始转换')
+                self.update()
+                if 视频帧图路径:
+                    os.chdir(abs_path)
+                try:
+                    os.mkdir('temp_video_images')
+                except:
+                    pass
+                os.chdir('temp_video_images')
+                for each in os.listdir():
+                    os.remove(each)
+                num_frames = len(frames)
+                n = len(str(num_frames))
+                try:
+                    font = ImageFont.truetype(字体路径, size=字体大小)
+                except:
+                    font = ImageFont.load_default()
+                font_x_len, font_y_len = font.getsize(字符集[1])
+                font_y_len = int(font_y_len * 1.37)
+                if is_color == 0:
+                    for i in range(num_frames):
+                        self.frame_info.set(
+                            f'正在转换第{start_frame + i + 1}/{start_frame + num_frames}帧'
                         )
-                        root.update()
-                    else:
-                        break
-        if 导出视频:
-            root.frame_info.set('视频帧读取完成，开始转换')
-            root.update()
-            if 视频帧图路径:
-                os.chdir(abs_path)
+                        self.update()
+                        im = frames[i]
+                        text_str = self.img_to_ascii(im)
+                        im_txt = Image.new(
+                            "L", (int(im.width / 缩放倍数), int(im.height / 缩放倍数)),
+                            'white')
+                        dr = ImageDraw.Draw(im_txt)
+                        x = y = 0
+                        for j in range(len(text_str)):
+                            if text_str[j] == "\n":
+                                x = 0
+                                y += font_y_len
+                            dr.text((x, y),
+                                    text_str[j],
+                                    fill='black',
+                                    font=font)
+                            x += font_x_len
+                        im_txt.save(f'{i:0{n}d}.png')
+                else:
+                    for i in range(num_frames):
+                        self.frame_info.set(
+                            f'正在转换第{start_frame + i + 1}/{start_frame + num_frames}帧'
+                        )
+                        self.update()
+                        text_str_output = self.img_to_ascii(frames[i])
+                        txt, colors, im_txt = text_str_output
+                        dr = ImageDraw.Draw(im_txt)
+                        x = y = 0
+                        for j in range(len(txt)):
+                            if txt[j] == "\n":
+                                x = 0
+                                y += font_y_len
+                            dr.text((x, y), txt[j], fill=colors[j], font=font)
+                            x += font_x_len
+                        im_txt.save(f'{i:0{n}d}.png')
+
+                self.frame_info.set(f'转换完成，开始输出为视频..')
+                self.update()
+                os.chdir('..')
+                if 视频帧图路径:
+                    file_name = os.path.splitext(os.path.basename(视频帧图路径))[0]
+                else:
+                    file_name = os.path.splitext(os.path.basename(视频路径))[0]
+                output_filename = f'ascii_{file_name}.mp4'
+                if output_filename in os.listdir():
+                    os.remove(output_filename)
+                ffmpeg.input(f'temp_video_images/%{n}d.png',
+                             framerate=视频输出帧数).output(
+                                 output_filename,
+                                 pix_fmt='yuv420p').run(overwrite_output=True)
+                self.frame_info.set(f'已成功输出为视频')
+                self.update()
+
+            text_str_output = self.img_to_ascii(frames[0])
+            if type(text_str_output) != str:
+                text_str = text_str_output[0]
+            else:
+                text_str = text_str_output
+        else:
+            self.frame_info.set('图片转换中')
+            self.update()
             try:
-                os.mkdir('temp_video_images')
+                im = Image.open(图片路径)
+                text_str_output = self.img_to_ascii(im, 显示转换进度)
+                if type(text_str_output) != str:
+                    text_str = text_str_output[0]
+                else:
+                    text_str = text_str_output
             except:
-                pass
-            os.chdir('temp_video_images')
-            for each in os.listdir():
-                os.remove(each)
-            num_frames = len(frames)
-            n = len(str(num_frames))
-            try:
-                font = ImageFont.truetype(字体路径, size=字体大小)
-            except:
-                font = ImageFont.load_default()
-            font_x_len, font_y_len = font.getsize(字符集[1])
-            font_y_len = int(font_y_len * 1.37)
-            if is_color == 0:
-                for i in range(num_frames):
-                    root.frame_info.set(
-                        f'正在转换第{start_frame + i + 1}/{start_frame + num_frames}帧'
-                    )
-                    root.update()
-                    im = frames[i]
-                    text_str = img_to_ascii(im)
+                self.frame_info.set('图片路径不存在或者为空')
+                self.update()
+                return
+            self.frame_info.set('图片转换完成')
+            self.update()
+            file_name = os.path.splitext(os.path.basename(图片路径))[0]
+            if 字符画保存为文本文件:
+                self.frame_info.set('图片转换完成，正在写入字符画为\n文本文件...')
+                self.update()
+                with open(f'ascii_{file_name}.txt', 'w',
+                          encoding='utf-8') as f:
+                    f.write(text_str)
+                self.frame_info.set('已成功写入文本文件')
+                self.update()
+            if 字符画保存为图片:
+                self.frame_info.set('图片转换完成，正在输出字符画为图片...')
+                self.update()
+                try:
+                    font = ImageFont.truetype(字体路径, size=字体大小)
+                except Exception as e:
+                    print(str(e))
+                    font = ImageFont.load_default()
+                font_x_len, font_y_len = font.getsize(字符集[1])
+                font_y_len = int(font_y_len * 1.37)
+                if is_color == 0:
                     im_txt = Image.new(
                         "L", (int(im.width / 缩放倍数), int(im.height / 缩放倍数)),
                         'white')
                     dr = ImageDraw.Draw(im_txt)
                     x = y = 0
-                    for j in range(len(text_str)):
-                        if text_str[j] == "\n":
+                    for i in range(len(text_str)):
+                        if text_str[i] == "\n":
                             x = 0
                             y += font_y_len
-                        dr.text((x, y), text_str[j], fill='black', font=font)
+                        dr.text((x, y), text_str[i], fill='black', font=font)
                         x += font_x_len
-                    im_txt.save(f'{i:0{n}d}.png')
-            else:
-                for i in range(num_frames):
-                    root.frame_info.set(
-                        f'正在转换第{start_frame + i + 1}/{start_frame + num_frames}帧'
-                    )
-                    root.update()
-                    text_str_output = img_to_ascii(frames[i])
+                    im_txt.save(f'ascii_{file_name}.png')
+
+                else:
                     txt, colors, im_txt = text_str_output
                     dr = ImageDraw.Draw(im_txt)
                     x = y = 0
-                    for j in range(len(txt)):
-                        if txt[j] == "\n":
+                    for i in range(len(txt)):
+                        if txt[i] == "\n":
                             x = 0
                             y += font_y_len
-                        dr.text((x, y), txt[j], fill=colors[j], font=font)
+                        dr.text((x, y), txt[i], fill=colors[i], font=font)
                         x += font_x_len
-                    im_txt.save(f'{i:0{n}d}.png')
+                    im_txt.save(f'ascii_{file_name}.png')
 
-            root.frame_info.set(f'转换完成，开始输出为视频..')
-            root.update()
-            os.chdir('..')
-            if 视频帧图路径:
-                file_name = os.path.splitext(os.path.basename(视频帧图路径))[0]
-            else:
-                file_name = os.path.splitext(os.path.basename(视频路径))[0]
-            output_filename = f'ascii_{file_name}.mp4'
-            if output_filename in os.listdir():
-                os.remove(output_filename)
-            ffmpeg.input(f'temp_video_images/%{n}d.png',
-                         framerate=视频输出帧数).output(
-                             output_filename,
-                             pix_fmt='yuv420p').run(overwrite_output=True)
-            root.frame_info.set(f'已成功输出为视频')
-            root.update()
-
-        text_str_output = img_to_ascii(frames[0])
-        if type(text_str_output) != str:
-            text_str = text_str_output[0]
-        else:
-            text_str = text_str_output
-    else:
-        root.frame_info.set('图片转换中')
-        root.update()
-        try:
-            im = Image.open(图片路径)
-            text_str_output = img_to_ascii(im, 显示转换进度)
-            if type(text_str_output) != str:
-                text_str = text_str_output[0]
-            else:
-                text_str = text_str_output
-        except:
-            root.frame_info.set('图片路径不存在或者为空')
-            root.update()
-            return
-        root.frame_info.set('图片转换完成')
-        root.update()
-        file_name = os.path.splitext(os.path.basename(图片路径))[0]
-        if 字符画保存为文本文件:
-            root.frame_info.set('图片转换完成，正在写入字符画为\n文本文件...')
-            root.update()
-            with open(f'ascii_{file_name}.txt', 'w', encoding='utf-8') as f:
-                f.write(text_str)
-            root.frame_info.set('已成功写入文本文件')
-            root.update()
-        if 字符画保存为图片:
-            root.frame_info.set('图片转换完成，正在输出字符画为图片...')
-            root.update()
-            try:
-                font = ImageFont.truetype(字体路径, size=字体大小)
-            except Exception as e:
-                print(str(e))
-                font = ImageFont.load_default()
-            font_x_len, font_y_len = font.getsize(字符集[1])
-            font_y_len = int(font_y_len * 1.37)
-            if is_color == 0:
-                im_txt = Image.new(
-                    "L", (int(im.width / 缩放倍数), int(im.height / 缩放倍数)),
-                    'white')
-                dr = ImageDraw.Draw(im_txt)
-                x = y = 0
-                for i in range(len(text_str)):
-                    if text_str[i] == "\n":
-                        x = 0
-                        y += font_y_len
-                    dr.text((x, y), text_str[i], fill='black', font=font)
-                    x += font_x_len
-                im_txt.save(f'ascii_{file_name}.png')
-
-            else:
-                txt, colors, im_txt = text_str_output
-                dr = ImageDraw.Draw(im_txt)
-                x = y = 0
-                for i in range(len(txt)):
-                    if txt[i] == "\n":
-                        x = 0
-                        y += font_y_len
-                    dr.text((x, y), txt[i], fill=colors[i], font=font)
-                    x += font_x_len
-                im_txt.save(f'ascii_{file_name}.png')
-
-            root.frame_info.set('已成功输出为图片')
-            root.update()
+                self.frame_info.set('已成功输出为图片')
+                self.update()
 
 
 root = Root()
