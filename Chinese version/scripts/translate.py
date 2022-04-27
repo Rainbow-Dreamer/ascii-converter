@@ -26,4 +26,4 @@ translate_dict = {
     'ascii_image_character_color': '字符画图片字符颜色'
 }
 
-translate_dict_reverse = {j:i for i, j in translate_dict.items()}
+translate_dict_reverse = {j: i for i, j in translate_dict.items()}

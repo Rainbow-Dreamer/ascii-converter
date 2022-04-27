@@ -37,6 +37,7 @@ def change(var, new, is_str=True):
 
 
 class Root(Tk):
+
     def __init__(self):
         super(Root, self).__init__()
         self.title("Ascii Converter 字符画转换器")
@@ -169,12 +170,6 @@ class Root(Tk):
         ]
         self.value_dict = {i: eval(i) for i in self.all_config_options}
         self.go_back = False
-
-        try:
-            with open('browse memory.txt', encoding='utf-8-sig') as f:
-                self.last_place = f.read()
-        except:
-            self.last_place = "."
 
     def quit_main_window(self):
         self.img_to_ascii_img_button.place_forget()
@@ -642,8 +637,7 @@ class Root(Tk):
             self.config_contents.insert(END, str(current_config_value))
 
     def choose_filename(self):
-        filename = filedialog.askopenfilename(initialdir=self.last_place,
-                                              title="选择文件路径",
+        filename = filedialog.askopenfilename(title="选择文件路径",
                                               filetype=(("所有文件", "*.*"), ))
         if not filename:
             return
@@ -652,10 +646,7 @@ class Root(Tk):
         self.config_change(0)
 
     def choose_directory(self):
-        directory = filedialog.askdirectory(
-            initialdir=self.last_place,
-            title="选择文件夹路径",
-        )
+        directory = filedialog.askdirectory(title="选择文件夹路径")
         if not directory:
             return
         self.config_contents.delete('1.0', END)
@@ -863,8 +854,7 @@ class Root(Tk):
         self.reinit()
         video_frames_path = None
         if mode == 1:
-            video_frames_path = filedialog.askdirectory(
-                initialdir=self.last_place, title="选择视频帧图路径")
+            video_frames_path = filedialog.askdirectory(title="选择视频帧图路径")
             if not video_frames_path:
                 return
         if video_frames_path:
@@ -1019,8 +1009,7 @@ class Root(Tk):
                 self.current_value_dict['video_path']):
             self.frame_info.set('视频路径不存在')
             return
-        video_frames_save_path = filedialog.askdirectory(
-            initialdir=self.last_place, title="选择视频帧图保存路径")
+        video_frames_save_path = filedialog.askdirectory(title="选择视频帧图保存路径")
         if not video_frames_save_path:
             return
         try:
@@ -1186,20 +1175,14 @@ class Root(Tk):
 
     def search_path(self, obj, mode=0):
         if mode == 0:
-            filename = filedialog.askopenfilename(initialdir=self.last_place,
-                                                  title="选择文件",
+            filename = filedialog.askopenfilename(title="选择文件",
                                                   filetype=(("所有文件", "*.*"), ))
         elif mode == 1:
-            filename = filedialog.askdirectory(initialdir=self.last_place,
-                                               title="选择文件夹")
+            filename = filedialog.askdirectory(title="选择文件夹")
         if filename:
             obj.delete('1.0', END)
             obj.insert(END, filename)
             obj.func(1)
-            memory = os.path.dirname(filename)
-            with open('browse memory.txt', 'w', encoding='utf-8') as f:
-                f.write(memory)
-            self.last_place = memory
 
     def show_saved(self):
         self.frame_info.set('当前配置保存完成')

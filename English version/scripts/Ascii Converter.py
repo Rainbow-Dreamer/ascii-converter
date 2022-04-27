@@ -36,6 +36,7 @@ def change(var, new, is_str=True):
 
 
 class Root(Tk):
+
     def __init__(self):
         super(Root, self).__init__()
         self.title("Ascii Converter")
@@ -174,12 +175,6 @@ class Root(Tk):
         self.all_config_options = get_all_config_options(text)
         self.value_dict = {i: eval(i) for i in self.all_config_options}
         self.go_back = False
-
-        try:
-            with open('browse memory.txt', encoding='utf-8-sig') as f:
-                self.last_place = f.read()
-        except:
-            self.last_place = "."
 
     def quit_main_window(self):
         self.img_to_ascii_img_button.place_forget()
@@ -648,8 +643,7 @@ class Root(Tk):
             self.config_contents.insert(END, str(current_config_value))
 
     def choose_filename(self):
-        filename = filedialog.askopenfilename(initialdir=self.last_place,
-                                              title="Choose filename",
+        filename = filedialog.askopenfilename(title="Choose filename",
                                               filetype=(("All files",
                                                          "*.*"), ))
         if not filename:
@@ -659,10 +653,7 @@ class Root(Tk):
         self.config_change(0)
 
     def choose_directory(self):
-        directory = filedialog.askdirectory(
-            initialdir=self.last_place,
-            title="Choose directory",
-        )
+        directory = filedialog.askdirectory(title="Choose directory")
         if not directory:
             return
         self.config_contents.delete('1.0', END)
@@ -876,7 +867,7 @@ class Root(Tk):
         video_frames_path = None
         if mode == 1:
             video_frames_path = filedialog.askdirectory(
-                initialdir=self.last_place, title="Choose video frames path")
+                title="Choose video frames path")
             if not video_frames_path:
                 return
         if video_frames_path:
@@ -1035,7 +1026,6 @@ class Root(Tk):
             self.frame_info.set('This video path does not exist')
             return
         video_frames_save_path = filedialog.askdirectory(
-            initialdir=self.last_place,
             title="Choose the path to save video frames")
         if not video_frames_save_path:
             return
@@ -1205,21 +1195,15 @@ class Root(Tk):
 
     def search_path(self, obj, mode=0):
         if mode == 0:
-            filename = filedialog.askopenfilename(initialdir=self.last_place,
-                                                  title="Choose filename",
+            filename = filedialog.askopenfilename(title="Choose filename",
                                                   filetype=(("All files",
                                                              "*.*"), ))
         elif mode == 1:
-            filename = filedialog.askdirectory(initialdir=self.last_place,
-                                               title="Choose directory")
+            filename = filedialog.askdirectory(title="Choose directory")
         if filename:
             obj.delete('1.0', END)
             obj.insert(END, filename)
             obj.func(1)
-            memory = os.path.dirname(filename)
-            with open('browse memory.txt', 'w', encoding='utf-8') as f:
-                f.write(memory)
-            self.last_place = memory
 
     def show_saved(self):
         self.frame_info.set('Current settings are saved')
