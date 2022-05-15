@@ -758,7 +758,6 @@ class Root(Tk):
             'Converting images are finished,\nwriting ascii result to text...')
         self.update()
         output_filename = filedialog.asksaveasfilename(
-            initialdir='.',
             initialfile=f'ascii_{file_name}.txt',
             title="Choose the file path of the exported ASCII text file",
             filetype=(("All files", "*.*"), ))
@@ -802,7 +801,6 @@ class Root(Tk):
         )
         self.update()
         output_filename = filedialog.asksaveasfilename(
-            initialdir='.',
             initialfile=f'ascii_{file_name}.png',
             title="Choose the file path of the exported ASCII image file",
             filetype=(("All files", "*.*"), ))
@@ -911,7 +909,6 @@ class Root(Tk):
             file_name = os.path.splitext(
                 os.path.basename(self.current_value_dict['video_path']))[0]
         output_filename = filedialog.asksaveasfilename(
-            initialdir='.',
             initialfile=f'ascii_{file_name}.mp4',
             title="Choose the file path of the exported video",
             filetype=(("All files", "*.*"), ))

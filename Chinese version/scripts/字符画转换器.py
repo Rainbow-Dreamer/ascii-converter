@@ -748,7 +748,6 @@ class Root(Tk):
         self.frame_info.set('图片转换完成，正在写入字符画为\n文本文件...')
         self.update()
         output_filename = filedialog.asksaveasfilename(
-            initialdir='.',
             initialfile=f'ascii_{file_name}.txt',
             title="选择输出字符画文本文件的路径",
             filetype=(("所有文件", "*.*"), ))
@@ -790,7 +789,6 @@ class Root(Tk):
         self.frame_info.set('图片转换完成，正在输出字符画为图片...')
         self.update()
         output_filename = filedialog.asksaveasfilename(
-            initialdir='.',
             initialfile=f'ascii_{file_name}.png',
             title="选择输出字符画图片的路径",
             filetype=(("所有文件", "*.*"), ))
@@ -898,7 +896,6 @@ class Root(Tk):
             file_name = os.path.splitext(
                 os.path.basename(self.current_value_dict['video_path']))[0]
         output_filename = filedialog.asksaveasfilename(
-            initialdir='.',
             initialfile=f'ascii_{file_name}.mp4',
             title="选择输出视频的文件路径",
             filetype=(("所有文件", "*.*"), ))

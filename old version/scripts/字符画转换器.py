@@ -17,6 +17,7 @@ def change(var, new, is_str=True):
 
 
 class Root(Tk):
+
     def __init__(self):
         super(Root, self).__init__()
         self.title("字符画转换器")
@@ -141,11 +142,10 @@ class Root(Tk):
 
     def search_path(self, obj, mode=0):
         if mode == 0:
-            filename = filedialog.askopenfilename(initialdir='.',
-                                                  title="选择文件",
+            filename = filedialog.askopenfilename(title="选择文件",
                                                   filetype=(("所有文件", "*.*"), ))
         elif mode == 1:
-            filename = filedialog.askdirectory(initialdir='.', title="选择文件夹")
+            filename = filedialog.askdirectory(title="选择文件夹")
         if filename:
             obj.delete('1.0', END)
             obj.insert(END, filename)
