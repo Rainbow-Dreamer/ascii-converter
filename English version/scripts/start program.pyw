@@ -15,5 +15,5 @@ current_path = os.getcwd()
 os.chdir(current_path)
 sys.path.append(abs_path)
 sys.path.append(current_path)
-with open('scripts/Ascii Converter.py', encoding='utf-8-sig') as f:
+with open('scripts/Ascii Converter.py', encoding='utf-8') as f:
     exec(f.read(), globals())

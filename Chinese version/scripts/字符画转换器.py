@@ -1,7 +1,7 @@
 from scripts.translate import translate_dict, translate_dict_reverse
 from ast import literal_eval
 
-with open('scripts/config.py', encoding='utf-8-sig') as f:
+with open('scripts/config.py', encoding='utf-8') as f:
     text = f.read()
     exec(text, globals())
 abs_path = os.getcwd()
@@ -23,7 +23,7 @@ def get_all_config_options(text):
 
 
 def change(var, new, is_str=True):
-    text = open('scripts/config.py', encoding='utf-8-sig').read()
+    text = open('scripts/config.py', encoding='utf-8').read()
     text_ls = list(text)
     var_len = len(var) + 1
     var_ind = text.index('\n' + var) + var_len
