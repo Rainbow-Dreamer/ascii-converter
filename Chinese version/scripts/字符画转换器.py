@@ -638,7 +638,7 @@ class Root(Tk):
 
     def choose_filename(self):
         filename = filedialog.askopenfilename(title="选择文件路径",
-                                              filetype=(("所有文件", "*.*"), ))
+                                              filetypes=(("所有文件", "*"), ))
         if not filename:
             return
         self.config_contents.delete('1.0', END)
@@ -750,7 +750,7 @@ class Root(Tk):
         output_filename = filedialog.asksaveasfilename(
             initialfile=f'ascii_{file_name}.txt',
             title="选择输出字符画文本文件的路径",
-            filetype=(("所有文件", "*.*"), ))
+            filetypes=(("所有文件", "*"), ))
         if not output_filename:
             self.frame_info.set('已取消输出')
             return
@@ -791,7 +791,7 @@ class Root(Tk):
         output_filename = filedialog.asksaveasfilename(
             initialfile=f'ascii_{file_name}.png',
             title="选择输出字符画图片的路径",
-            filetype=(("所有文件", "*.*"), ))
+            filetypes=(("所有文件", "*"), ))
         if not output_filename:
             self.frame_info.set('已取消输出')
             return
@@ -898,7 +898,7 @@ class Root(Tk):
         output_filename = filedialog.asksaveasfilename(
             initialfile=f'ascii_{file_name}.mp4',
             title="选择输出视频的文件路径",
-            filetype=(("所有文件", "*.*"), ))
+            filetypes=(("所有文件", "*"), ))
         if not output_filename:
             self.frame_info.set('已取消输出')
             return
@@ -1173,7 +1173,7 @@ class Root(Tk):
     def search_path(self, obj, mode=0):
         if mode == 0:
             filename = filedialog.askopenfilename(title="选择文件",
-                                                  filetype=(("所有文件", "*.*"), ))
+                                                  filetypes=(("所有文件", "*"), ))
         elif mode == 1:
             filename = filedialog.askdirectory(title="选择文件夹")
         if filename:

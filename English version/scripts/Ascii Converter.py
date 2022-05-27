@@ -644,8 +644,7 @@ class Root(Tk):
 
     def choose_filename(self):
         filename = filedialog.askopenfilename(title="Choose filename",
-                                              filetype=(("All files",
-                                                         "*.*"), ))
+                                              filetypes=(("All files", "*"), ))
         if not filename:
             return
         self.config_contents.delete('1.0', END)
@@ -760,7 +759,7 @@ class Root(Tk):
         output_filename = filedialog.asksaveasfilename(
             initialfile=f'ascii_{file_name}.txt',
             title="Choose the file path of the exported ASCII text file",
-            filetype=(("All files", "*.*"), ))
+            filetypes=(("All files", "*"), ))
         if not output_filename:
             self.frame_info.set('canceled exporting')
             return
@@ -803,7 +802,7 @@ class Root(Tk):
         output_filename = filedialog.asksaveasfilename(
             initialfile=f'ascii_{file_name}.png',
             title="Choose the file path of the exported ASCII image file",
-            filetype=(("All files", "*.*"), ))
+            filetypes=(("All files", "*"), ))
         if not output_filename:
             self.frame_info.set('canceled exporting')
             return
@@ -911,7 +910,7 @@ class Root(Tk):
         output_filename = filedialog.asksaveasfilename(
             initialfile=f'ascii_{file_name}.mp4',
             title="Choose the file path of the exported video",
-            filetype=(("All files", "*.*"), ))
+            filetypes=(("All files", "*"), ))
         if not output_filename:
             self.frame_info.set('canceled exporting')
             return
@@ -1193,8 +1192,8 @@ class Root(Tk):
     def search_path(self, obj, mode=0):
         if mode == 0:
             filename = filedialog.askopenfilename(title="Choose filename",
-                                                  filetype=(("All files",
-                                                             "*.*"), ))
+                                                  filetypes=(("All files",
+                                                              "*"), ))
         elif mode == 1:
             filename = filedialog.askdirectory(title="Choose directory")
         if filename:
