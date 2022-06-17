@@ -1,9 +1,14 @@
 from ast import literal_eval
 
+abs_path = os.getcwd()
+
 with open('scripts/config.py', encoding='utf-8') as f:
     text = f.read()
     exec(text, globals())
-abs_path = os.getcwd()
+
+with open(f'scripts/languages/{language}.py', encoding='utf-8') as f:
+    exec(f.read(), globals())
+translate_dict_reverse = {j: i for i, j in translate_dict.items()}
 
 
 def get_all_config_options(text):
@@ -63,10 +68,18 @@ class Root(Tk):
                         foreground='white',
                         background='dodger blue')
         style.map('New.TButton', background=[('active', 'deep sky blue')])
-        style.configure('TEntry',
-                        fieldbackground='black',
+        style.configure('New2.TButton',
+                        borderwidth=-2,
+                        focuscolor='none',
+                        highlightthickness=0,
+                        font=('Consolas', 12),
                         foreground='white',
-                        insertcolor='white')
+                        background='forest green')
+        style.map('New2.TButton', background=[('active', 'deep sky blue')])
+        style.configure('TEntry',
+                        fieldbackground='white',
+                        foreground='black',
+                        insertcolor='black')
         style.configure('TLabelframe',
                         background='black',
                         borderwidth=0,
@@ -81,29 +94,28 @@ class Root(Tk):
                         highlightthickness=0,
                         font=('Consolas', 12))
         style.configure('TLabel',
-                        background='black',
-                        foreground='white',
+                        background='white',
+                        foreground='black',
                         borderwidth=0,
                         focuscolor='none',
                         highlightthickness=0,
                         font=('Consolas', 12))
         style.configure('New.TLabel',
-                        background='black',
-                        foreground='white',
+                        background='white',
+                        foreground='black',
                         borderwidth=0,
                         focuscolor='none',
                         highlightthickness=0,
                         font=('Consolas', 10))
         style.configure('TCheckbutton',
-                        background='black',
-                        foreground='white',
+                        background='white',
+                        foreground='black',
                         borderwidth=0,
                         focuscolor='none',
                         highlightthickness=0,
                         inactiveselectbackground='black',
                         font=('Consolas', 12))
         style.configure('TScrollbar', background='white')
-        self.configure(bg='white')
         self.background_image = ImageTk.PhotoImage(
             Image.open(background_image).resize((1000, 700)))
         self.bg_label = ttk.Label(self, image=self.background_image)
@@ -116,13 +128,13 @@ class Root(Tk):
         self.title_label.place(x=0, y=0)
         self.img_to_ascii_img_button = ttk.Button(
             self,
-            text='Image to Ascii Images/Texts',
+            text=translate_dict['Image to Ascii Images/Texts'],
             compound=CENTER,
             command=self.img_to_ascii_img_window)
         self.img_to_ascii_img_button.place(x=0, y=140, width=500, height=60)
         self.video_to_ascii_video_button = ttk.Button(
             self,
-            text='Videos to Ascii Videos',
+            text=translate_dict['Videos to Ascii Videos'],
             compound=CENTER,
             command=self.video_to_ascii_video_window)
         self.video_to_ascii_video_button.place(x=0,
@@ -131,13 +143,13 @@ class Root(Tk):
                                                height=60)
         self.video_to_ascii_img_button = ttk.Button(
             self,
-            text='Extract Frames From Videos',
+            text=translate_dict['Extract Frames From Videos'],
             compound=CENTER,
             command=self.video_to_img_window)
         self.video_to_ascii_img_button.place(x=0, y=340, width=500, height=60)
         self.change_settings_button = ttk.Button(
             self,
-            text='Change Settings',
+            text=translate_dict['Change Settings'],
             compound=CENTER,
             command=self.change_settings_window,
             style='New.TButton')
@@ -148,26 +160,11 @@ class Root(Tk):
                                     style='New.TLabel',
                                     anchor='nw')
         self.all_config_options = get_all_config_options(text)
+        self.translate_all_config_options = [
+            translate_dict[i] for i in self.all_config_options
+        ]
         self.value_dict = {i: eval(i) for i in self.all_config_options}
         self.go_back = False
-
-    def quit_main_window(self):
-        self.img_to_ascii_img_button.place_forget()
-        self.video_to_ascii_video_button.place_forget()
-        self.video_to_ascii_img_button.place_forget()
-        self.change_settings_button.place_forget()
-
-    def reset_main_window(self):
-        self.img_to_ascii_img_button.place(x=140, y=140, width=180, height=100)
-        self.video_to_ascii_video_button.place(x=440,
-                                               y=140,
-                                               width=180,
-                                               height=100)
-        self.video_to_ascii_img_button.place(x=140,
-                                             y=280,
-                                             width=180,
-                                             height=100)
-        self.change_settings_button.place(x=440, y=280, width=180, height=100)
 
     def img_to_ascii_img_window(self):
         self.go_back = False
@@ -175,37 +172,33 @@ class Root(Tk):
         self.current_widgets = []
 
         self.go_back_button = ttk.Button(self,
-                                         text='Back',
+                                         text=translate_dict['Back'],
                                          command=self.go_back_main_window,
-                                         image=self.button_img2,
-                                         compound=CENTER)
-        self.go_back_button.place(x=600, y=420)
+                                         compound=CENTER,
+                                         style='New.TButton')
+        self.go_back_button.place(x=500, y=580, width=400, height=50)
         self.current_widgets.append(self.go_back_button)
 
         self.save_as_ascii_text_button = ttk.Button(
             self,
-            text='image → ascii text',
+            text=translate_dict['image → ascii text'],
             command=self.image_to_ascii_text,
-            image=self.button_img3,
-            compound=CENTER,
-            style='New.TButton')
-        self.save_as_ascii_text_button.place(x=150, y=230)
+            compound=CENTER)
+        self.save_as_ascii_text_button.place(x=0, y=500, width=400, height=50)
         self.current_widgets.append(self.save_as_ascii_text_button)
 
         self.save_as_ascii_image_button = ttk.Button(
             self,
-            text='image → ascii image',
+            text=translate_dict['image → ascii image'],
             command=self.image_to_ascii_image,
-            image=self.button_img3,
-            compound=CENTER,
-            style='New.TButton')
-        self.save_as_ascii_image_button.place(x=150, y=300)
+            compound=CENTER)
+        self.save_as_ascii_image_button.place(x=0, y=580, width=400, height=50)
         self.current_widgets.append(self.save_as_ascii_image_button)
 
         self.current_widgets += self.set_value('image path', 'image_path',
                                                True, 600, 50, 0, 115, True)
         self.current_widgets += self.set_value('resize ratio', 'resize_ratio',
-                                               False, 120, 28, 0, 200)
+                                               False, 120, 28, 0, 220)
         self.current_widgets += self.set_value('bit number', 'bit_number',
                                                False, 120, 28, 0, 300)
 
@@ -214,25 +207,25 @@ class Root(Tk):
                                                False,
                                                200,
                                                40,
-                                               410,
                                                200,
+                                               220,
                                                mode=1,
                                                font_size=10)
 
         self.current_widgets += self.set_value('image width ratio',
                                                'image_width_ratio', False, 160,
-                                               28, 400, 260)
+                                               28, 200, 300)
         self.current_widgets += self.set_value('image height ratio',
                                                'image_height_ratio', False,
-                                               170, 28, 580, 260)
+                                               170, 28, 450, 300)
 
-        self.save_button = ttk.Button(self,
-                                      text='Save Current Settings',
-                                      command=self.save_current,
-                                      image=self.button_img4,
-                                      compound=CENTER,
-                                      style='New2.TButton')
-        self.save_button.place(x=600, y=350)
+        self.save_button = ttk.Button(
+            self,
+            text=translate_dict['Save Current Settings'],
+            command=self.save_current,
+            compound=CENTER,
+            style='New.TButton')
+        self.save_button.place(x=500, y=500, width=400, height=50)
         self.current_widgets.append(self.save_button)
 
         self.picture_color = IntVar()
@@ -240,45 +233,173 @@ class Root(Tk):
         if type(img_color) == list:
             img_color = img_color[1]
         self.picture_color.set(1 if img_color else 0)
-        self.output_picture_color = Checkbutton(
+        self.output_picture_color = ttk.Checkbutton(
             self,
-            text='colored image',
+            text=translate_dict['colored image'],
             variable=self.picture_color,
-            command=lambda: self.change_bool('colored_image'),
-            background='black',
-            foreground='white',
-            borderwidth=0,
-            highlightthickness=0,
-            font=('Consolas', 12),
-            selectcolor='black',
-            activebackground='white')
+            command=lambda: self.change_bool('colored_image'))
         self.output_picture_color.var = self.picture_color
-        self.output_picture_color.place(x=620, y=200, width=160, height=40)
+        self.output_picture_color.place(x=450, y=220, width=160, height=40)
         self.value_dict['colored_image'] = [
             self.output_picture_color, img_color, False
         ]
         self.current_widgets.append(self.output_picture_color)
 
-        self.frame_info.set('No actions at this time')
-        self.frame_show.place(x=0, y=400, width=260, height=70)
+        self.frame_info.set(translate_dict['No actions at this time'])
+        self.frame_show.place(x=0, y=400, width=300, height=70)
+        self.current_widgets.append(self.frame_show)
+
+    def video_to_ascii_video_window(self):
+        self.go_back = False
+        self.quit_main_window()
+        self.current_widgets = []
+
+        self.go_back_button = ttk.Button(self,
+                                         text=translate_dict['Back'],
+                                         command=self.go_back_main_window,
+                                         compound=CENTER,
+                                         style='New.TButton')
+        self.go_back_button.place(x=500, y=580, width=400, height=50)
+        self.current_widgets.append(self.go_back_button)
+
+        self.start_video_to_ascii_video_button = ttk.Button(
+            self,
+            text=translate_dict['video → ascii video'],
+            command=self.video_to_ascii_video,
+            compound=CENTER,
+            style='New.TButton')
+        self.start_video_to_ascii_video_button.place(x=0,
+                                                     y=500,
+                                                     width=400,
+                                                     height=50)
+        self.current_widgets.append(self.start_video_to_ascii_video_button)
+
+        self.start_video_frames_to_ascii_video_button = ttk.Button(
+            self,
+            text=translate_dict['frames → ascii video'],
+            command=lambda: self.video_to_ascii_video(mode=1),
+            compound=CENTER,
+            style='New.TButton')
+        self.start_video_frames_to_ascii_video_button.place(x=0,
+                                                            y=580,
+                                                            width=400,
+                                                            height=50)
+        self.current_widgets.append(
+            self.start_video_frames_to_ascii_video_button)
+
+        self.current_widgets += self.set_value('video path', 'video_path',
+                                               True, 600, 50, 0, 115, True)
+        self.current_widgets += self.set_value('resize ratio', 'resize_ratio',
+                                               False, 120, 28, 0, 220)
+        self.current_widgets += self.set_value('bit number', 'bit_number',
+                                               False, 120, 28, 0, 300)
+        self.current_widgets += self.set_value('video frames interval',
+                                               'video_frames_interval', False,
+                                               200, 28, 160, 220)
+        self.current_widgets += self.set_value('font path', 'font_path', True,
+                                               100, 28, 400, 220)
+        self.current_widgets += self.set_value('font size', 'font_size', False,
+                                               100, 28, 550, 220)
+        self.current_widgets += self.set_value('video frame rate',
+                                               'video_frame_rate', False, 160,
+                                               28, 160, 300)
+        self.current_widgets += self.set_value('image width ratio',
+                                               'image_width_ratio', False, 160,
+                                               28, 400, 300)
+        self.current_widgets += self.set_value('image height ratio',
+                                               'image_height_ratio', False,
+                                               170, 28, 600, 300)
+
+        self.save_button = ttk.Button(
+            self,
+            text=translate_dict['Save Current Settings'],
+            command=self.save_current,
+            compound=CENTER,
+            style='New.TButton')
+        self.save_button.place(x=500, y=500, width=400, height=50)
+        self.current_widgets.append(self.save_button)
+
+        self.picture_color = IntVar()
+        img_color = self.value_dict['colored_image']
+        if type(img_color) == list:
+            img_color = img_color[1]
+        self.picture_color.set(1 if img_color else 0)
+        self.output_picture_color = ttk.Checkbutton(
+            self,
+            text=translate_dict['colored image'],
+            variable=self.picture_color,
+            command=lambda: self.change_bool('colored_image'))
+        self.output_picture_color.var = self.picture_color
+        self.output_picture_color.place(x=700, y=220, width=160, height=40)
+        self.value_dict['colored_image'] = [
+            self.output_picture_color, img_color, False
+        ]
+        self.current_widgets.append(self.output_picture_color)
+
+        self.frame_info.set(translate_dict['No actions at this time'])
+        self.frame_show.place(x=0, y=400, width=300, height=70)
+        self.current_widgets.append(self.frame_show)
+
+    def video_to_img_window(self):
+        self.go_back = False
+        self.quit_main_window()
+        self.current_widgets = []
+
+        self.go_back_button = ttk.Button(self,
+                                         text=translate_dict['Back'],
+                                         command=self.go_back_main_window,
+                                         compound=CENTER,
+                                         style='New.TButton')
+        self.go_back_button.place(x=500, y=580, width=400, height=50)
+        self.current_widgets.append(self.go_back_button)
+
+        self.start_video_to_frames_button = ttk.Button(
+            self,
+            text=translate_dict['video → frames'],
+            command=self.video_to_img,
+            compound=CENTER)
+        self.start_video_to_frames_button.place(x=0,
+                                                y=500,
+                                                width=400,
+                                                height=50)
+        self.current_widgets.append(self.start_video_to_frames_button)
+
+        self.current_widgets += self.set_value('video path', 'video_path',
+                                               True, 600, 50, 0, 115, True)
+        self.current_widgets += self.set_value('video frames interval',
+                                               'video_frames_interval', False,
+                                               200, 28, 0, 220)
+        self.picture_color = IntVar()
+        self.picture_color.set(1)
+        self.save_button = ttk.Button(
+            self,
+            text=translate_dict['Save Current Settings'],
+            command=self.save_current,
+            compound=CENTER,
+            style='New.TButton')
+        self.save_button.place(x=500, y=500, width=400, height=50)
+        self.current_widgets.append(self.save_button)
+
+        self.frame_info.set(translate_dict['No actions at this time'])
+        self.frame_show.place(x=0, y=400, width=300, height=70)
         self.current_widgets.append(self.frame_show)
 
     def change_settings_window(self):
         self.go_back = False
         self.quit_main_window()
         self.go_back_button = ttk.Button(self,
-                                         text='Back',
+                                         text=translate_dict['Back'],
                                          command=self.go_back_main_window,
-                                         image=self.button_img2,
-                                         compound=CENTER)
-        self.go_back_button.place(x=600, y=420)
+                                         compound=CENTER,
+                                         style='New.TButton')
+        self.go_back_button.place(x=500, y=580, width=400, height=50)
         self.config_options_bar = ttk.Scrollbar(self)
-        self.config_options_bar.place(x=228, y=121, height=183, anchor=CENTER)
+        self.config_options_bar.place(x=228, y=211, height=183, anchor=CENTER)
         self.choose_config_options = Listbox(
             self,
             yscrollcommand=self.config_options_bar.set,
-            background='black',
-            foreground='white')
+            background='white',
+            foreground='black')
         self.choose_config_options.bind('<<ListboxSelect>>',
                                         self.show_current_config_options)
         self.options_num = len(self.all_config_options)
@@ -290,8 +411,8 @@ class Root(Tk):
         self.all_config_options.sort(key=lambda s: s.lower())
         self.alpha_config = self.all_config_options.copy()
         for k in self.all_config_options:
-            self.choose_config_options.insert(END, k)
-        self.choose_config_options.place(x=0, y=30, width=220)
+            self.choose_config_options.insert(END, translate_dict[k])
+        self.choose_config_options.place(x=0, y=120, width=220)
         self.config_options_bar.config(
             command=self.choose_config_options.yview)
         self.config_name = ttk.Label(self, text='')
@@ -301,81 +422,75 @@ class Root(Tk):
                                     autoseparators=True,
                                     maxundo=-1)
         self.config_contents.bind('<KeyRelease>', self.config_change)
-        self.config_contents.place(x=400, y=160, width=380, height=170)
-        self.choose_filename_button = ttk.Button(self,
-                                                 text='Choose filename',
-                                                 command=self.choose_filename,
-                                                 image=self.button_img4,
-                                                 compound=CENTER,
-                                                 style='New.TButton')
-        self.choose_directory_button = ttk.Button(
+        self.config_contents.place(x=400, y=165, width=380, height=170)
+        self.choose_filename_button = ttk.Button(
             self,
-            text='Choose directory',
-            command=self.choose_directory,
-            image=self.button_img4,
+            text=translate_dict['Choose filename'],
+            command=self.choose_filename,
             compound=CENTER,
             style='New.TButton')
-        self.choose_filename_button.place(x=0, y=230)
-        self.choose_directory_button.place(x=0, y=300)
+        self.choose_directory_button = ttk.Button(
+            self,
+            text=translate_dict['Choose directory'],
+            command=self.choose_directory,
+            compound=CENTER,
+            style='New.TButton')
+        self.choose_filename_button.place(x=0, y=500, width=400, height=50)
+        self.choose_directory_button.place(x=0, y=580, width=400, height=50)
         self.save = ttk.Button(self,
-                               text='Save Current Settings',
+                               text=translate_dict['Save Current Settings'],
                                command=self.save_current,
-                               image=self.button_img4,
                                compound=CENTER,
-                               style='New2.TButton')
-        self.save.place(x=0, y=360)
+                               style='New.TButton')
+        self.save.place(x=500, y=500, width=400, height=50)
         self.saved_text = ttk.Label(self, text='saved')
-        self.search_text = ttk.Label(self, text='Search Settings')
+        self.search_text = ttk.Label(self,
+                                     text=translate_dict['Search Settings'])
         self.search_text.place(x=0, y=425)
         self.search_contents = StringVar()
         self.search_contents.trace_add('write', self.search)
-        self.search_entry = Entry(self, textvariable=self.search_contents)
+        self.search_entry = ttk.Entry(self, textvariable=self.search_contents)
         self.search_entry.place(x=0, y=450)
         self.search_inds = 0
         self.up_button = ttk.Button(
             self,
-            text='Previous',
+            text=translate_dict['Previous'],
             command=lambda: self.change_search_inds(-1),
             width=8,
-            image=self.button_img2,
             compound=CENTER,
             style='New.TButton')
         self.down_button = ttk.Button(
             self,
-            text='Next',
+            text=translate_dict['Next'],
             command=lambda: self.change_search_inds(1),
             width=8,
-            image=self.button_img2,
             compound=CENTER,
             style='New.TButton')
-        self.up_button.place(x=160, y=395)
-        self.down_button.place(x=160, y=450)
+        self.up_button.place(x=200, y=450, width=150, height=30)
+        self.down_button.place(x=400, y=450, width=150, height=30)
         self.search_inds_list = []
         self.choose_bool1 = ttk.Button(
             self,
             text='True',
             command=lambda: self.insert_bool('True'),
-            image=self.button_img2,
             compound=CENTER)
         self.choose_bool2 = ttk.Button(
             self,
             text='False',
             command=lambda: self.insert_bool('False'),
-            image=self.button_img2,
             compound=CENTER)
-        self.choose_bool1.place(x=160, y=270)
-        self.choose_bool2.place(x=280, y=270)
+        self.choose_bool1.place(x=200, y=400, width=150, height=30)
+        self.choose_bool2.place(x=400, y=400, width=150, height=30)
         self.change_sort_button = ttk.Button(
             self,
-            text="Sort in order of appearance",
+            text=translate_dict['Sort in order of appearance'],
             command=self.change_sort,
-            image=self.button_img5,
             compound=CENTER,
             style='New2.TButton')
         self.sort_mode = 0
         self.change_sort()
-        self.change_sort_button.place(x=160, y=340)
-        self.frame_show.place(x=500, y=330, width=280, height=70)
+        self.change_sort_button.place(x=0, y=350, width=300, height=30)
+        self.frame_show.place(x=600, y=400, width=300, height=70)
         self.current_widgets = [
             self.go_back_button, self.config_options_bar,
             self.choose_config_options, self.config_contents,
@@ -385,170 +500,28 @@ class Root(Tk):
             self.choose_bool2, self.change_sort_button, self.config_name,
             self.frame_show
         ]
-        self.frame_info.set('No actions at this time')
+        self.frame_info.set(translate_dict['No actions at this time'])
         self.choose_config_options.selection_set(0)
         self.choose_config_options.selection_anchor(0)
         self.show_current_config_options(0)
 
-    def video_to_ascii_video_window(self):
-        self.go_back = False
-        self.quit_main_window()
-        self.current_widgets = []
-
-        self.go_back_button = ttk.Button(self,
-                                         text='Back',
-                                         command=self.go_back_main_window,
-                                         image=self.button_img2,
-                                         compound=CENTER)
-        self.go_back_button.place(x=630, y=420)
-        self.current_widgets.append(self.go_back_button)
-
-        self.start_video_to_ascii_video_button = ttk.Button(
-            self,
-            text='video → ascii video',
-            command=self.video_to_ascii_video,
-            image=self.button_img5,
-            compound=CENTER,
-            style='New.TButton')
-        self.start_video_to_ascii_video_button.place(x=350, y=210)
-        self.current_widgets.append(self.start_video_to_ascii_video_button)
-
-        self.start_video_frames_to_ascii_video_button = ttk.Button(
-            self,
-            text='frames → ascii video',
-            command=lambda: self.video_to_ascii_video(mode=1),
-            image=self.button_img5,
-            compound=CENTER,
-            style='New.TButton')
-        self.start_video_frames_to_ascii_video_button.place(x=570, y=210)
-        self.current_widgets.append(
-            self.start_video_frames_to_ascii_video_button)
-
-        self.current_widgets += self.set_value('video path', 'video_path',
-                                               True, 600, 50, 0, 115, True)
-        self.current_widgets += self.set_value('resize ratio', 'resize_ratio',
-                                               False, 120, 28, 0, 200)
-        self.current_widgets += self.set_value('bit number', 'bit_number',
-                                               False, 120, 28, 0, 300)
-        self.current_widgets += self.set_value('video frames interval',
-                                               'video_frames_interval', False,
-                                               200, 28, 140, 200)
-        self.current_widgets += self.set_value('font path', 'font_path', True,
-                                               100, 28, 150, 270)
-        self.current_widgets += self.set_value('font size', 'font_size', False,
-                                               100, 28, 270, 270)
-        self.current_widgets += self.set_value('video frame rate',
-                                               'video_frame_rate', False, 160,
-                                               28, 450, 270)
-        self.current_widgets += self.set_value('image width ratio',
-                                               'image_width_ratio', False, 160,
-                                               28, 270, 330)
-        self.current_widgets += self.set_value('image height ratio',
-                                               'image_height_ratio', False,
-                                               170, 28, 450, 330)
-
-        self.save_button = ttk.Button(self,
-                                      text='Save Current Settings',
-                                      command=self.save_current,
-                                      image=self.button_img4,
-                                      compound=CENTER,
-                                      style='New2.TButton')
-        self.save_button.place(x=630, y=350)
-        self.current_widgets.append(self.save_button)
-
-        self.picture_color = IntVar()
-        img_color = self.value_dict['colored_image']
-        if type(img_color) == list:
-            img_color = img_color[1]
-        self.picture_color.set(1 if img_color else 0)
-        self.output_picture_color = Checkbutton(
-            self,
-            text='colored image',
-            variable=self.picture_color,
-            command=lambda: self.change_bool('colored_image'),
-            background='black',
-            foreground='white',
-            borderwidth=0,
-            highlightthickness=0,
-            font=('Consolas', 12),
-            selectcolor='black',
-            activebackground='white')
-        self.output_picture_color.var = self.picture_color
-        self.output_picture_color.place(x=620, y=280, width=160, height=40)
-        self.value_dict['colored_image'] = [
-            self.output_picture_color, img_color, False
-        ]
-        self.current_widgets.append(self.output_picture_color)
-
-        self.frame_info.set('No actions at this time')
-        self.frame_show.place(x=0, y=400, width=260, height=70)
-        self.current_widgets.append(self.frame_show)
-
-    def video_to_img_window(self):
-        self.go_back = False
-        self.quit_main_window()
-        self.current_widgets = []
-
-        self.go_back_button = ttk.Button(self,
-                                         text='Back',
-                                         command=self.go_back_main_window,
-                                         image=self.button_img2,
-                                         compound=CENTER)
-        self.go_back_button.place(x=630, y=420)
-        self.current_widgets.append(self.go_back_button)
-
-        self.start_video_to_frames_button = ttk.Button(
-            self,
-            text='video → frames',
-            command=self.video_to_img,
-            image=self.button_img3,
-            compound=CENTER)
-        self.start_video_to_frames_button.place(x=350, y=210)
-        self.current_widgets.append(self.start_video_to_frames_button)
-
-        self.current_widgets += self.set_value('video path', 'video_path',
-                                               True, 600, 50, 0, 115, True)
-        self.current_widgets += self.set_value('video frames interval',
-                                               'video_frames_interval', False,
-                                               200, 28, 70, 200)
-        self.picture_color = IntVar()
-        self.picture_color.set(1)
-        self.save_button = ttk.Button(self,
-                                      text='Save Current Settings',
-                                      command=self.save_current,
-                                      image=self.button_img4,
-                                      compound=CENTER,
-                                      style='New2.TButton')
-        self.save_button.place(x=630, y=350)
-        self.current_widgets.append(self.save_button)
-
-        self.frame_info.set('No actions at this time')
-        self.frame_show.place(x=0, y=400, width=260, height=70)
-        self.current_widgets.append(self.frame_show)
-
-    def go_back_main_window(self):
-        os.chdir(abs_path)
-        self.go_back = True
-        for i in self.current_widgets:
-            i.place_forget()
-        self.reset_main_window()
-        self.var_counter = 1
-
     def change_sort(self):
         if self.sort_mode == 0:
             self.sort_mode = 1
-            self.change_sort_button.config(text='Sort in order of appearance')
+            self.change_sort_button.config(
+                text=translate_dict['Sort in order of appearance'])
             self.all_config_options = self.config_original.copy()
             self.choose_config_options.delete(0, END)
             for k in self.all_config_options:
-                self.choose_config_options.insert(END, k)
+                self.choose_config_options.insert(END, translate_dict[k])
         else:
             self.sort_mode = 0
-            self.change_sort_button.config(text='Sort in alphabetical order')
+            self.change_sort_button.config(
+                text=translate_dict['Sort in alphabetical order'])
             self.all_config_options = self.alpha_config.copy()
             self.choose_config_options.delete(0, END)
             for k in self.all_config_options:
-                self.choose_config_options.insert(END, k)
+                self.choose_config_options.insert(END, translate_dict[k])
         self.search()
 
     def insert_bool(self, content):
@@ -561,7 +534,7 @@ class Root(Tk):
         try:
             current = self.config_contents.get('1.0', 'end-1c')
             current_new = '"' + current.replace('"', '\\"') + '"'
-            self.value_dict[current_config] = current
+            self.value_dict[translate_dict_reverse[current_config]] = current
         except Exception as e:
             print(str(e))
             pass
@@ -587,7 +560,7 @@ class Root(Tk):
             return
         self.search_inds_list = [
             i for i in range(self.options_num)
-            if current in self.all_config_options[i]
+            if current in self.translate_all_config_options[i]
         ]
         if self.search_inds_list:
             self.search_inds = 0
@@ -603,12 +576,13 @@ class Root(Tk):
     def show_current_config_options(self, e):
         if not self.already_place_config_name:
             self.already_place_config_name = True
-            self.config_name.place(x=400, y=124, height=35)
+            self.config_name.place(x=400, y=120, height=35)
         current_config = self.choose_config_options.get(ANCHOR)
         if current_config:
             self.config_name.configure(text=current_config)
             self.config_contents.delete('1.0', END)
-            current_config_value = self.value_dict[current_config]
+            current_config_value = self.value_dict[
+                translate_dict_reverse[current_config]]
             if type(current_config_value) == list:
                 current_config_value = current_config_value[1]
             try:
@@ -618,8 +592,9 @@ class Root(Tk):
             self.config_contents.insert(END, str(current_config_value))
 
     def choose_filename(self):
-        filename = filedialog.askopenfilename(title="Choose filename",
-                                              filetypes=(("All files", "*"), ))
+        filename = filedialog.askopenfilename(
+            title=translate_dict['Choose filename'],
+            filetypes=((translate_dict['All files'], "*"), ))
         if not filename:
             return
         self.config_contents.delete('1.0', END)
@@ -627,7 +602,8 @@ class Root(Tk):
         self.config_change(0)
 
     def choose_directory(self):
-        directory = filedialog.askdirectory(title="Choose directory")
+        directory = filedialog.askdirectory(
+            title=translate_dict['Choose directory'])
         if not directory:
             return
         self.config_contents.delete('1.0', END)
@@ -643,6 +619,144 @@ class Root(Tk):
         if 'text' in str(current_focus):
             current_focus.delete('1.0', END)
             current_focus.insert(END, value)
+
+    def save_current_contents(self, current_entry, real_value, is_str):
+        try:
+            self.value_dict[real_value][1] = current_entry.get('1.0', 'end-1c')
+        except Exception as e:
+            print(str(e))
+            pass
+
+    def search_path(self, obj, mode=0):
+        if mode == 0:
+            filename = filedialog.askopenfilename(
+                title=translate_dict['Choose filename'],
+                filetypes=((translate_dict['All files'], "*"), ))
+        elif mode == 1:
+            filename = filedialog.askdirectory(
+                title=translate_dict['Choose directory'])
+        if filename:
+            obj.delete('1.0', END)
+            obj.insert(END, filename)
+            obj.func(1)
+
+    def show_saved(self):
+        self.frame_info.set(translate_dict['Current settings are saved'])
+
+    def save_current(self):
+        changed = False
+        changed_values = []
+        for each in self.value_dict:
+            current_value = self.value_dict[each]
+            if type(current_value) != list:
+                before_value = eval(each)
+                try:
+                    current_value = eval(current_value)
+                    current_is_str = False
+                except:
+                    current_is_str = True
+                if current_value != before_value:
+                    change(each, current_value, current_is_str)
+                    changed = True
+                    changed_values.append(each)
+                    if current_is_str:
+                        current_value = repr(current_value)
+                    exec(f"{each} = {current_value}", globals(), globals())
+            else:
+                if type(current_value[1]) == bool:
+                    current = current_value[0].var.get()
+                    current = True if current else False
+                    if current != eval(each):
+                        change(each, current, str_msg)
+                        changed = True
+                        changed_values.append(each)
+                        exec(f"{each} = {current}", globals(), globals())
+                else:
+                    current = current_value[0].get('1.0', 'end-1c')
+                    str_msg = current_value[2]
+                    if current == '':
+                        current = None
+                    if not str_msg and current is not None:
+                        current = eval(current)
+                    if current in ['', 'None']:
+                        current = None
+                        str_msg = False
+                    if current != eval(each):
+                        change(each, current, str_msg)
+                        changed = True
+                        changed_values.append(each)
+                        exec(
+                            f"{each} = {repr(current) if str_msg else current}",
+                            globals(), globals())
+        if changed:
+            if 'language' in changed_values:
+                with open(f'scripts/languages/{language}.py',
+                          encoding='utf-8') as f:
+                    exec(f.read(), globals())
+                global translate_dict_reverse
+                translate_dict_reverse = {
+                    j: i
+                    for i, j in translate_dict.items()
+                }
+                current_config = self.choose_config_options.index(ANCHOR)
+                self.choose_config_options.delete(0, END)
+                for k in self.all_config_options:
+                    self.choose_config_options.insert(END, translate_dict[k])
+                self.choose_config_options.selection_set(current_config)
+                self.choose_config_options.selection_anchor(current_config)
+                self.show_current_config_options(0)
+            if 'background_image' in changed_values:
+                self.background_image = ImageTk.PhotoImage(
+                    Image.open(background_image).resize((1000, 700)))
+                self.bg_label.configure(image=self.background_image)
+            self.show_saved()
+        else:
+            self.frame_info.set(
+                translate_dict['There\'s no changes in current settings'])
+
+    def quit_main_window(self):
+        self.img_to_ascii_img_button.place_forget()
+        self.video_to_ascii_video_button.place_forget()
+        self.video_to_ascii_img_button.place_forget()
+        self.change_settings_button.place_forget()
+
+    def reset_main_window(self):
+        self.img_to_ascii_img_button = ttk.Button(
+            self,
+            text=translate_dict['Image to Ascii Images/Texts'],
+            compound=CENTER,
+            command=self.img_to_ascii_img_window)
+        self.img_to_ascii_img_button.place(x=0, y=140, width=500, height=60)
+        self.video_to_ascii_video_button = ttk.Button(
+            self,
+            text=translate_dict['Videos to Ascii Videos'],
+            compound=CENTER,
+            command=self.video_to_ascii_video_window)
+        self.video_to_ascii_video_button.place(x=0,
+                                               y=240,
+                                               width=500,
+                                               height=60)
+        self.video_to_ascii_img_button = ttk.Button(
+            self,
+            text=translate_dict['Extract Frames From Videos'],
+            compound=CENTER,
+            command=self.video_to_img_window)
+        self.video_to_ascii_img_button.place(x=0, y=340, width=500, height=60)
+        self.change_settings_button = ttk.Button(
+            self,
+            text=translate_dict['Change Settings'],
+            compound=CENTER,
+            command=self.change_settings_window,
+            style='New.TButton')
+        self.change_settings_button.place(x=0, y=440, width=500, height=60)
+
+    def go_back_main_window(self):
+        os.chdir(abs_path)
+        self.go_back = True
+        for i in self.current_widgets:
+            i.place_forget()
+        self.reset_main_window()
+        self.var_counter = 1
 
     def get_char(self, r, g, b, alpha=None):
         if alpha == 0:
@@ -683,7 +797,7 @@ class Root(Tk):
                 if show_percentage:
                     count += WIDTH
                     self.frame_info.set(
-                        f'Conversion progress:  {round((count/whole_count)*100, 3)}%'
+                        f'{translate_dict["Conversion progress:"]}  {round((count/whole_count)*100, 3)}%'
                     )
                     self.update()
                 txt += '\n'
@@ -697,19 +811,20 @@ class Root(Tk):
                 if show_percentage:
                     count += WIDTH
                     self.frame_info.set(
-                        f'Conversion progress:  {round((count/whole_count)*100, 3)}%'
+                        f'{translate_dict["Conversion progress:"]}  {round((count/whole_count)*100, 3)}%'
                     )
                     self.update()
                 txt += '\n'
             return txt
 
     def image_to_ascii_text(self):
-        self.frame_info.set('Converting images..')
+        self.frame_info.set(translate_dict['Converting images..'])
         self.update()
         self.reinit()
         if not self.current_value_dict['image_path'] or not os.path.isfile(
                 self.current_value_dict['image_path']):
-            self.frame_info.set('This image path does not exist')
+            self.frame_info.set(
+                translate_dict['This image path does not exist'])
             return
         try:
             im = Image.open(self.current_value_dict['image_path'])
@@ -721,35 +836,37 @@ class Root(Tk):
                 text_str = text_str_output
         except Exception as e:
             print(str(e))
-            self.frame_info.set('This image path does not exist')
+            self.frame_info.set(
+                translate_dict['This image path does not exist'])
             self.update()
             return
-        self.frame_info.set('Converting images are finished')
-        self.update()
         file_name = os.path.splitext(
             os.path.basename(self.current_value_dict['image_path']))[0]
-        self.frame_info.set(
-            'Converting images are finished,\nwriting ascii result to text...')
+        self.frame_info.set(translate_dict[
+            'Converting images are finished, writing ascii result to text...'])
         self.update()
         output_filename = filedialog.asksaveasfilename(
             initialfile=f'ascii_{file_name}.txt',
-            title="Choose the file path of the exported ASCII text file",
-            filetypes=(("All files", "*"), ))
+            title=translate_dict[
+                'Choose the file path of the exported ASCII text file'],
+            filetypes=((translate_dict['All files'], "*"), ))
         if not output_filename:
-            self.frame_info.set('canceled exporting')
+            self.frame_info.set(translate_dict['canceled exporting'])
             return
         with open(output_filename, 'w', encoding='utf-8') as f:
             f.write(text_str)
-        self.frame_info.set('Successfully writing to text file')
+        self.frame_info.set(
+            translate_dict['Successfully writing to text file'])
         self.update()
 
     def image_to_ascii_image(self):
-        self.frame_info.set('Converting images..')
+        self.frame_info.set(translate_dict['Converting images..'])
         self.update()
         self.reinit()
         if not self.current_value_dict['image_path'] or not os.path.isfile(
                 self.current_value_dict['image_path']):
-            self.frame_info.set('This image path does not exist')
+            self.frame_info.set(
+                translate_dict['This image path does not exist'])
             return
         try:
             im = Image.open(self.current_value_dict['image_path'])
@@ -763,23 +880,23 @@ class Root(Tk):
                 text_str = text_str_output
         except Exception as e:
             print(str(e))
-            self.frame_info.set('This image path does not exist')
+            self.frame_info.set(
+                translate_dict['This image path does not exist'])
             self.update()
             return
-        self.frame_info.set('Converting images are finished')
-        self.update()
         file_name = os.path.splitext(
             os.path.basename(self.current_value_dict['image_path']))[0]
-        self.frame_info.set(
-            'Converting images are finished,\nwriting ascii result to image...'
-        )
+        self.frame_info.set(translate_dict[
+            'Converting images are finished, writing ascii result to image...']
+                            )
         self.update()
         output_filename = filedialog.asksaveasfilename(
             initialfile=f'ascii_{file_name}.png',
-            title="Choose the file path of the exported ASCII image file",
-            filetypes=(("All files", "*"), ))
+            title=translate_dict[
+                'Choose the file path of the exported ASCII image file'],
+            filetypes=((translate_dict['All files'], "*"), ))
         if not output_filename:
-            self.frame_info.set('canceled exporting')
+            self.frame_info.set(translate_dict['canceled exporting'])
             return
         try:
             font = ImageFont.truetype(
@@ -831,7 +948,8 @@ class Root(Tk):
                 x += font_x_len
             im_txt.save(output_filename)
 
-        self.frame_info.set('Successfully writing to image file')
+        self.frame_info.set(
+            translate_dict['Successfully writing to image file'])
         self.update()
 
     def video_to_ascii_video(self, mode=0):
@@ -839,7 +957,7 @@ class Root(Tk):
         video_frames_path = None
         if mode == 1:
             video_frames_path = filedialog.askdirectory(
-                title="Choose video frames path")
+                title=translate_dict['Choose video frames path'])
             if not video_frames_path:
                 return
         if video_frames_path:
@@ -856,7 +974,8 @@ class Root(Tk):
         else:
             if not self.current_value_dict['video_path'] or not os.path.isfile(
                     self.current_value_dict['video_path']):
-                self.frame_info.set('This video path does not exist')
+                self.frame_info.set(
+                    translate_dict['This video path does not exist'])
                 return
             vidcap = cv2.VideoCapture(self.current_value_dict['video_path'])
             count = 0
@@ -884,10 +1003,10 @@ class Root(Tk):
                 os.path.basename(self.current_value_dict['video_path']))[0]
         output_filename = filedialog.asksaveasfilename(
             initialfile=f'ascii_{file_name}.mp4',
-            title="Choose the file path of the exported video",
-            filetypes=(("All files", "*"), ))
+            title=translate_dict['Choose the file path of the exported video'],
+            filetypes=((translate_dict['All files'], "*"), ))
         if not output_filename:
-            self.frame_info.set('canceled exporting')
+            self.frame_info.set(translate_dict['canceled exporting'])
             return
         if video_frames_path:
             os.chdir(abs_path)
@@ -920,8 +1039,8 @@ class Root(Tk):
                 if self.go_back:
                     break
                 self.frame_info.set(
-                    f'Converting video frame {start_frame + i + 1}/{start_frame + num_frames}'
-                )
+                    translate_dict['Converting video frame'].format(
+                        start_frame + i + 1, start_frame + num_frames))
                 self.update()
                 try:
                     im = next(frames)
@@ -954,8 +1073,8 @@ class Root(Tk):
                 if self.go_back:
                     break
                 self.frame_info.set(
-                    f'Converting video frame {start_frame + i + 1}/{start_frame + num_frames}'
-                )
+                    translate_dict['Converting video frame'].format(
+                        start_frame + i + 1, start_frame + num_frames))
                 self.update()
                 try:
                     text_str_output = self.img_to_ascii(next(frames),
@@ -975,7 +1094,7 @@ class Root(Tk):
                     break
                 im_txt.save(f'{i:0{n}d}.png')
         self.frame_info.set(
-            'Conversion are finished,\nstart to export video..')
+            translate_dict['Conversion are finished, start to export video..'])
         self.update()
         os.chdir(abs_path)
         if self.go_back:
@@ -987,17 +1106,19 @@ class Root(Tk):
                      framerate=current_framerate).output(
                          output_filename,
                          pix_fmt='yuv420p').run(overwrite_output=True)
-        self.frame_info.set('Video has been successfully exported')
+        self.frame_info.set(
+            translate_dict['Video has been successfully exported'])
         self.update()
 
     def video_to_img(self):
         self.reinit()
         if not self.current_value_dict['video_path'] or not os.path.isfile(
                 self.current_value_dict['video_path']):
-            self.frame_info.set('This video path does not exist')
+            self.frame_info.set(
+                translate_dict['This video path does not exist'])
             return
         video_frames_save_path = filedialog.askdirectory(
-            title="Choose the path to save video frames")
+            title=translate_dict['Choose the path to save video frames'])
         if not video_frames_save_path:
             return
         try:
@@ -1025,7 +1146,7 @@ class Root(Tk):
                 is_read, img = vidcap.read()
                 count += 1
                 self.frame_info.set(
-                    f'Reading and exporting\nvideo frame {count}/{start_frame + num_frames}'
+                    f'{translate_dict["Reading and exporting video frame"]} {count}/{start_frame + num_frames}'
                 )
                 self.update()
             vidcap.set(cv2.CAP_PROP_POS_FRAMES, 0)
@@ -1047,7 +1168,7 @@ class Root(Tk):
                     is_read, img = vidcap.read()
                     count += 1
                     self.frame_info.set(
-                        f'Reading and exporting\nvideo frame {start_frame + count}/{start_frame + num_frames}'
+                        f'{translate_dict["Reading and exporting video frame"]} {start_frame + count}/{start_frame + num_frames}'
                     )
                     self.update()
                 else:
@@ -1055,7 +1176,7 @@ class Root(Tk):
             vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
         os.chdir(abs_path)
         self.frame_info.set(
-            'Video frames are successfully\nexported as images')
+            translate_dict['Video frames are successfully exported as images'])
         self.update()
         return
 
@@ -1092,15 +1213,15 @@ class Root(Tk):
                   font_size=12):
         current_widgets = []
         if mode == 0:
-            value_label = ttk.Label(self, text=value_name)
+            value_label = ttk.Label(self, text=translate_dict[real_value])
             value_label.place(x=x1, y=y1, width=width, height=25)
             value_entry = Text(self,
                                undo=True,
                                autoseparators=True,
                                maxundo=-1,
-                               background='black',
-                               foreground='white',
-                               insertbackground='white')
+                               background='white',
+                               foreground='black',
+                               insertbackground='black')
             before_value = self.value_dict[real_value]
             if type(before_value) != list:
                 before_value = str(before_value)
@@ -1125,18 +1246,11 @@ class Root(Tk):
             if type(before_value) == list:
                 before_value = before_value[1]
             checkvar.set(1 if before_value else 0)
-            value_checkbutton = Checkbutton(
+            value_checkbutton = ttk.Checkbutton(
                 self,
-                text=value_name,
+                text=translate_dict[real_value],
                 variable=checkvar,
-                command=lambda: self.change_bool(real_value),
-                background='black',
-                foreground='white',
-                borderwidth=0,
-                highlightthickness=0,
-                font=('Consolas', font_size),
-                selectcolor='black',
-                activebackground='white')
+                command=lambda: self.change_bool(real_value))
             value_checkbutton.var = checkvar
             self.value_dict[real_value] = [
                 value_checkbutton, before_value, is_str
@@ -1146,84 +1260,19 @@ class Root(Tk):
         if path_enable:
             path_button = ttk.Button(
                 self,
-                text='change',
+                text=translate_dict['change'],
                 command=lambda: self.search_path(value_entry, path_mode),
-                image=self.button_img2,
-                compound=CENTER)
-            path_button.place(x=x1 + width + 10, y=y1 + 5)
+                compound=CENTER,
+                style='New.TButton')
+            path_button.place(x=x1 + width + 15,
+                              y=y1 + 5,
+                              width=200,
+                              height=50)
             current_widgets.append(path_button)
         return current_widgets
 
     def change_bool(self, value_name):
         self.value_dict[value_name][1] = not self.value_dict[value_name][1]
-
-    def save_current_contents(self, current_entry, real_value, is_str):
-        try:
-            self.value_dict[real_value][1] = current_entry.get('1.0', 'end-1c')
-        except Exception as e:
-            print(str(e))
-            pass
-
-    def search_path(self, obj, mode=0):
-        if mode == 0:
-            filename = filedialog.askopenfilename(title="Choose filename",
-                                                  filetypes=(("All files",
-                                                              "*"), ))
-        elif mode == 1:
-            filename = filedialog.askdirectory(title="Choose directory")
-        if filename:
-            obj.delete('1.0', END)
-            obj.insert(END, filename)
-            obj.func(1)
-
-    def show_saved(self):
-        self.frame_info.set('Current settings are saved')
-
-    def save_current(self):
-        changed = False
-        for each in self.value_dict:
-            current_value = self.value_dict[each]
-            if type(current_value) != list:
-                before_value = eval(each)
-                try:
-                    current_value = eval(current_value)
-                    current_is_str = False
-                except:
-                    current_is_str = True
-                if current_value != before_value:
-                    change(each, current_value, current_is_str)
-                    changed = True
-                    if current_is_str:
-                        current_value = repr(current_value)
-                    exec(f"{each} = {current_value}", globals(), globals())
-            else:
-                if type(current_value[1]) == bool:
-                    current = current_value[0].var.get()
-                    current = True if current else False
-                    if current != eval(each):
-                        change(each, current, str_msg)
-                        changed = True
-                        exec(f"{each} = {current}", globals(), globals())
-                else:
-                    current = current_value[0].get('1.0', 'end-1c')
-                    str_msg = current_value[2]
-                    if current == '':
-                        current = None
-                    if not str_msg and current is not None:
-                        current = eval(current)
-                    if current in ['', 'None']:
-                        current = None
-                        str_msg = False
-                    if current != eval(each):
-                        change(each, current, str_msg)
-                        changed = True
-                        exec(
-                            f"{each} = {repr(current) if str_msg else current}",
-                            globals(), globals())
-        if changed:
-            self.show_saved()
-        else:
-            self.frame_info.set('There\'s no changes in current settings')
 
 
 root = Root()
