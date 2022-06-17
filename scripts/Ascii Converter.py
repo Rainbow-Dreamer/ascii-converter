@@ -45,8 +45,7 @@ class Root(Tk):
     def __init__(self):
         super(Root, self).__init__()
         self.title("Ascii Converter")
-        self.minsize(1000, 700)
-        self.resizable(0, 0)
+        self.minsize(1000, 650)
         self.wm_iconbitmap('resources/ascii.ico')
         self.value_dict = {}
         self.var_counter = 1
@@ -116,8 +115,13 @@ class Root(Tk):
                         inactiveselectbackground='black',
                         font=('Consolas', 12))
         style.configure('TScrollbar', background='white')
+        try:
+            bg_image = Image.open(background_image)
+        except:
+            bg_image = Image.open('resources/background.png')
         self.background_image = ImageTk.PhotoImage(
-            Image.open(background_image).resize((1000, 700)))
+            bg_image.resize(
+                (1000, int(1000 * (bg_image.height / bg_image.width)))))
         self.bg_label = ttk.Label(self, image=self.background_image)
         self.bg_label.place(x=0, y=0)
         title_image = Image.open('resources/title.png')
@@ -176,7 +180,7 @@ class Root(Tk):
                                          command=self.go_back_main_window,
                                          compound=CENTER,
                                          style='New.TButton')
-        self.go_back_button.place(x=500, y=580, width=400, height=50)
+        self.go_back_button.place(x=500, y=560, width=400, height=50)
         self.current_widgets.append(self.go_back_button)
 
         self.save_as_ascii_text_button = ttk.Button(
@@ -184,7 +188,7 @@ class Root(Tk):
             text=translate_dict['image → ascii text'],
             command=self.image_to_ascii_text,
             compound=CENTER)
-        self.save_as_ascii_text_button.place(x=0, y=500, width=400, height=50)
+        self.save_as_ascii_text_button.place(x=0, y=480, width=400, height=50)
         self.current_widgets.append(self.save_as_ascii_text_button)
 
         self.save_as_ascii_image_button = ttk.Button(
@@ -192,7 +196,7 @@ class Root(Tk):
             text=translate_dict['image → ascii image'],
             command=self.image_to_ascii_image,
             compound=CENTER)
-        self.save_as_ascii_image_button.place(x=0, y=580, width=400, height=50)
+        self.save_as_ascii_image_button.place(x=0, y=560, width=400, height=50)
         self.current_widgets.append(self.save_as_ascii_image_button)
 
         self.current_widgets += self.set_value('image path', 'image_path',
@@ -225,7 +229,7 @@ class Root(Tk):
             command=self.save_current,
             compound=CENTER,
             style='New.TButton')
-        self.save_button.place(x=500, y=500, width=400, height=50)
+        self.save_button.place(x=500, y=480, width=400, height=50)
         self.current_widgets.append(self.save_button)
 
         self.picture_color = IntVar()
@@ -246,7 +250,7 @@ class Root(Tk):
         self.current_widgets.append(self.output_picture_color)
 
         self.frame_info.set(translate_dict['No actions at this time'])
-        self.frame_show.place(x=0, y=400, width=300, height=70)
+        self.frame_show.place(x=0, y=380, width=300, height=70)
         self.current_widgets.append(self.frame_show)
 
     def video_to_ascii_video_window(self):
@@ -259,7 +263,7 @@ class Root(Tk):
                                          command=self.go_back_main_window,
                                          compound=CENTER,
                                          style='New.TButton')
-        self.go_back_button.place(x=500, y=580, width=400, height=50)
+        self.go_back_button.place(x=500, y=560, width=400, height=50)
         self.current_widgets.append(self.go_back_button)
 
         self.start_video_to_ascii_video_button = ttk.Button(
@@ -269,7 +273,7 @@ class Root(Tk):
             compound=CENTER,
             style='New.TButton')
         self.start_video_to_ascii_video_button.place(x=0,
-                                                     y=500,
+                                                     y=480,
                                                      width=400,
                                                      height=50)
         self.current_widgets.append(self.start_video_to_ascii_video_button)
@@ -281,7 +285,7 @@ class Root(Tk):
             compound=CENTER,
             style='New.TButton')
         self.start_video_frames_to_ascii_video_button.place(x=0,
-                                                            y=580,
+                                                            y=560,
                                                             width=400,
                                                             height=50)
         self.current_widgets.append(
@@ -316,7 +320,7 @@ class Root(Tk):
             command=self.save_current,
             compound=CENTER,
             style='New.TButton')
-        self.save_button.place(x=500, y=500, width=400, height=50)
+        self.save_button.place(x=500, y=480, width=400, height=50)
         self.current_widgets.append(self.save_button)
 
         self.picture_color = IntVar()
@@ -337,7 +341,7 @@ class Root(Tk):
         self.current_widgets.append(self.output_picture_color)
 
         self.frame_info.set(translate_dict['No actions at this time'])
-        self.frame_show.place(x=0, y=400, width=300, height=70)
+        self.frame_show.place(x=0, y=380, width=300, height=70)
         self.current_widgets.append(self.frame_show)
 
     def video_to_img_window(self):
@@ -350,7 +354,7 @@ class Root(Tk):
                                          command=self.go_back_main_window,
                                          compound=CENTER,
                                          style='New.TButton')
-        self.go_back_button.place(x=500, y=580, width=400, height=50)
+        self.go_back_button.place(x=500, y=560, width=400, height=50)
         self.current_widgets.append(self.go_back_button)
 
         self.start_video_to_frames_button = ttk.Button(
@@ -359,7 +363,7 @@ class Root(Tk):
             command=self.video_to_img,
             compound=CENTER)
         self.start_video_to_frames_button.place(x=0,
-                                                y=500,
+                                                y=480,
                                                 width=400,
                                                 height=50)
         self.current_widgets.append(self.start_video_to_frames_button)
@@ -377,11 +381,11 @@ class Root(Tk):
             command=self.save_current,
             compound=CENTER,
             style='New.TButton')
-        self.save_button.place(x=500, y=500, width=400, height=50)
+        self.save_button.place(x=500, y=480, width=400, height=50)
         self.current_widgets.append(self.save_button)
 
         self.frame_info.set(translate_dict['No actions at this time'])
-        self.frame_show.place(x=0, y=400, width=300, height=70)
+        self.frame_show.place(x=0, y=380, width=300, height=70)
         self.current_widgets.append(self.frame_show)
 
     def change_settings_window(self):
@@ -392,9 +396,9 @@ class Root(Tk):
                                          command=self.go_back_main_window,
                                          compound=CENTER,
                                          style='New.TButton')
-        self.go_back_button.place(x=500, y=580, width=400, height=50)
+        self.go_back_button.place(x=500, y=560, width=400, height=50)
         self.config_options_bar = ttk.Scrollbar(self)
-        self.config_options_bar.place(x=228, y=211, height=183, anchor=CENTER)
+        self.config_options_bar.place(x=228, y=191, height=183, anchor=CENTER)
         self.choose_config_options = Listbox(
             self,
             yscrollcommand=self.config_options_bar.set,
@@ -412,7 +416,7 @@ class Root(Tk):
         self.alpha_config = self.all_config_options.copy()
         for k in self.all_config_options:
             self.choose_config_options.insert(END, translate_dict[k])
-        self.choose_config_options.place(x=0, y=120, width=220)
+        self.choose_config_options.place(x=0, y=100, width=220)
         self.config_options_bar.config(
             command=self.choose_config_options.yview)
         self.config_name = ttk.Label(self, text='')
@@ -422,7 +426,7 @@ class Root(Tk):
                                     autoseparators=True,
                                     maxundo=-1)
         self.config_contents.bind('<KeyRelease>', self.config_change)
-        self.config_contents.place(x=400, y=165, width=380, height=170)
+        self.config_contents.place(x=400, y=145, width=380, height=170)
         self.choose_filename_button = ttk.Button(
             self,
             text=translate_dict['Choose filename'],
@@ -435,22 +439,23 @@ class Root(Tk):
             command=self.choose_directory,
             compound=CENTER,
             style='New.TButton')
-        self.choose_filename_button.place(x=0, y=500, width=400, height=50)
-        self.choose_directory_button.place(x=0, y=580, width=400, height=50)
-        self.save = ttk.Button(self,
-                               text=translate_dict['Save Current Settings'],
-                               command=self.save_current,
-                               compound=CENTER,
-                               style='New.TButton')
-        self.save.place(x=500, y=500, width=400, height=50)
+        self.choose_filename_button.place(x=0, y=480, width=400, height=50)
+        self.choose_directory_button.place(x=0, y=560, width=400, height=50)
+        self.save_button = ttk.Button(
+            self,
+            text=translate_dict['Save Current Settings'],
+            command=self.save_current,
+            compound=CENTER,
+            style='New.TButton')
+        self.save_button.place(x=500, y=480, width=400, height=50)
         self.saved_text = ttk.Label(self, text='saved')
         self.search_text = ttk.Label(self,
                                      text=translate_dict['Search Settings'])
-        self.search_text.place(x=0, y=425)
+        self.search_text.place(x=0, y=400)
         self.search_contents = StringVar()
         self.search_contents.trace_add('write', self.search)
         self.search_entry = ttk.Entry(self, textvariable=self.search_contents)
-        self.search_entry.place(x=0, y=450)
+        self.search_entry.place(x=0, y=425)
         self.search_inds = 0
         self.up_button = ttk.Button(
             self,
@@ -466,8 +471,8 @@ class Root(Tk):
             width=8,
             compound=CENTER,
             style='New.TButton')
-        self.up_button.place(x=200, y=450, width=150, height=30)
-        self.down_button.place(x=400, y=450, width=150, height=30)
+        self.up_button.place(x=200, y=420, width=150, height=30)
+        self.down_button.place(x=400, y=420, width=150, height=30)
         self.search_inds_list = []
         self.choose_bool1 = ttk.Button(
             self,
@@ -479,8 +484,8 @@ class Root(Tk):
             text='False',
             command=lambda: self.insert_bool('False'),
             compound=CENTER)
-        self.choose_bool1.place(x=200, y=400, width=150, height=30)
-        self.choose_bool2.place(x=400, y=400, width=150, height=30)
+        self.choose_bool1.place(x=200, y=370, width=150, height=30)
+        self.choose_bool2.place(x=400, y=370, width=150, height=30)
         self.change_sort_button = ttk.Button(
             self,
             text=translate_dict['Sort in order of appearance'],
@@ -489,16 +494,16 @@ class Root(Tk):
             style='New2.TButton')
         self.sort_mode = 0
         self.change_sort()
-        self.change_sort_button.place(x=0, y=350, width=300, height=30)
-        self.frame_show.place(x=600, y=400, width=300, height=70)
+        self.change_sort_button.place(x=0, y=320, width=300, height=30)
+        self.frame_show.place(x=600, y=370, width=300, height=70)
         self.current_widgets = [
             self.go_back_button, self.config_options_bar,
             self.choose_config_options, self.config_contents,
             self.choose_filename_button, self.choose_directory_button,
-            self.save, self.saved_text, self.search_text, self.search_entry,
-            self.up_button, self.down_button, self.choose_bool1,
-            self.choose_bool2, self.change_sort_button, self.config_name,
-            self.frame_show
+            self.save_button, self.saved_text, self.search_text,
+            self.search_entry, self.up_button, self.down_button,
+            self.choose_bool1, self.choose_bool2, self.change_sort_button,
+            self.config_name, self.frame_show
         ]
         self.frame_info.set(translate_dict['No actions at this time'])
         self.choose_config_options.selection_set(0)
@@ -576,7 +581,7 @@ class Root(Tk):
     def show_current_config_options(self, e):
         if not self.already_place_config_name:
             self.already_place_config_name = True
-            self.config_name.place(x=400, y=120, height=35)
+            self.config_name.place(x=400, y=100, height=35)
         current_config = self.choose_config_options.get(ANCHOR)
         if current_config:
             self.config_name.configure(text=current_config)
@@ -706,8 +711,14 @@ class Root(Tk):
                 self.choose_config_options.selection_anchor(current_config)
                 self.show_current_config_options(0)
             if 'background_image' in changed_values:
+                try:
+                    bg_image = Image.open(background_image)
+                except:
+                    bg_image = Image.open('resources/background.png')
                 self.background_image = ImageTk.PhotoImage(
-                    Image.open(background_image).resize((1000, 700)))
+                    bg_image.resize(
+                        (1000,
+                         int(1000 * (bg_image.height / bg_image.width)))))
                 self.bg_label.configure(image=self.background_image)
             self.show_saved()
         else:
