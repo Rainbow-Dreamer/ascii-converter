@@ -40,7 +40,7 @@ class Root(Tk):
     def __init__(self):
         super(Root, self).__init__()
         self.title("Ascii Converter")
-        self.minsize(800, 500)
+        self.minsize(1000, 700)
         self.resizable(0, 0)
         self.wm_iconbitmap('resources/ascii.ico')
         self.value_dict = {}
@@ -48,21 +48,21 @@ class Root(Tk):
         style = ttk.Style()
         style.theme_use('alt')
         style.configure('TButton',
-                        borderwidth=0,
+                        borderwidth=-2,
                         focuscolor='none',
                         highlightthickness=0,
-                        font=('Consolas', 12))
-        style.map('TButton', foreground=[('active', 'white')])
+                        font=('Consolas', 18),
+                        foreground='white',
+                        background='forest green')
+        style.map('TButton', background=[('active', 'lime green')])
         style.configure('New.TButton',
-                        borderwidth=0,
+                        borderwidth=-2,
                         focuscolor='none',
                         highlightthickness=0,
-                        font=('Consolas', 10))
-        style.configure('New2.TButton',
-                        borderwidth=0,
-                        focuscolor='none',
-                        highlightthickness=0,
-                        font=('Consolas', 8))
+                        font=('Consolas', 18),
+                        foreground='white',
+                        background='dodger blue')
+        style.map('New.TButton', background=[('active', 'deep sky blue')])
         style.configure('TEntry',
                         fieldbackground='black',
                         foreground='white',
@@ -103,70 +103,45 @@ class Root(Tk):
                         inactiveselectbackground='black',
                         font=('Consolas', 12))
         style.configure('TScrollbar', background='white')
-        self.button_img = ImageTk.PhotoImage(
-            Image.open('resources/button.png').resize((180, 100)))
-        self.button_img2 = ImageTk.PhotoImage(
-            Image.open('resources/button.png').resize((100, 40)))
-        self.button_img3 = ImageTk.PhotoImage(
-            Image.open('resources/button.png').resize((150, 40)))
-        self.button_img4 = ImageTk.PhotoImage(
-            Image.open('resources/button.png').resize((150, 30)))
-        self.button_img5 = ImageTk.PhotoImage(
-            Image.open('resources/button.png').resize((200, 30)))
-        bg_image = Image.open('resources/5072612.jpg')
-        ratio = 800 / bg_image.width
-        self.bg_image = ImageTk.PhotoImage(
-            bg_image.resize((800, int(bg_image.height * ratio))))
-        self.bg_label = ttk.Label(
-            self,
-            image=self.bg_image,
-            text='\n' * 23 +
-            'made by Rainbow Dreamer\nqq: 2180502841\nBiliBili Account: Rainbow_Dreamer\nGithub Account: Rainbow Dreamer',
-            compound=CENTER)
-        self.bg_label.configure(font=('Consolas', 10), foreground='white')
+        self.configure(bg='white')
+        self.background_image = ImageTk.PhotoImage(
+            Image.open(background_image).resize((1000, 700)))
+        self.bg_label = ttk.Label(self, image=self.background_image)
         self.bg_label.place(x=0, y=0)
         title_image = Image.open('resources/title.png')
-        self.title_image = ImageTk.PhotoImage(title_image.resize((240, 100)))
+        self.title_image = ImageTk.PhotoImage(title_image.resize((456, 80)))
         self.title_label = ttk.Label(self,
                                      image=self.title_image,
-                                     text='Ascii Converter',
                                      compound=CENTER)
-        self.title_label.configure(font=('Consolas', 15), foreground='white')
-        self.title_label.place(x=260, y=10)
+        self.title_label.place(x=0, y=0)
         self.img_to_ascii_img_button = ttk.Button(
             self,
-            text='Image to Ascii\nImages/Texts',
-            image=self.button_img,
+            text='Image to Ascii Images/Texts',
             compound=CENTER,
             command=self.img_to_ascii_img_window)
-        self.img_to_ascii_img_button.place(x=140, y=140, width=180, height=100)
+        self.img_to_ascii_img_button.place(x=0, y=140, width=500, height=60)
         self.video_to_ascii_video_button = ttk.Button(
             self,
-            text='Videos to\nAscii Videos',
-            image=self.button_img,
+            text='Videos to Ascii Videos',
             compound=CENTER,
             command=self.video_to_ascii_video_window)
-        self.video_to_ascii_video_button.place(x=440,
-                                               y=140,
-                                               width=180,
-                                               height=100)
+        self.video_to_ascii_video_button.place(x=0,
+                                               y=240,
+                                               width=500,
+                                               height=60)
         self.video_to_ascii_img_button = ttk.Button(
             self,
-            text='Extract Frames\nFrom Videos',
-            image=self.button_img,
+            text='Extract Frames From Videos',
             compound=CENTER,
             command=self.video_to_img_window)
-        self.video_to_ascii_img_button.place(x=140,
-                                             y=280,
-                                             width=180,
-                                             height=100)
+        self.video_to_ascii_img_button.place(x=0, y=340, width=500, height=60)
         self.change_settings_button = ttk.Button(
             self,
             text='Change Settings',
-            image=self.button_img,
             compound=CENTER,
-            command=self.change_settings_window)
-        self.change_settings_button.place(x=440, y=280, width=180, height=100)
+            command=self.change_settings_window,
+            style='New.TButton')
+        self.change_settings_button.place(x=0, y=440, width=500, height=60)
         self.frame_info = StringVar()
         self.frame_show = ttk.Label(self,
                                     textvariable=self.frame_info,

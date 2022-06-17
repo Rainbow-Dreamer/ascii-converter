@@ -23,7 +23,8 @@ translate_dict = {
     'ascii_image_mode': '字符画图片格式',
     'colored_ascii_image_mode': '彩色字符画图片样式',
     'ascii_image_init_bg_color': '字符画图片初始背景色',
-    'ascii_image_character_color': '字符画图片字符颜色'
+    'ascii_image_character_color': '字符画图片字符颜色',
+    'background_image': '背景图片'
 }
 
 translate_dict_reverse = {j: i for i, j in translate_dict.items()}
