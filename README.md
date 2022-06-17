@@ -18,31 +18,39 @@ Besides, there are many other parameters that can be set.
 
 You can also choose to output colored ASCII pictures and videos.
 
+Change `background_image` in the settings to change background image.
+
+Change `language` in the settings and save the settings to change language, currently supported languages: `English, Chinese`
+
 ## Previews
 
 ### Main interface
 
 The following is a screenshot of the main interface of this ASCII art converter I wrote.
 
-![image](https://github.com/Rainbow-Dreamer/ascii-converter/blob/master/previews/4.jpg?raw=true)
+![image](https://github.com/Rainbow-Dreamer/ascii-converter/blob/master/previews/1.jpg?raw=true)
+
+
+
+![image](https://github.com/Rainbow-Dreamer/ascii-converter/blob/master/previews/2.jpg?raw=true)
 
 ### Example of conversion effect
 
 Convert the following image to ASCII at a scaling ratio of 1:2 (scaling factor of 2)
 
-![image](https://github.com/Rainbow-Dreamer/ascii-converter/blob/master/previews/2.jpg?raw=True)
+![image](https://github.com/Rainbow-Dreamer/ascii-converter/blob/master/previews/3.jpg?raw=True)
 
 Open the converted text file with ASCII characters in a text editor
 
-![image](https://github.com/Rainbow-Dreamer/ascii-converter/blob/master/previews/3.jpg?raw=True)
+![image](https://github.com/Rainbow-Dreamer/ascii-converter/blob/master/previews/4.jpg?raw=True)
 
 ## Download
 
 This ASCII converter currently only supports Windows.
 
-You can download the latest version [here](https://www.jianguoyun.com/p/DUPFUecQhPG0CBiUk6YE)
+Latest version: v3.0
 
-For the old version, you can download [here](https://www.jianguoyun.com/p/Db0nUwgQhPG0CBiSk6YE)
+You can download the latest version and history releases [here](https://www.jianguoyun.com/p/Da5RDjwQhPG0CBjRs8cEIAA)
 
 ## Changelog
 
@@ -70,31 +78,41 @@ For the old version, you can download [here](https://www.jianguoyun.com/p/Db0nUw
 
 你也可以选择输出为彩色ASCII字符画图片和视频。
 
+更改设置里的`background_image`来更改背景图片。
+
+更改设置里的`language`并且保存设置来更改语言，目前支持的语言: `English, Chinese`
+
 ## 预览
 
 ### 主界面
 
 以下是我写的这个字符画转换器的主界面截图：
 
-![image](previews/1.jpg)
+![image](https://github.com/Rainbow-Dreamer/ascii-converter/blob/master/previews/1.jpg?raw=true)
+
+
+
+
+
+![image](https://github.com/Rainbow-Dreamer/ascii-converter/blob/master/previews/2.jpg?raw=true)
 
 ### 转换效果示例
 
 把以下的图片按照缩放比例1:2（缩放倍数为2）转换为ASCII字符画
 
-![image](previews/2.jpg)
+![image](https://github.com/Rainbow-Dreamer/ascii-converter/blob/master/previews/3.jpg?raw=true)
 
 在文本编辑器里打开转换后的ASCII字符的文本文件
 
-![image](previews/3.jpg)
+![image](https://github.com/Rainbow-Dreamer/ascii-converter/blob/master/previews/4.jpg?raw=true)
 
 ## 下载
 
 这个ASCII字符画转换器目前只支持Windows。
 
-你可以从[这里](https://www.jianguoyun.com/p/DUPFUecQhPG0CBiUk6YE)下载最新的版本
+最新版本: v3.0
 
-你可以从[这里](https://www.jianguoyun.com/p/Db0nUwgQhPG0CBiSk6YE)下载旧版本
+你可以在[这里](https://www.jianguoyun.com/p/Da5RDjwQhPG0CBjRs8cEIAA)下载最新版本和历史版本
 
 ## 更新日志
 
