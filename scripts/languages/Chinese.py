@@ -35,7 +35,6 @@ translate_dict = {
     'change': '更改',
     'Save Current Settings': '保存当前配置',
     'Back': '返回',
-    'colored image': '输出图片为彩色',
     'video → ascii video': '视频 → 字符画视频',
     'frames → ascii video': '帧图 → 字符画视频',
     'No actions at this time': '目前暂无动作',

@@ -6,8 +6,12 @@ with open('scripts/config.py', encoding='utf-8') as f:
     text = f.read()
     exec(text, globals())
 
-with open(f'scripts/languages/{language}.py', encoding='utf-8') as f:
-    exec(f.read(), globals())
+try:
+    with open(f'scripts/languages/{language}.py', encoding='utf-8') as f:
+        exec(f.read(), globals())
+except:
+    with open('scripts/languages/English.py', encoding='utf-8') as f:
+        exec(f.read(), globals())
 translate_dict_reverse = {j: i for i, j in translate_dict.items()}
 
 
@@ -168,7 +172,16 @@ class Root(Tk):
             translate_dict[i] for i in self.all_config_options
         ]
         self.value_dict = {i: eval(i) for i in self.all_config_options}
+        self.options_num = len(self.all_config_options)
+        self.all_config_options_ind = {
+            self.all_config_options[i]: i
+            for i in range(self.options_num)
+        }
+        self.config_original = self.all_config_options.copy()
+        self.all_config_options.sort(key=lambda s: s.lower())
+        self.alpha_config = self.all_config_options.copy()
         self.go_back = False
+        self.sort_mode = 1
 
     def img_to_ascii_img_window(self):
         self.go_back = False
@@ -239,7 +252,7 @@ class Root(Tk):
         self.picture_color.set(1 if img_color else 0)
         self.output_picture_color = ttk.Checkbutton(
             self,
-            text=translate_dict['colored image'],
+            text=translate_dict['colored_image'],
             variable=self.picture_color,
             command=lambda: self.change_bool('colored_image'))
         self.output_picture_color.var = self.picture_color
@@ -330,7 +343,7 @@ class Root(Tk):
         self.picture_color.set(1 if img_color else 0)
         self.output_picture_color = ttk.Checkbutton(
             self,
-            text=translate_dict['colored image'],
+            text=translate_dict['colored_image'],
             variable=self.picture_color,
             command=lambda: self.change_bool('colored_image'))
         self.output_picture_color.var = self.picture_color
@@ -406,16 +419,6 @@ class Root(Tk):
             foreground='black')
         self.choose_config_options.bind('<<ListboxSelect>>',
                                         self.show_current_config_options)
-        self.options_num = len(self.all_config_options)
-        self.all_config_options_ind = {
-            self.all_config_options[i]: i
-            for i in range(self.options_num)
-        }
-        self.config_original = self.all_config_options.copy()
-        self.all_config_options.sort(key=lambda s: s.lower())
-        self.alpha_config = self.all_config_options.copy()
-        for k in self.all_config_options:
-            self.choose_config_options.insert(END, translate_dict[k])
         self.choose_config_options.place(x=0, y=100, width=220)
         self.config_options_bar.config(
             command=self.choose_config_options.yview)
@@ -489,11 +492,10 @@ class Root(Tk):
         self.change_sort_button = ttk.Button(
             self,
             text=translate_dict['Sort in order of appearance'],
-            command=self.change_sort,
+            command=lambda: self.change_sort(change=True),
             compound=CENTER,
             style='New2.TButton')
-        self.sort_mode = 0
-        self.change_sort()
+        self.change_sort(self.sort_mode)
         self.change_sort_button.place(x=0, y=320, width=300, height=30)
         self.frame_show.place(x=600, y=370, width=300, height=70)
         self.current_widgets = [
@@ -510,12 +512,17 @@ class Root(Tk):
         self.choose_config_options.selection_anchor(0)
         self.show_current_config_options(0)
 
-    def change_sort(self):
-        if self.sort_mode == 0:
+    def change_sort(self, mode=0, change=False):
+        if change:
+            mode = 1 - self.sort_mode
+        if mode == 1:
             self.sort_mode = 1
             self.change_sort_button.config(
                 text=translate_dict['Sort in order of appearance'])
             self.all_config_options = self.config_original.copy()
+            self.translate_all_config_options = [
+                translate_dict[i] for i in self.all_config_options
+            ]
             self.choose_config_options.delete(0, END)
             for k in self.all_config_options:
                 self.choose_config_options.insert(END, translate_dict[k])
@@ -524,10 +531,16 @@ class Root(Tk):
             self.change_sort_button.config(
                 text=translate_dict['Sort in alphabetical order'])
             self.all_config_options = self.alpha_config.copy()
+            self.translate_all_config_options = [
+                translate_dict[i] for i in self.all_config_options
+            ]
             self.choose_config_options.delete(0, END)
             for k in self.all_config_options:
                 self.choose_config_options.insert(END, translate_dict[k])
-        self.search()
+        if not self.search_contents.get():
+            self.choose_config_options.selection_set(0)
+        else:
+            self.search()
 
     def insert_bool(self, content):
         self.config_contents.delete('1.0', END)
@@ -695,9 +708,14 @@ class Root(Tk):
                             globals(), globals())
         if changed:
             if 'language' in changed_values:
-                with open(f'scripts/languages/{language}.py',
-                          encoding='utf-8') as f:
-                    exec(f.read(), globals())
+                try:
+                    with open(f'scripts/languages/{language}.py',
+                              encoding='utf-8') as f:
+                        exec(f.read(), globals())
+                except:
+                    with open('scripts/languages/English.py',
+                              encoding='utf-8') as f:
+                        exec(f.read(), globals())
                 global translate_dict_reverse
                 translate_dict_reverse = {
                     j: i

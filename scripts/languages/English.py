@@ -71,8 +71,6 @@ translate_dict = {
     'Save Current Settings',
     'Back':
     'Back',
-    'colored image':
-    'colored image',
     'video → ascii video':
     'video → ascii video',
     'frames → ascii video':
