@@ -283,8 +283,7 @@ class Root(Tk):
             self,
             text=translate_dict['video → ascii video'],
             command=self.video_to_ascii_video,
-            compound=CENTER,
-            style='New.TButton')
+            compound=CENTER)
         self.start_video_to_ascii_video_button.place(x=0,
                                                      y=480,
                                                      width=400,
@@ -295,8 +294,7 @@ class Root(Tk):
             self,
             text=translate_dict['frames → ascii video'],
             command=lambda: self.video_to_ascii_video(mode=1),
-            compound=CENTER,
-            style='New.TButton')
+            compound=CENTER)
         self.start_video_frames_to_ascii_video_button.place(x=0,
                                                             y=560,
                                                             width=400,
