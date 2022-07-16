@@ -1012,8 +1012,11 @@ class Root(Tk):
                           for k in range(whole_frame_number))
                 frame_length = whole_frame_number
             else:
-                start_frame, to_frame = self.current_value_dict[
+                frames_interval = self.current_value_dict[
                     'video_frames_interval']
+                start_frame, to_frame = literal_eval(
+                    frames_interval) if isinstance(frames_interval,
+                                                   str) else frames_interval
                 no_of_frames = to_frame - start_frame
                 frame_length = no_of_frames
                 vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
@@ -1176,8 +1179,10 @@ class Root(Tk):
                 self.update()
             vidcap.set(cv2.CAP_PROP_POS_FRAMES, 0)
         else:
-            start_frame, to_frame = self.current_value_dict[
-                'video_frames_interval']
+            frames_interval = self.current_value_dict['video_frames_interval']
+            start_frame, to_frame = literal_eval(
+                frames_interval) if isinstance(frames_interval,
+                                               str) else frames_interval
             no_of_frames = to_frame - start_frame
             num_frames = no_of_frames
             vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
