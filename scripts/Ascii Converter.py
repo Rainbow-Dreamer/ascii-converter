@@ -42,6 +42,14 @@ def change(var, new, is_str=True):
         f.write(''.join(text_ls))
 
 
+def get_value(text):
+    try:
+        value = literal_eval(text)
+    except:
+        value = text
+    return value
+
+
 class Root(Tk):
 
     def __init__(self):
@@ -599,10 +607,7 @@ class Root(Tk):
                 translate_dict_reverse[current_config]]
             if type(current_config_value) == list:
                 current_config_value = current_config_value[1]
-            try:
-                current_config_value = eval(current_config_value)
-            except:
-                pass
+            current_config_value = get_value(current_config_value)
             self.config_contents.insert(END, str(current_config_value))
 
     def choose_filename(self):
@@ -665,7 +670,7 @@ class Root(Tk):
             if type(current_value) != list:
                 before_value = eval(each)
                 try:
-                    current_value = eval(current_value)
+                    current_value = literal_eval(current_value)
                     current_is_str = False
                 except:
                     current_is_str = True
@@ -691,7 +696,7 @@ class Root(Tk):
                     if current == '':
                         current = None
                     if not str_msg and current is not None:
-                        current = eval(current)
+                        current = get_value(current)
                     if current in ['', 'None']:
                         current = None
                         str_msg = False
@@ -1012,11 +1017,8 @@ class Root(Tk):
                           for k in range(whole_frame_number))
                 frame_length = whole_frame_number
             else:
-                frames_interval = self.current_value_dict[
+                start_frame, to_frame = self.current_value_dict[
                     'video_frames_interval']
-                start_frame, to_frame = literal_eval(
-                    frames_interval) if isinstance(frames_interval,
-                                                   str) else frames_interval
                 no_of_frames = to_frame - start_frame
                 frame_length = no_of_frames
                 vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
@@ -1179,10 +1181,8 @@ class Root(Tk):
                 self.update()
             vidcap.set(cv2.CAP_PROP_POS_FRAMES, 0)
         else:
-            frames_interval = self.current_value_dict['video_frames_interval']
-            start_frame, to_frame = literal_eval(
-                frames_interval) if isinstance(frames_interval,
-                                               str) else frames_interval
+            start_frame, to_frame = self.current_value_dict[
+                'video_frames_interval']
             no_of_frames = to_frame - start_frame
             num_frames = no_of_frames
             vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
@@ -1217,8 +1217,7 @@ class Root(Tk):
             for i, j in self.value_dict.items()
         })
         self.current_value_dict = {
-            i: eval(j) if (type(eval(i)) != str and eval(i) != None
-                           and type(j) == str and j not in ['', 'None']) else j
+            i: get_value(j)
             for i, j in self.current_value_dict.items()
         }
         self.current_value_dict = {
@@ -1256,7 +1255,7 @@ class Root(Tk):
             if type(before_value) != list:
                 before_value = str(before_value)
             else:
-                before_value = eval(repr(before_value[1]))
+                before_value = get_value(repr(before_value[1]))
             if before_value == 'None':
                 before_value = ''
             value_entry.insert(END, before_value)
