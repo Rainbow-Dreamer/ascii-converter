@@ -1,8 +1,11 @@
+import json
+
 abs_path = os.getcwd()
 
-with open('scripts/config.py', encoding='utf-8') as f:
-    text = f.read()
-    exec(text, globals())
+settings_path = 'scripts/config.json'
+with open(settings_path, encoding='utf-8') as f:
+    current_settings = json.load(f)
+globals().update(current_settings)
 
 try:
     with open(f'scripts/languages/{language}.py', encoding='utf-8') as f:
@@ -13,33 +16,14 @@ except:
 translate_dict_reverse = {j: i for i, j in translate_dict.items()}
 
 
-def get_all_config_options(text):
-    result = []
-    N = len(text)
-    for i in range(N):
-        current = text[i]
-        if current == '\n':
-            if i + 1 < N:
-                next_character = text[i + 1]
-                if next_character.isalpha():
-                    inds = text[i + 1:].index('=') - 1
-                    current_config_options = text[i + 1:i + 1 + inds]
-                    result.append(current_config_options)
-    return result
-
-
-def change(var, new, is_str=True):
-    text = open('scripts/config.py', encoding='utf-8').read()
-    text_ls = list(text)
-    var_len = len(var) + 1
-    var_ind = text.index('\n' + var) + var_len
-    next_line = text[var_ind:].index('\n')
-    if is_str:
-        text_ls[var_ind:var_ind + next_line] = f' = {repr(new)}'
-    else:
-        text_ls[var_ind:var_ind + next_line] = f" = {new}"
-    with open('scripts/config.py', 'w', encoding='utf-8') as f:
-        f.write(''.join(text_ls))
+def change(var, new):
+    current_settings[var] = new
+    with open(settings_path, 'w', encoding='utf-8') as f:
+        json.dump(current_settings,
+                   f,
+                   indent=4,
+                   separators=(',', ': '),
+                   ensure_ascii=False)
 
 
 def get_value(text):
@@ -57,7 +41,6 @@ class Root(Tk):
         self.title("Ascii Converter")
         self.minsize(1000, 650)
         self.wm_iconbitmap('resources/ascii.ico')
-        self.value_dict = {}
         self.var_counter = 1
         style = ttk.Style()
         style.theme_use('alt')
@@ -173,11 +156,11 @@ class Root(Tk):
                                     textvariable=self.frame_info,
                                     style='New.TLabel',
                                     anchor='nw')
-        self.all_config_options = get_all_config_options(text)
+        self.all_config_options = list(current_settings.keys())
         self.translate_all_config_options = [
             translate_dict[i] for i in self.all_config_options
         ]
-        self.value_dict = {i: eval(i) for i in self.all_config_options}
+        self.value_dict = current_settings
         self.options_num = len(self.all_config_options)
         self.all_config_options_ind = {
             self.all_config_options[i]: i
@@ -668,28 +651,25 @@ class Root(Tk):
         for each in self.value_dict:
             current_value = self.value_dict[each]
             if type(current_value) != list:
-                before_value = eval(each)
-                try:
+                before_value = current_settings[each]
+                if not isinstance(before_value, str):
                     current_value = literal_eval(current_value)
-                    current_is_str = False
-                except:
-                    current_is_str = True
                 if current_value != before_value:
-                    change(each, current_value, current_is_str)
+                    change(each, current_value)
                     changed = True
                     changed_values.append(each)
                     if current_is_str:
                         current_value = repr(current_value)
-                    exec(f"{each} = {current_value}", globals(), globals())
+                    current_settings[each] = current_value
             else:
                 if type(current_value[1]) == bool:
                     current = current_value[0].var.get()
                     current = True if current else False
-                    if current != eval(each):
-                        change(each, current, str_msg)
+                    if current != get_value(each):
+                        change(each, current)
                         changed = True
                         changed_values.append(each)
-                        exec(f"{each} = {current}", globals(), globals())
+                        current_settings[each] = current
                 else:
                     current = current_value[0].get('1.0', 'end-1c')
                     str_msg = current_value[2]
@@ -700,13 +680,11 @@ class Root(Tk):
                     if current in ['', 'None']:
                         current = None
                         str_msg = False
-                    if current != eval(each):
-                        change(each, current, str_msg)
+                    if current != get_value(each):
+                        change(each, current)
                         changed = True
                         changed_values.append(each)
-                        exec(
-                            f"{each} = {repr(current) if str_msg else current}",
-                            globals(), globals())
+                        current_settings[each] = current
         if changed:
             if 'language' in changed_values:
                 try:
