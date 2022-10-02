@@ -20,10 +20,10 @@ def change(var, new):
     current_settings[var] = new
     with open(settings_path, 'w', encoding='utf-8') as f:
         json.dump(current_settings,
-                   f,
-                   indent=4,
-                   separators=(',', ': '),
-                   ensure_ascii=False)
+                  f,
+                  indent=4,
+                  separators=(',', ': '),
+                  ensure_ascii=False)
 
 
 def get_value(text):
@@ -41,7 +41,6 @@ class Root(Tk):
         self.title("Ascii Converter")
         self.minsize(1000, 650)
         self.wm_iconbitmap('resources/ascii.ico')
-        self.var_counter = 1
         style = ttk.Style()
         style.theme_use('alt')
         style.configure('TButton',
@@ -156,6 +155,8 @@ class Root(Tk):
                                     textvariable=self.frame_info,
                                     style='New.TLabel',
                                     anchor='nw')
+        self.var_counter = 1
+        self.value_entry_dict = {}
         self.all_config_options = list(current_settings.keys())
         self.translate_all_config_options = [
             translate_dict[i] for i in self.all_config_options
@@ -201,16 +202,15 @@ class Root(Tk):
         self.save_as_ascii_image_button.place(x=0, y=560, width=400, height=50)
         self.current_widgets.append(self.save_as_ascii_image_button)
 
-        self.current_widgets += self.set_value('image path', 'image_path',
-                                               True, 600, 50, 0, 115, True)
+        self.current_widgets += self.set_value('image path', 'image_path', 600,
+                                               50, 0, 115, True)
         self.current_widgets += self.set_value('resize ratio', 'resize_ratio',
-                                               False, 120, 28, 0, 220)
-        self.current_widgets += self.set_value('bit number', 'bit_number',
-                                               False, 120, 28, 0, 300)
+                                               120, 28, 0, 220)
+        self.current_widgets += self.set_value('bit number', 'bit_number', 120,
+                                               28, 0, 300)
 
         self.current_widgets += self.set_value('show convert percentages',
                                                'show_convert_percentages',
-                                               False,
                                                200,
                                                40,
                                                200,
@@ -219,11 +219,11 @@ class Root(Tk):
                                                font_size=10)
 
         self.current_widgets += self.set_value('image width ratio',
-                                               'image_width_ratio', False, 160,
-                                               28, 200, 300)
+                                               'image_width_ratio', 160, 28,
+                                               200, 300)
         self.current_widgets += self.set_value('image height ratio',
-                                               'image_height_ratio', False,
-                                               170, 28, 450, 300)
+                                               'image_height_ratio', 170, 28,
+                                               450, 300)
 
         self.save_button = ttk.Button(
             self,
@@ -246,9 +246,8 @@ class Root(Tk):
             command=lambda: self.change_bool('colored_image'))
         self.output_picture_color.var = self.picture_color
         self.output_picture_color.place(x=450, y=220, width=160, height=40)
-        self.value_dict['colored_image'] = [
-            self.output_picture_color, img_color, False
-        ]
+        self.value_dict['colored_image'] = img_color
+        self.value_entry_dict['colored_image'] = self.output_picture_color
         self.current_widgets.append(self.output_picture_color)
 
         self.frame_info.set(translate_dict['No actions at this time'])
@@ -291,28 +290,28 @@ class Root(Tk):
         self.current_widgets.append(
             self.start_video_frames_to_ascii_video_button)
 
-        self.current_widgets += self.set_value('video path', 'video_path',
-                                               True, 600, 50, 0, 115, True)
+        self.current_widgets += self.set_value('video path', 'video_path', 600,
+                                               50, 0, 115, True)
         self.current_widgets += self.set_value('resize ratio', 'resize_ratio',
-                                               False, 120, 28, 0, 220)
-        self.current_widgets += self.set_value('bit number', 'bit_number',
-                                               False, 120, 28, 0, 300)
+                                               120, 28, 0, 220)
+        self.current_widgets += self.set_value('bit number', 'bit_number', 120,
+                                               28, 0, 300)
         self.current_widgets += self.set_value('video frames interval',
-                                               'video_frames_interval', False,
-                                               200, 28, 160, 220)
-        self.current_widgets += self.set_value('font path', 'font_path', True,
-                                               100, 28, 400, 220)
-        self.current_widgets += self.set_value('font size', 'font_size', False,
-                                               100, 28, 550, 220)
+                                               'video_frames_interval', 200,
+                                               28, 160, 220)
+        self.current_widgets += self.set_value('font path', 'font_path', 100,
+                                               28, 400, 220)
+        self.current_widgets += self.set_value('font size', 'font_size', 100,
+                                               28, 550, 220)
         self.current_widgets += self.set_value('video frame rate',
-                                               'video_frame_rate', False, 160,
-                                               28, 160, 300)
+                                               'video_frame_rate', 160, 28,
+                                               160, 300)
         self.current_widgets += self.set_value('image width ratio',
-                                               'image_width_ratio', False, 160,
-                                               28, 400, 300)
+                                               'image_width_ratio', 160, 28,
+                                               400, 300)
         self.current_widgets += self.set_value('image height ratio',
-                                               'image_height_ratio', False,
-                                               170, 28, 600, 300)
+                                               'image_height_ratio', 170, 28,
+                                               600, 300)
 
         self.save_button = ttk.Button(
             self,
@@ -325,8 +324,6 @@ class Root(Tk):
 
         self.picture_color = IntVar()
         img_color = self.value_dict['colored_image']
-        if type(img_color) == list:
-            img_color = img_color[1]
         self.picture_color.set(1 if img_color else 0)
         self.output_picture_color = ttk.Checkbutton(
             self,
@@ -335,9 +332,8 @@ class Root(Tk):
             command=lambda: self.change_bool('colored_image'))
         self.output_picture_color.var = self.picture_color
         self.output_picture_color.place(x=700, y=220, width=160, height=40)
-        self.value_dict['colored_image'] = [
-            self.output_picture_color, img_color, False
-        ]
+        self.value_dict['colored_image'] = img_color
+        self.value_entry_dict['colored_image'] = self.output_picture_color
         self.current_widgets.append(self.output_picture_color)
 
         self.frame_info.set(translate_dict['No actions at this time'])
@@ -368,11 +364,11 @@ class Root(Tk):
                                                 height=50)
         self.current_widgets.append(self.start_video_to_frames_button)
 
-        self.current_widgets += self.set_value('video path', 'video_path',
-                                               True, 600, 50, 0, 115, True)
+        self.current_widgets += self.set_value('video path', 'video_path', 600,
+                                               50, 0, 115, True)
         self.current_widgets += self.set_value('video frames interval',
-                                               'video_frames_interval', False,
-                                               200, 28, 0, 220)
+                                               'video_frames_interval', 200,
+                                               28, 0, 220)
         self.picture_color = IntVar()
         self.picture_color.set(1)
         self.save_button = ttk.Button(
@@ -542,7 +538,6 @@ class Root(Tk):
             self.value_dict[translate_dict_reverse[current_config]] = current
         except Exception as e:
             print(str(e))
-            pass
 
     def change_search_inds(self, num):
         self.search_inds += num
@@ -622,12 +617,11 @@ class Root(Tk):
             current_focus.delete('1.0', END)
             current_focus.insert(END, value)
 
-    def save_current_contents(self, current_entry, real_value, is_str):
+    def save_current_contents(self, current_entry, real_value):
         try:
-            self.value_dict[real_value][1] = current_entry.get('1.0', 'end-1c')
+            self.value_dict[real_value] = current_entry.get('1.0', 'end-1c')
         except Exception as e:
             print(str(e))
-            pass
 
     def search_path(self, obj, mode=0):
         if mode == 0:
@@ -650,20 +644,22 @@ class Root(Tk):
         changed_values = []
         for each in self.value_dict:
             current_value = self.value_dict[each]
-            if type(current_value) != list:
+            if each not in self.value_entry_dict:
                 before_value = current_settings[each]
                 if not isinstance(before_value, str):
-                    current_value = literal_eval(current_value)
+                    if current_value in ['', 'None']:
+                        current_value = None
+                    else:
+                        current_value = get_value(current_value)
                 if current_value != before_value:
                     change(each, current_value)
                     changed = True
                     changed_values.append(each)
-                    if current_is_str:
-                        current_value = repr(current_value)
                     current_settings[each] = current_value
             else:
-                if type(current_value[1]) == bool:
-                    current = current_value[0].var.get()
+                current_button = self.value_entry_dict[each]
+                if isinstance(current_button, ttk.Checkbutton):
+                    current = current_button.var.get()
                     current = True if current else False
                     if current != get_value(each):
                         change(each, current)
@@ -671,8 +667,9 @@ class Root(Tk):
                         changed_values.append(each)
                         current_settings[each] = current
                 else:
-                    current = current_value[0].get('1.0', 'end-1c')
-                    str_msg = current_value[2]
+                    current = current_button.get('1.0', 'end-1c')
+                    before_value = current_settings[each]
+                    str_msg = isinstance(before_value, str)
                     if current == '':
                         current = None
                     if not str_msg and current is not None:
@@ -1190,10 +1187,7 @@ class Root(Tk):
 
     def reinit(self):
         self.is_color = self.picture_color.get()
-        self.current_value_dict = deepcopy({
-            i: (j[1] if type(j) == list else j)
-            for i, j in self.value_dict.items()
-        })
+        self.current_value_dict = deepcopy(self.value_dict)
         self.current_value_dict = {
             i: get_value(j)
             for i, j in self.current_value_dict.items()
@@ -1209,7 +1203,6 @@ class Root(Tk):
     def set_value(self,
                   value_name,
                   real_value,
-                  is_str,
                   width,
                   height,
                   x1,
@@ -1239,11 +1232,11 @@ class Root(Tk):
             value_entry.insert(END, before_value)
             value_entry.configure(font=('Consolas', 12))
             value_entry.place(x=x1, y=y1 + 25, width=width, height=height)
-            self.value_dict[real_value] = [value_entry, before_value, is_str]
+            self.value_entry_dict[real_value] = value_entry
             current_widgets.append(value_label)
             current_widgets.append(value_entry)
             value_entry.func = lambda e: self.save_current_contents(
-                value_entry, real_value, is_str)
+                value_entry, real_value)
             value_entry.bind('<KeyRelease>', value_entry.func)
         elif mode == 1:
             exec(f"self.checkvar{self.var_counter} = IntVar()")
@@ -1259,9 +1252,7 @@ class Root(Tk):
                 variable=checkvar,
                 command=lambda: self.change_bool(real_value))
             value_checkbutton.var = checkvar
-            self.value_dict[real_value] = [
-                value_checkbutton, before_value, is_str
-            ]
+            self.value_entry_dict[real_value] = value_checkbutton
             value_checkbutton.place(x=x1, y=y1, width=width, height=height)
             current_widgets.append(value_checkbutton)
         if path_enable:
@@ -1279,7 +1270,7 @@ class Root(Tk):
         return current_widgets
 
     def change_bool(self, value_name):
-        self.value_dict[value_name][1] = not self.value_dict[value_name][1]
+        self.value_dict[value_name] = not self.value_dict[value_name]
 
 
 root = Root()
