@@ -534,7 +534,8 @@ class Root(Tk):
         current_config = self.choose_config_options.get(ANCHOR)
         try:
             current = self.config_contents.get('1.0', 'end-1c')
-            self.value_dict[translate_dict_reverse[current_config]] = current
+            self.value_dict[
+                translate_dict_reverse[current_config]] = get_value(current)
         except Exception as e:
             print(str(e))
 
@@ -618,7 +619,8 @@ class Root(Tk):
 
     def save_current_contents(self, current_entry, real_value):
         try:
-            self.value_dict[real_value] = current_entry.get('1.0', 'end-1c')
+            current = current_entry.get('1.0', 'end-1c')
+            self.value_dict[real_value] = get_value(current)
         except Exception as e:
             print(str(e))
 
