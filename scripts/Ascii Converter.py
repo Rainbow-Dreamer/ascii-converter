@@ -161,7 +161,7 @@ class Root(Tk):
         self.translate_all_config_options = [
             translate_dict[i] for i in self.all_config_options
         ]
-        self.value_dict = current_settings
+        self.value_dict = deepcopy(current_settings)
         self.options_num = len(self.all_config_options)
         self.all_config_options_ind = {
             self.all_config_options[i]: i
@@ -534,7 +534,6 @@ class Root(Tk):
         current_config = self.choose_config_options.get(ANCHOR)
         try:
             current = self.config_contents.get('1.0', 'end-1c')
-            current_new = '"' + current.replace('"', '\\"') + '"'
             self.value_dict[translate_dict_reverse[current_config]] = current
         except Exception as e:
             print(str(e))
@@ -643,9 +642,9 @@ class Root(Tk):
         changed = False
         changed_values = []
         for each in self.value_dict:
-            current_value = self.value_dict[each]
             if each not in self.value_entry_dict:
                 before_value = current_settings[each]
+                current_value = self.value_dict[each]
                 if not isinstance(before_value, str):
                     if current_value in ['', 'None']:
                         current_value = None
@@ -659,33 +658,32 @@ class Root(Tk):
             else:
                 current_button = self.value_entry_dict[each]
                 if isinstance(current_button, ttk.Checkbutton):
-                    current = current_button.var.get()
-                    current = True if current else False
-                    if current != get_value(each):
-                        change(each, current)
-                        changed = True
-                        changed_values.append(each)
-                        current_settings[each] = current
-                else:
-                    current = current_button.get('1.0', 'end-1c')
+                    current_value = current_button.var.get()
+                    current_value = True if current_value else False
                     before_value = current_settings[each]
-                    str_msg = isinstance(before_value, str)
-                    if current == '':
-                        current = None
-                    if not str_msg and current is not None:
-                        current = get_value(current)
-                    if current in ['', 'None']:
-                        current = None
-                        str_msg = False
-                    if current != get_value(each):
-                        change(each, current)
+                    if current_value != before_value:
+                        change(each, current_value)
                         changed = True
                         changed_values.append(each)
-                        current_settings[each] = current
+                        current_settings[each] = current_value
+                else:
+                    current_value = current_button.get('1.0', 'end-1c')
+                    before_value = current_settings[each]
+                    if not isinstance(before_value, str):
+                        if current_value in ['', 'None']:
+                            current_value = None
+                        else:
+                            current_value = get_value(current_value)
+                    if current_value != before_value:
+                        change(each, current_value)
+                        changed = True
+                        changed_values.append(each)
+                        current_settings[each] = current_value
         if changed:
             if 'language' in changed_values:
+                current_language = self.value_dict['language']
                 try:
-                    with open(f'scripts/languages/{language}.py',
+                    with open(f'scripts/languages/{current_language}.py',
                               encoding='utf-8') as f:
                         exec(f.read(), globals())
                 except:
@@ -769,17 +767,15 @@ class Root(Tk):
         elif alpha is None:
             alpha = self.K
         gray = int(0.2126 * r + 0.7152 * g + 0.0722 * b)
-        return self.current_value_dict['ascii_character_set'][int(gray /
-                                                                  self.unit)]
+        return self.value_dict['ascii_character_set'][int(gray / self.unit)]
 
     def img_to_ascii(self, im, show_percentage=False, mode=0):
-        WIDTH = int((im.width * self.current_value_dict['image_width_ratio'] /
-                     self.current_value_dict['image_width_ratio_scale']) /
-                    self.current_value_dict['resize_ratio'])
-        HEIGHT = int(
-            (im.height * self.current_value_dict['image_height_ratio'] /
-             self.current_value_dict['image_height_ratio_scale']) /
-            self.current_value_dict['resize_ratio'])
+        WIDTH = int((im.width * self.value_dict['image_width_ratio'] /
+                     self.value_dict['image_width_ratio_scale']) /
+                    self.value_dict['resize_ratio'])
+        HEIGHT = int((im.height * self.value_dict['image_height_ratio'] /
+                      self.value_dict['image_height_ratio_scale']) /
+                     self.value_dict['resize_ratio'])
         if show_percentage:
             whole_count = WIDTH * HEIGHT
             count = 0
@@ -787,12 +783,12 @@ class Root(Tk):
         txt = ""
         if mode == 1:
             im_txt = Image.new(
-                self.current_value_dict['colored_ascii_image_mode'],
-                (int(im.width / self.current_value_dict['resize_ratio']),
-                 int(im.height / self.current_value_dict['resize_ratio'])),
-                (2**self.current_value_dict['bit_number'] - 1,
-                 2**self.current_value_dict['bit_number'] - 1,
-                 2**self.current_value_dict['bit_number'] - 1))
+                self.value_dict['colored_ascii_image_mode'],
+                (int(im.width / self.value_dict['resize_ratio']),
+                 int(im.height / self.value_dict['resize_ratio'])),
+                (2**self.value_dict['bit_number'] - 1,
+                 2**self.value_dict['bit_number'] - 1,
+                 2**self.value_dict['bit_number'] - 1))
             colors = []
             for i in range(HEIGHT):
                 for j in range(WIDTH):
@@ -826,15 +822,15 @@ class Root(Tk):
         self.frame_info.set(translate_dict['Converting images..'])
         self.update()
         self.reinit()
-        if not self.current_value_dict['image_path'] or not os.path.isfile(
-                self.current_value_dict['image_path']):
+        if not self.value_dict['image_path'] or not os.path.isfile(
+                self.value_dict['image_path']):
             self.frame_info.set(
                 translate_dict['This image path does not exist'])
             return
         try:
-            im = Image.open(self.current_value_dict['image_path'])
+            im = Image.open(self.value_dict['image_path'])
             text_str_output = self.img_to_ascii(
-                im, self.current_value_dict['show_convert_percentages'])
+                im, self.value_dict['show_convert_percentages'])
             if type(text_str_output) != str:
                 text_str = text_str_output[0]
             else:
@@ -846,7 +842,7 @@ class Root(Tk):
             self.update()
             return
         file_name = os.path.splitext(
-            os.path.basename(self.current_value_dict['image_path']))[0]
+            os.path.basename(self.value_dict['image_path']))[0]
         self.frame_info.set(translate_dict[
             'Converting images are finished, writing ascii result to text...'])
         self.update()
@@ -868,16 +864,16 @@ class Root(Tk):
         self.frame_info.set(translate_dict['Converting images..'])
         self.update()
         self.reinit()
-        if not self.current_value_dict['image_path'] or not os.path.isfile(
-                self.current_value_dict['image_path']):
+        if not self.value_dict['image_path'] or not os.path.isfile(
+                self.value_dict['image_path']):
             self.frame_info.set(
                 translate_dict['This image path does not exist'])
             return
         try:
-            im = Image.open(self.current_value_dict['image_path'])
+            im = Image.open(self.value_dict['image_path'])
             text_str_output = self.img_to_ascii(
                 im,
-                self.current_value_dict['show_convert_percentages'],
+                self.value_dict['show_convert_percentages'],
                 mode=self.is_color)
             if type(text_str_output) != str:
                 text_str = text_str_output[0]
@@ -890,7 +886,7 @@ class Root(Tk):
             self.update()
             return
         file_name = os.path.splitext(
-            os.path.basename(self.current_value_dict['image_path']))[0]
+            os.path.basename(self.value_dict['image_path']))[0]
         self.frame_info.set(translate_dict[
             'Converting images are finished, writing ascii result to image...']
                             )
@@ -904,31 +900,28 @@ class Root(Tk):
             self.frame_info.set(translate_dict['canceled exporting'])
             return
         try:
-            font = ImageFont.truetype(
-                self.current_value_dict['font_path'],
-                size=self.current_value_dict['font_size'])
+            font = ImageFont.truetype(self.value_dict['font_path'],
+                                      size=self.value_dict['font_size'])
         except:
             font = ImageFont.load_default()
         font_x_len, font_y_len = font.getsize(
-            self.current_value_dict['ascii_character_set'][1])
+            self.value_dict['ascii_character_set'][1])
         font_y_len = int(font_y_len * 1.37)
-        ascii_image_padding_x = self.current_value_dict[
-            'ascii_image_padding_x']
-        ascii_image_padding_y = self.current_value_dict[
-            'ascii_image_padding_y']
+        ascii_image_padding_x = self.value_dict['ascii_image_padding_x']
+        ascii_image_padding_y = self.value_dict['ascii_image_padding_y']
         if ascii_image_padding_x is not None:
             font_x_len = float(ascii_image_padding_x)
         if ascii_image_padding_y is not None:
             font_y_len = float(ascii_image_padding_y)
         if self.is_color == 0:
             im_txt = Image.new(
-                self.current_value_dict['ascii_image_mode'],
-                (int(im.width / self.current_value_dict['resize_ratio']),
-                 int(im.height / self.current_value_dict['resize_ratio'])),
-                self.current_value_dict['ascii_image_init_bg_color'])
+                self.value_dict['ascii_image_mode'],
+                (int(im.width / self.value_dict['resize_ratio']),
+                 int(im.height / self.value_dict['resize_ratio'])),
+                self.value_dict['ascii_image_init_bg_color'])
             dr = ImageDraw.Draw(im_txt)
             x = y = 0
-            ascii_image_character_color = self.current_value_dict[
+            ascii_image_character_color = self.value_dict[
                 'ascii_image_character_color']
             for i in range(len(text_str)):
                 if text_str[i] == "\n":
@@ -977,22 +970,22 @@ class Root(Tk):
             start_frame = 0
             frame_length = len(file_ls)
         else:
-            if not self.current_value_dict['video_path'] or not os.path.isfile(
-                    self.current_value_dict['video_path']):
+            if not self.value_dict['video_path'] or not os.path.isfile(
+                    self.value_dict['video_path']):
                 self.frame_info.set(
                     translate_dict['This video path does not exist'])
                 return
-            vidcap = cv2.VideoCapture(self.current_value_dict['video_path'])
+            vidcap = cv2.VideoCapture(self.value_dict['video_path'])
             count = 0
             start_frame = 0
-            if not self.current_value_dict['video_frames_interval']:
+            if not self.value_dict['video_frames_interval']:
                 whole_frame_number = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
                 frames = (Image.fromarray(
                     cv2.cvtColor(vidcap.read()[1], cv2.COLOR_BGR2RGB))
                           for k in range(whole_frame_number))
                 frame_length = whole_frame_number
             else:
-                start_frame, to_frame = self.current_value_dict[
+                start_frame, to_frame = self.value_dict[
                     'video_frames_interval']
                 no_of_frames = to_frame - start_frame
                 frame_length = no_of_frames
@@ -1005,7 +998,7 @@ class Root(Tk):
                 os.path.basename(video_frames_path))[0]
         else:
             file_name = os.path.splitext(
-                os.path.basename(self.current_value_dict['video_path']))[0]
+                os.path.basename(self.value_dict['video_path']))[0]
         output_filename = filedialog.asksaveasfilename(
             initialfile=f'ascii_{file_name}.mp4',
             title=translate_dict['Choose the file path of the exported video'],
@@ -1023,18 +1016,15 @@ class Root(Tk):
         num_frames = frame_length
         n = len(str(num_frames))
         try:
-            font = ImageFont.truetype(
-                self.current_value_dict['font_path'],
-                size=self.current_value_dict['font_size'])
+            font = ImageFont.truetype(self.value_dict['font_path'],
+                                      size=self.value_dict['font_size'])
         except:
             font = ImageFont.load_default()
         font_x_len, font_y_len = font.getsize(
-            self.current_value_dict['ascii_character_set'][1])
+            self.value_dict['ascii_character_set'][1])
         font_y_len = int(font_y_len * 1.37)
-        ascii_image_padding_x = self.current_value_dict[
-            'ascii_image_padding_x']
-        ascii_image_padding_y = self.current_value_dict[
-            'ascii_image_padding_y']
+        ascii_image_padding_x = self.value_dict['ascii_image_padding_x']
+        ascii_image_padding_y = self.value_dict['ascii_image_padding_y']
         if ascii_image_padding_x is not None:
             font_x_len = float(ascii_image_padding_x)
         if ascii_image_padding_y is not None:
@@ -1053,13 +1043,13 @@ class Root(Tk):
                     break
                 text_str = self.img_to_ascii(im)
                 im_txt = Image.new(
-                    self.current_value_dict['ascii_image_mode'],
-                    (int(im.width / self.current_value_dict['resize_ratio']),
-                     int(im.height / self.current_value_dict['resize_ratio'])),
-                    self.current_value_dict['ascii_image_init_bg_color'])
+                    self.value_dict['ascii_image_mode'],
+                    (int(im.width / self.value_dict['resize_ratio']),
+                     int(im.height / self.value_dict['resize_ratio'])),
+                    self.value_dict['ascii_image_init_bg_color'])
                 dr = ImageDraw.Draw(im_txt)
                 x = y = 0
-                ascii_image_character_color = self.current_value_dict[
+                ascii_image_character_color = self.value_dict[
                     'ascii_image_character_color']
                 for j in range(len(text_str)):
                     if text_str[j] == "\n":
@@ -1104,7 +1094,7 @@ class Root(Tk):
         os.chdir(abs_path)
         if self.go_back:
             return
-        current_framerate = self.current_value_dict['video_frame_rate']
+        current_framerate = self.value_dict['video_frame_rate']
         if not current_framerate:
             current_framerate = vidcap.get(cv2.CAP_PROP_FPS)
         ffmpeg.input(f'temp_video_images/%{n}d.png',
@@ -1117,8 +1107,8 @@ class Root(Tk):
 
     def video_to_img(self):
         self.reinit()
-        if not self.current_value_dict['video_path'] or not os.path.isfile(
-                self.current_value_dict['video_path']):
+        if not self.value_dict['video_path'] or not os.path.isfile(
+                self.value_dict['video_path']):
             self.frame_info.set(
                 translate_dict['This video path does not exist'])
             return
@@ -1134,10 +1124,10 @@ class Root(Tk):
             os.chdir('video_frame_ascii_images')
             for each in os.listdir():
                 os.remove(each)
-        vidcap = cv2.VideoCapture(self.current_value_dict['video_path'])
+        vidcap = cv2.VideoCapture(self.value_dict['video_path'])
         count = 0
         start_frame = 0
-        if not self.current_value_dict['video_frames_interval']:
+        if not self.value_dict['video_frames_interval']:
             whole_frame_number = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
             num_frames = whole_frame_number
             frames = (Image.fromarray(
@@ -1156,8 +1146,7 @@ class Root(Tk):
                 self.update()
             vidcap.set(cv2.CAP_PROP_POS_FRAMES, 0)
         else:
-            start_frame, to_frame = self.current_value_dict[
-                'video_frames_interval']
+            start_frame, to_frame = self.value_dict['video_frames_interval']
             no_of_frames = to_frame - start_frame
             num_frames = no_of_frames
             vidcap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
@@ -1187,17 +1176,8 @@ class Root(Tk):
 
     def reinit(self):
         self.is_color = self.picture_color.get()
-        self.current_value_dict = deepcopy(self.value_dict)
-        self.current_value_dict = {
-            i: get_value(j)
-            for i, j in self.current_value_dict.items()
-        }
-        self.current_value_dict = {
-            i: (None if j in ['', 'None'] else j)
-            for i, j in self.current_value_dict.items()
-        }
-        length = len(self.current_value_dict['ascii_character_set'])
-        self.K = 2**self.current_value_dict['bit_number']
+        length = len(self.value_dict['ascii_character_set'])
+        self.K = 2**self.value_dict['bit_number']
         self.unit = (self.K + 1) / length
 
     def set_value(self,
