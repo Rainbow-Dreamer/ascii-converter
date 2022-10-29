@@ -41,72 +41,7 @@ class Root(Tk):
         self.title("Ascii Converter")
         self.minsize(1000, 650)
         self.wm_iconbitmap('resources/ascii.ico')
-        style = ttk.Style()
-        style.theme_use('alt')
-        style.configure('TButton',
-                        borderwidth=-2,
-                        focuscolor='none',
-                        highlightthickness=0,
-                        font=('Consolas', 18),
-                        foreground='white',
-                        background='forest green')
-        style.map('TButton', background=[('active', 'lime green')])
-        style.configure('New.TButton',
-                        borderwidth=-2,
-                        focuscolor='none',
-                        highlightthickness=0,
-                        font=('Consolas', 18),
-                        foreground='white',
-                        background='dodger blue')
-        style.map('New.TButton', background=[('active', 'deep sky blue')])
-        style.configure('New2.TButton',
-                        borderwidth=-2,
-                        focuscolor='none',
-                        highlightthickness=0,
-                        font=('Consolas', 12),
-                        foreground='white',
-                        background='forest green')
-        style.map('New2.TButton', background=[('active', 'deep sky blue')])
-        style.configure('TEntry',
-                        fieldbackground='white',
-                        foreground='black',
-                        insertcolor='black')
-        style.configure('TLabelframe',
-                        background='black',
-                        borderwidth=0,
-                        focuscolor='none',
-                        highlightthickness=0,
-                        font=('Consolas', 12))
-        style.configure('TLabelframe.Label',
-                        background='black',
-                        foreground='white',
-                        borderwidth=0,
-                        focuscolor='none',
-                        highlightthickness=0,
-                        font=('Consolas', 12))
-        style.configure('TLabel',
-                        background='white',
-                        foreground='black',
-                        borderwidth=0,
-                        focuscolor='none',
-                        highlightthickness=0,
-                        font=('Consolas', 12))
-        style.configure('New.TLabel',
-                        background='white',
-                        foreground='black',
-                        borderwidth=0,
-                        focuscolor='none',
-                        highlightthickness=0,
-                        font=('Consolas', 10))
-        style.configure('TCheckbutton',
-                        background='white',
-                        foreground='black',
-                        borderwidth=0,
-                        focuscolor='none',
-                        highlightthickness=0,
-                        inactiveselectbackground='black',
-                        font=('Consolas', 12))
-        style.configure('TScrollbar', background='white')
+        self.set_style()
         try:
             bg_image = Image.open(background_image)
         except:
@@ -169,6 +104,75 @@ class Root(Tk):
         self.go_back = False
         self.sort_mode = 1
         self.current_widgets = []
+
+    def set_style(self):
+        self.current_font = translate_dict['font']
+        style = ttk.Style()
+        style.theme_use('alt')
+        style.configure('TButton',
+                        borderwidth=-2,
+                        focuscolor='none',
+                        highlightthickness=0,
+                        font=(self.current_font, 18),
+                        foreground='white',
+                        background='forest green')
+        style.map('TButton', background=[('active', 'lime green')])
+        style.configure('New.TButton',
+                        borderwidth=-2,
+                        focuscolor='none',
+                        highlightthickness=0,
+                        font=(self.current_font, 18),
+                        foreground='white',
+                        background='dodger blue')
+        style.map('New.TButton', background=[('active', 'deep sky blue')])
+        style.configure('New2.TButton',
+                        borderwidth=-2,
+                        focuscolor='none',
+                        highlightthickness=0,
+                        font=(self.current_font, 12),
+                        foreground='white',
+                        background='forest green')
+        style.map('New2.TButton', background=[('active', 'deep sky blue')])
+        style.configure('TEntry',
+                        fieldbackground='white',
+                        foreground='black',
+                        insertcolor='black')
+        style.configure('TLabelframe',
+                        background='black',
+                        borderwidth=0,
+                        focuscolor='none',
+                        highlightthickness=0,
+                        font=(self.current_font, 12))
+        style.configure('TLabelframe.Label',
+                        background='black',
+                        foreground='white',
+                        borderwidth=0,
+                        focuscolor='none',
+                        highlightthickness=0,
+                        font=(self.current_font, 12))
+        style.configure('TLabel',
+                        background='white',
+                        foreground='black',
+                        borderwidth=0,
+                        focuscolor='none',
+                        highlightthickness=0,
+                        font=(self.current_font, 12))
+        style.configure('New.TLabel',
+                        background='white',
+                        foreground='black',
+                        borderwidth=0,
+                        focuscolor='none',
+                        highlightthickness=0,
+                        font=(self.current_font, 10))
+        style.configure('TCheckbutton',
+                        background='white',
+                        foreground='black',
+                        borderwidth=0,
+                        focuscolor='none',
+                        highlightthickness=0,
+                        inactiveselectbackground='black',
+                        font=(self.current_font, 12))
+        style.configure('TScrollbar', background='white')
 
     def img_to_ascii_img_window(self):
         self.go_back = False
@@ -723,6 +727,7 @@ class Root(Tk):
         self.change_settings_button.place_forget()
 
     def reset_main_window(self):
+        self.set_style()
         self.img_to_ascii_img_button = ttk.Button(
             self,
             text=translate_dict['Image to Ascii Images/Texts'],
@@ -1209,7 +1214,7 @@ class Root(Tk):
             if before_value == 'None':
                 before_value = ''
             value_entry.insert(END, before_value)
-            value_entry.configure(font=('Consolas', 12))
+            value_entry.configure(font=(self.current_font, 12))
             value_entry.place(x=x1, y=y1 + 25, width=width, height=height)
             self.value_entry_dict[real_value] = value_entry
             current_widgets.append(value_label)
