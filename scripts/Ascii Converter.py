@@ -8,11 +8,11 @@ with open(settings_path, encoding='utf-8') as f:
 globals().update(current_settings)
 
 try:
-    with open(f'scripts/languages/{language}.py', encoding='utf-8') as f:
-        exec(f.read(), globals())
+    with open(f'scripts/languages/{language}.json', encoding='utf-8') as f:
+        translate_dict = json.load(f)
 except:
-    with open('scripts/languages/English.py', encoding='utf-8') as f:
-        exec(f.read(), globals())
+    with open('scripts/languages/English.json', encoding='utf-8') as f:
+        translate_dict = json.load(f)
 translate_dict_reverse = {j: i for i, j in translate_dict.items()}
 
 
@@ -684,14 +684,15 @@ class Root(Tk):
         if changed:
             if 'language' in changed_values:
                 current_language = self.value_dict['language']
+                global translate_dict
                 try:
-                    with open(f'scripts/languages/{current_language}.py',
+                    with open(f'scripts/languages/{current_language}.json',
                               encoding='utf-8') as f:
-                        exec(f.read(), globals())
+                        translate_dict = json.load(f)
                 except:
-                    with open('scripts/languages/English.py',
+                    with open('scripts/languages/English.json',
                               encoding='utf-8') as f:
-                        exec(f.read(), globals())
+                        translate_dict = json.load(f)
                 global translate_dict_reverse
                 translate_dict_reverse = {
                     j: i
