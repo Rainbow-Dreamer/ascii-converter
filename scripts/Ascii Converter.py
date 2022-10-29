@@ -163,10 +163,6 @@ class Root(Tk):
         ]
         self.value_dict = deepcopy(current_settings)
         self.options_num = len(self.all_config_options)
-        self.all_config_options_ind = {
-            self.all_config_options[i]: i
-            for i in range(self.options_num)
-        }
         self.config_original = self.all_config_options.copy()
         self.all_config_options.sort(key=lambda s: s.lower())
         self.alpha_config = self.all_config_options.copy()
