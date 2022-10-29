@@ -67,5 +67,6 @@
     "Video has been successfully exported": "已成功输出为视频",
     "Choose the path to save video frames": "选择视频帧图保存路径",
     "Reading and exporting video frame": "正在读取并导出视频帧",
-    "Video frames are successfully exported as images": "视频帧图片导出完成"
+    "Video frames are successfully exported as images": "视频帧图片导出完成",
+    "font": "微软雅黑"
 }

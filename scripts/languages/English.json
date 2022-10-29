@@ -67,5 +67,6 @@
     "Video has been successfully exported": "Video has been successfully exported",
     "Choose the path to save video frames": "Choose the path to save video frames",
     "Reading and exporting video frame": "Reading and exporting\nvideo frame",
-    "Video frames are successfully exported as images": "Video frames are successfully\nexported as images"
+    "Video frames are successfully exported as images": "Video frames are successfully\nexported as images",
+    "font": "Consolas"
 }
