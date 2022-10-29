@@ -168,6 +168,7 @@ class Root(Tk):
         self.alpha_config = self.all_config_options.copy()
         self.go_back = False
         self.sort_mode = 1
+        self.current_widgets = []
 
     def img_to_ascii_img_window(self):
         self.go_back = False
@@ -430,7 +431,6 @@ class Root(Tk):
             compound=CENTER,
             style='New.TButton')
         self.save_button.place(x=500, y=480, width=400, height=50)
-        self.saved_text = ttk.Label(self, text='saved')
         self.search_text = ttk.Label(self,
                                      text=translate_dict['Search Settings'])
         self.search_text.place(x=0, y=400)
@@ -481,10 +481,10 @@ class Root(Tk):
             self.go_back_button, self.config_options_bar,
             self.choose_config_options, self.config_contents,
             self.choose_filename_button, self.choose_directory_button,
-            self.save_button, self.saved_text, self.search_text,
-            self.search_entry, self.up_button, self.down_button,
-            self.choose_bool1, self.choose_bool2, self.change_sort_button,
-            self.config_name, self.frame_show
+            self.save_button, self.search_text, self.search_entry,
+            self.up_button, self.down_button, self.choose_bool1,
+            self.choose_bool2, self.change_sort_button, self.config_name,
+            self.frame_show
         ]
         self.frame_info.set(translate_dict['No actions at this time'])
         self.choose_config_options.selection_set(0)
