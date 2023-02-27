@@ -42,6 +42,7 @@ class Root(Tk):
         self.minsize(1000, 650)
         self.wm_iconbitmap('resources/ascii.ico')
         self.set_style()
+        self.update_font()
         try:
             bg_image = Image.open(background_image)
         except:
@@ -104,6 +105,16 @@ class Root(Tk):
         self.go_back = False
         self.sort_mode = 1
         self.current_widgets = []
+
+    def update_font(self):
+        try:
+            self.font = ImageFont.truetype(self.value_dict['font_path'],
+                                           size=self.value_dict['font_size'])
+        except:
+            self.font = ImageFont.load_default()
+        font_x_len, font_y_len = self.font.getsize('a')
+        self.font_x_len = font_x_len
+        self.font_y_len = font_y_len
 
     def set_style(self):
         self.current_font = translate_dict['font']
@@ -300,10 +311,6 @@ class Root(Tk):
         self.current_widgets += self.set_value('video frames interval',
                                                'video_frames_interval', 200,
                                                28, 160, 220)
-        self.current_widgets += self.set_value('font path', 'font_path', 100,
-                                               28, 400, 220)
-        self.current_widgets += self.set_value('font size', 'font_size', 100,
-                                               28, 550, 220)
         self.current_widgets += self.set_value('video frame rate',
                                                'video_frame_rate', 160, 28,
                                                160, 300)
@@ -332,7 +339,7 @@ class Root(Tk):
             variable=self.picture_color,
             command=lambda: self.change_bool('colored_image'))
         self.output_picture_color.var = self.picture_color
-        self.output_picture_color.place(x=700, y=220, width=160, height=40)
+        self.output_picture_color.place(x=400, y=220, width=160, height=40)
         self.value_dict['colored_image'] = img_color
         self.value_entry_dict['colored_image'] = self.output_picture_color
         self.current_widgets.append(self.output_picture_color)
@@ -625,12 +632,21 @@ class Root(Tk):
             print(str(e))
 
     def search_path(self, obj, mode=0):
+        current_filename = obj.get('1.0', 'end-1c')
+        if os.path.isfile(current_filename):
+            current_directory = os.path.dirname(current_filename)
+        elif os.path.isdir(current_filename):
+            current_directory = current_filename
+        else:
+            current_directory = ''
         if mode == 0:
             filename = filedialog.askopenfilename(
+                initialdir=current_directory,
                 title=translate_dict['Choose filename'],
                 filetypes=((translate_dict['All files'], "*"), ))
         elif mode == 1:
             filename = filedialog.askdirectory(
+                initialdir=current_directory,
                 title=translate_dict['Choose directory'])
         if filename:
             obj.delete('1.0', END)
@@ -774,11 +790,11 @@ class Root(Tk):
         return self.value_dict['ascii_character_set'][int(gray / self.unit)]
 
     def img_to_ascii(self, im, show_percentage=False, mode=0):
-        WIDTH = int((im.width * self.value_dict['image_width_ratio'] /
-                     self.value_dict['image_width_ratio_scale']) /
+        WIDTH = int((im.width / self.font_x_len) *
+                    self.value_dict['image_width_ratio'] /
                     self.value_dict['resize_ratio'])
-        HEIGHT = int((im.height * self.value_dict['image_height_ratio'] /
-                      self.value_dict['image_height_ratio_scale']) /
+        HEIGHT = int((im.height / self.font_y_len) *
+                     self.value_dict['image_height_ratio'] /
                      self.value_dict['resize_ratio'])
         if show_percentage:
             whole_count = WIDTH * HEIGHT
@@ -903,20 +919,6 @@ class Root(Tk):
         if not output_filename:
             self.frame_info.set(translate_dict['canceled exporting'])
             return
-        try:
-            font = ImageFont.truetype(self.value_dict['font_path'],
-                                      size=self.value_dict['font_size'])
-        except:
-            font = ImageFont.load_default()
-        font_x_len, font_y_len = font.getsize(
-            self.value_dict['ascii_character_set'][1])
-        font_y_len = int(font_y_len * 1.37)
-        ascii_image_padding_x = self.value_dict['ascii_image_padding_x']
-        ascii_image_padding_y = self.value_dict['ascii_image_padding_y']
-        if ascii_image_padding_x is not None:
-            font_x_len = float(ascii_image_padding_x)
-        if ascii_image_padding_y is not None:
-            font_y_len = float(ascii_image_padding_y)
         if self.is_color == 0:
             im_txt = Image.new(
                 self.value_dict['ascii_image_mode'],
@@ -930,12 +932,12 @@ class Root(Tk):
             for i in range(len(text_str)):
                 if text_str[i] == "\n":
                     x = 0
-                    y += font_y_len
+                    y += self.font_y_len
                 dr.text((x, y),
                         text_str[i],
                         fill=ascii_image_character_color,
-                        font=font)
-                x += font_x_len
+                        font=self.font)
+                x += self.font_x_len
             im_txt.save(output_filename)
 
         else:
@@ -945,9 +947,9 @@ class Root(Tk):
             for i in range(len(txt)):
                 if txt[i] == "\n":
                     x = 0
-                    y += font_y_len
-                dr.text((x, y), txt[i], fill=colors[i], font=font)
-                x += font_x_len
+                    y += self.font_y_len
+                dr.text((x, y), txt[i], fill=colors[i], font=self.font)
+                x += self.font_x_len
             im_txt.save(output_filename)
 
         self.frame_info.set(
@@ -1019,20 +1021,6 @@ class Root(Tk):
             os.remove(each)
         num_frames = frame_length
         n = len(str(num_frames))
-        try:
-            font = ImageFont.truetype(self.value_dict['font_path'],
-                                      size=self.value_dict['font_size'])
-        except:
-            font = ImageFont.load_default()
-        font_x_len, font_y_len = font.getsize(
-            self.value_dict['ascii_character_set'][1])
-        font_y_len = int(font_y_len * 1.37)
-        ascii_image_padding_x = self.value_dict['ascii_image_padding_x']
-        ascii_image_padding_y = self.value_dict['ascii_image_padding_y']
-        if ascii_image_padding_x is not None:
-            font_x_len = float(ascii_image_padding_x)
-        if ascii_image_padding_y is not None:
-            font_y_len = float(ascii_image_padding_y)
         if self.is_color == 0:
             for i in range(num_frames):
                 if self.go_back:
@@ -1058,12 +1046,12 @@ class Root(Tk):
                 for j in range(len(text_str)):
                     if text_str[j] == "\n":
                         x = 0
-                        y += font_y_len
+                        y += self.font_y_len
                     dr.text((x, y),
                             text_str[j],
                             fill=ascii_image_character_color,
-                            font=font)
-                    x += font_x_len
+                            font=self.font)
+                    x += self.font_x_len
                 if self.go_back:
                     break
                 im_txt.save(f'{i:0{n}d}.png')
@@ -1086,9 +1074,9 @@ class Root(Tk):
                 for j in range(len(txt)):
                     if txt[j] == "\n":
                         x = 0
-                        y += font_y_len
-                    dr.text((x, y), txt[j], fill=colors[j], font=font)
-                    x += font_x_len
+                        y += self.font_y_len
+                    dr.text((x, y), txt[j], fill=colors[j], font=self.font)
+                    x += self.font_x_len
                 if self.go_back:
                     break
                 im_txt.save(f'{i:0{n}d}.png')
@@ -1207,10 +1195,7 @@ class Root(Tk):
                                foreground='black',
                                insertbackground='black')
             before_value = self.value_dict[real_value]
-            if type(before_value) != list:
-                before_value = str(before_value)
-            else:
-                before_value = get_value(repr(before_value[1]))
+            before_value = str(before_value)
             if before_value == 'None':
                 before_value = ''
             value_entry.insert(END, before_value)
