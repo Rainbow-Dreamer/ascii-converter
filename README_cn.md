@@ -58,3 +58,9 @@
 
 2020/12/14 最新版本的改动：之前显示字符画在软件屏幕上的功能感觉不是很有必要，因此在当前最新版本去掉了。
 
+## 捐赠
+
+这个项目是由Rainbow Dreamer在业余时间开发的。如果你觉得这个项目对你有用，想支持它和它的未来发展，请考虑给我买杯咖啡，我很感激任何金额。
+
+[![Support via PayPal](https://cdn.rawgit.com/twolfson/paypal-github-button/1.0.0/dist/button.svg)](https://www.paypal.com/donate/?business=7XSUZCQNT4M4Y&no_recurring=0&currency_code=CAD)
+

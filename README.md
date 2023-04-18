@@ -58,3 +58,9 @@ You can download the latest version and history releases [here](https://www.jian
 
 2020/12/14 Changes in the latest version: the previous function of displaying character pictures on a new screen was not felt to be very necessary, so it was removed in the current latest version.
 
+## Donation
+
+This project is developed by Rainbow Dreamer on his spare time. If you feel this project is useful to you and want to support it and it's future development, please consider buy me a coffee, I appreciate any amount.
+
+[![Support via PayPal](https://cdn.rawgit.com/twolfson/paypal-github-button/1.0.0/dist/button.svg)](https://www.paypal.com/donate/?business=7XSUZCQNT4M4Y&no_recurring=0&currency_code=CAD)
+
