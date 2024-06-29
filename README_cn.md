@@ -50,7 +50,7 @@
 
 最新版本: v3.0
 
-你可以在[这里](https://www.jianguoyun.com/p/DXITehsQt43aDBjVycoFIAA)下载最新版本和历史版本
+你可以在[这里](https://www.jianguoyun.com/p/DfiKSoIQt43aDBimycoFIAA)下载最新版本和历史版本
 
 ## 更新日志
 

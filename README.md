@@ -50,7 +50,7 @@ This ASCII converter currently only supports Windows.
 
 Latest version: v3.0
 
-You can download the latest version and history releases [here](https://www.jianguoyun.com/p/DXITehsQt43aDBjVycoFIAA)
+You can download the latest version and history releases [here](https://www.jianguoyun.com/p/DfiKSoIQt43aDBimycoFIAA)
 
 ## Changelog
 
